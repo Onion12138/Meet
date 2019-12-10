@@ -1,0 +1,23 @@
+spring:
+  redis:
+    host: 120.77.176.55
+    port: 6379
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://120.77.176.55:3306/meet?serverTimezone=Asia/Shanghai&useSSL=false&characterEncoding=utf8
+    username: root
+    password: root
+  mail:
+    protocol: smtp
+    host: smtp.qq.com
+    port: 465
+    username: 1452618379@qq.com
+    password: tpdvwwqgafgwicae
+    default-encoding: utf-8
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable: true
+    from: 1452618379@qq.com
+
