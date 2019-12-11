@@ -11,7 +11,7 @@ import org.springframework.data.annotation.Id;
 public class Comment {
     @Id
     private String id;
-    private String news;
+    private String newsId;
     private String parentId;
     private String publisher;
     private String content;

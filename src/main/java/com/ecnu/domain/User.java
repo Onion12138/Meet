@@ -18,6 +18,7 @@ public class User {
     private String nickname;
     private String profileUrl;
     private LocalDateTime registerTime;
+    private Integer credit; //信誉积分
     private boolean disabled;
     private boolean admin;
 }
