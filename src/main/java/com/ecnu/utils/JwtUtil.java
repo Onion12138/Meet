@@ -22,7 +22,7 @@ public class JwtUtil {
         JwtBuilder builder = Jwts.builder()
                 .setId(user.getId())
                 .setIssuedAt(new Date(now))
-                .claim("role", user.isAdmin())
+                .claim("role", user.getAdmin())
                 .claim("nickname",user.getNickname())
                 .setExpiration(new Date(now + ttl))
                 .signWith(SignatureAlgorithm.HS256, key);

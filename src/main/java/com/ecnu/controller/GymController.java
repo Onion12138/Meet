@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -24,8 +25,8 @@ public class GymController {
     private GymService gymService;
     @GetMapping("/allGyms")
     public ResultEntity findAllGyms(@RequestParam Integer page, @RequestParam Integer size){
-        PageInfo<Gym> gyms = gymService.findAllGyms(page, size);
-        return ResultEntity.succeed(gyms);
+        Map<String, Object> map = gymService.findAllGyms(page, size);
+        return ResultEntity.succeed(map);
     }
 
     @GetMapping("/keyword")

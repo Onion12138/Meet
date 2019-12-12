@@ -12,8 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author onion
@@ -25,10 +24,19 @@ public class GymServiceImpl implements GymService {
     private GymMapper gymMapper;
 
     @Override
-    public PageInfo<Gym> findAllGyms(Integer page, Integer size) {
+    public Map<String, Object> findAllGyms(Integer page, Integer size) {
         PageHelper.startPage(page, size);
+        Set<String> names = new TreeSet<>();
+        Set<String> address = new TreeSet<>();
         List<Gym> gyms = gymMapper.selectAll();
-        return new PageInfo<>(gyms);
+        PageInfo<Gym> pageInfo = new PageInfo<>(gyms);
+        gyms.stream().map(Gym::getAddress).distinct().forEach(address::add);
+        gyms.stream().map(Gym::getName).distinct().forEach(names::add);
+        Map<String, Object> map = new HashMap<>();
+        map.put("name",names);
+        map.put("address",address);
+        map.put("pageInfo",pageInfo);
+        return map;
     }
 
     @Override
@@ -43,6 +51,7 @@ public class GymServiceImpl implements GymService {
         return new PageInfo<>(gymMapper.selectByExample(example));
     }
 
+    //查看mysql的语句
     @Override
     public PageInfo<Gym> findGymsByFilter(Integer page, Integer size, GymFilterRequest request) {
         PageHelper.startPage(page, size);
@@ -75,22 +84,30 @@ public class GymServiceImpl implements GymService {
 
     @Override
     public void addGym(Gym gym) {
-
+        gymMapper.insert(gym);
     }
 
     @Override
     public void updateGym(Gym gym) {
-
+        gymMapper.updateByPrimaryKeySelective(gym);
     }
 
     @Override
     public void deleteGym(String gymId) {
-
+        Gym gym = new Gym();
+        gym.setId(gymId);
+        gym.setOpen(false);
+        gymMapper.updateByPrimaryKeySelective(gym);
     }
 
     @Override
     public void deleteGyms(Set<String> idList) {
-
+        idList.forEach(e->{
+            Gym gym = new Gym();
+            gym.setId(e);
+            gym.setOpen(false);
+            gymMapper.updateByPrimaryKeySelective(gym);
+        });
     }
 
 

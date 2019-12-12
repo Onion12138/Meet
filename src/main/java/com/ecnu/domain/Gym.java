@@ -3,6 +3,8 @@ package com.ecnu.domain;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
@@ -14,6 +16,7 @@ import java.io.Serializable;
 @Data
 public class Gym implements Serializable {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
     @NotEmpty
     private String name;

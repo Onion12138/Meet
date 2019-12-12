@@ -6,6 +6,7 @@ import com.ecnu.dto.GymFilterRequest;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -13,7 +14,7 @@ import java.util.Set;
  * @date 2019/12/11 -6:24 下午
  */
 public interface GymService {
-    PageInfo<Gym> findAllGyms(Integer page, Integer size);
+    Map<String, Object> findAllGyms(Integer page, Integer size);
 
     List<GymComment> findGymComments(String gymId);
 

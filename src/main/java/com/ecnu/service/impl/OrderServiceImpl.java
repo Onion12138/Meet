@@ -1,11 +1,16 @@
 package com.ecnu.service.impl;
 
+import com.ecnu.dao.OrderMapper;
 import com.ecnu.domain.Order;
 import com.ecnu.dto.OrderRequest;
 import com.ecnu.service.OrderService;
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -14,9 +19,15 @@ import java.util.Set;
  */
 @Service
 public class OrderServiceImpl implements OrderService {
+    @Autowired
+    private OrderMapper orderMapper;
     @Override
     public PageInfo<Order> findOrdersByUserId(String id, int page, int size) {
-        return null;
+        PageHelper.startPage(page, size);
+        Order order = new Order();
+        order.setUserId(id);
+        List<Order> orders = orderMapper.select(order);
+        return new PageInfo<>(orders);
     }
 
     @Override
@@ -36,7 +47,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public PageInfo<Order> findMyOrdersByGym(String id, String gymId, Integer page, Integer size) {
-        return null;
+        PageHelper.startPage(page,size);
+        Example example = new Example(Order.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("userId", id).andEqualTo("gymId", gymId);
+        example.and(criteria);
+        List<Order> orders = orderMapper.selectByExample(example);
+        return new PageInfo<>(orders);
     }
 
     @Override
@@ -49,9 +66,13 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
+    //是否不需要userId
     @Override
     public void cancelOrder(String userId, String orderId) {
-
+        Order order = new Order();
+        order.setId(orderId);
+        order.setCancel(true);
+        orderMapper.updateByPrimaryKeySelective(order);
     }
 
     @Override
@@ -82,5 +103,13 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void cancelOrders(Set<String> orderIds) {
 
+    }
+
+    @Override
+    public void commentOrder(String userId, Integer score, String comment) {
+        Order order = new Order();
+        order.setScore(score);
+        order.setComment(comment);
+        //参数不对
     }
 }

@@ -25,5 +25,7 @@ public class MybatisMapperTest {
         criteria2.andLike("nickname", "onion");
         example.or(criteria2);
         mapper.selectByExample(example);
+
+
     }
 }

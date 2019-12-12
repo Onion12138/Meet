@@ -10,10 +10,11 @@ import javax.validation.constraints.NotEmpty;
  */
 @Data
 public class NewsRequest {
+    private String newsId;
     @NotEmpty
     private String token;
-    @NotEmpty
-    private String publishTime;
+//    @NotEmpty
+//    private String publishTime;
     @NotEmpty
     private String content;
 }

@@ -17,5 +17,6 @@ public class News implements Serializable {
     private String publisher;
     private String nickname;
     private LocalDateTime publishTime;
+    private LocalDateTime updateTime;
     private String content;
 }
