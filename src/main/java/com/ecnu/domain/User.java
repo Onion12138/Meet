@@ -3,6 +3,8 @@ package com.ecnu.domain;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
+import javax.persistence.Table;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -10,7 +12,8 @@ import java.time.LocalDateTime;
  * @date 2019/12/10 -10:50 下午
  */
 @Data
-public class User {
+@Table(name = "user")
+public class User implements Serializable {
     @Id
     private String id;
     private String email;
@@ -19,6 +22,6 @@ public class User {
     private String profileUrl;
     private LocalDateTime registerTime;
     private Integer credit; //信誉积分
-    private boolean disabled;
-    private boolean admin;
+    private Boolean disabled;
+    private Boolean admin;
 }

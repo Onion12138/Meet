@@ -14,6 +14,8 @@ public enum ResultEnum {
     WRONG_CODE(1003, "验证码错误"),
     USER_NOT_EXIST(1004, "用户不存在"),
     WRONG_PASSWORD(1005, "密码错误"),
+    FILE_UPLOAD_ERROR(1006, "文件上传出错"),
+    ACCOUNT_DISABLED(1007, "账户被禁用"),
     ;
     private int code;
     private String message;

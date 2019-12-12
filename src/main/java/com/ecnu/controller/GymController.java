@@ -3,6 +3,7 @@ package com.ecnu.controller;
 import com.ecnu.annotation.AdminOnly;
 import com.ecnu.domain.Gym;
 import com.ecnu.domain.GymComment;
+import com.ecnu.dto.GymFilterRequest;
 import com.ecnu.service.GymService;
 import com.ecnu.vo.ResultEntity;
 import com.github.pagehelper.PageInfo;
@@ -24,6 +25,18 @@ public class GymController {
     @GetMapping("/allGyms")
     public ResultEntity findAllGyms(@RequestParam Integer page, @RequestParam Integer size){
         PageInfo<Gym> gyms = gymService.findAllGyms(page, size);
+        return ResultEntity.succeed(gyms);
+    }
+
+    @GetMapping("/keyword")
+    public ResultEntity findGymsByKeyword(@RequestParam Integer page, @RequestParam Integer size, @RequestParam String keyword){
+        PageInfo<Gym> gyms = gymService.findGymsByKeyword(page, size, keyword);
+        return ResultEntity.succeed(gyms);
+    }
+
+    @GetMapping("/filter")
+    public ResultEntity findGymByFilter(@RequestParam Integer page, @RequestParam Integer size, @RequestBody GymFilterRequest request){
+        PageInfo<Gym> gyms = gymService.findGymsByFilter(page, size, request);
         return ResultEntity.succeed(gyms);
     }
 

@@ -1,6 +1,6 @@
 package com.ecnu.service.impl;
 
-import com.ecnu.dao.UserDao;
+import com.ecnu.dao.UserMapper;
 import com.ecnu.domain.User;
 import com.ecnu.dto.UserLoginRequest;
 import com.ecnu.dto.UserRegisterRequest;
@@ -11,7 +11,17 @@ import com.ecnu.service.UserService;
 import com.ecnu.utils.CodeUtil;
 import com.ecnu.utils.JwtUtil;
 import com.ecnu.utils.KeyUtil;
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.gson.Gson;
+import com.qiniu.common.QiniuException;
+import com.qiniu.http.Response;
+import com.qiniu.storage.Configuration;
+import com.qiniu.storage.Region;
+import com.qiniu.storage.UploadManager;
+import com.qiniu.storage.model.DefaultPutRet;
+import com.qiniu.util.Auth;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -19,8 +29,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -29,24 +44,33 @@ import java.util.concurrent.TimeUnit;
  * @date 2019/12/11 -6:23 下午
  */
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
     @Autowired
-    private UserDao userDao;
+    private UserMapper userMapper;
     @Autowired
     private StringRedisTemplate redisTemplate;
-
     @Autowired
     private MailService mailService;
     @Autowired
     private BCryptPasswordEncoder encoder;
-
     @Value("600")
     private int expireTime;
     @Value("This is the code from notehub")
     private String subject;
+    @Value("${qiniu.access-key}")
+    private String accessKey;
+    @Value("${qiniu.secret-key}")
+    private String secretKey;
+    @Value("${qiniu.bucket}")
+    private String bucket;
+    @Value("2592000")
+    private long expireInSeconds;
     @Override
     public boolean checkEmail(String email) {
-        User user = userDao.findByEmail(email);
+        User u = new User();
+        u.setEmail(email);
+        User user = userMapper.selectOne(u);
         return user != null;
     }
 
@@ -69,19 +93,24 @@ public class UserServiceImpl implements UserService {
         user.setRegisterTime(LocalDateTime.now());
         user.setEmail(request.getEmail());
         user.setProfileUrl("https://avatars2.githubusercontent.com/u/33611404?s=400&v=4");
-        userDao.save(user);
+        userMapper.insert(user);
     }
 
     @Override
     public Map<String, String> login(UserLoginRequest request) {
         String email = request.getEmail();
         String password = request.getPassword();
-        User user = userDao.findByEmail(email);
+        User u = new User();
+        u.setEmail(email);
+        User user = userMapper.selectOne(u);
         if (user == null){
             throw new MyException(ResultEnum.USER_NOT_EXIST);
         }
         if (!encoder.matches(password, user.getPassword())){
             throw new MyException(ResultEnum.WRONG_PASSWORD);
+        }
+        if (user.getDisabled()){
+            throw new MyException(ResultEnum.ACCOUNT_DISABLED);
         }
         Map <String, String> map = new HashMap<>();
         String token = JwtUtil.createJwt(user);
@@ -89,23 +118,72 @@ public class UserServiceImpl implements UserService {
         map.put("token", token);
         map.put("nickname", nickname);
         map.put("profile",user.getProfileUrl());
-        map.put("role",user.isAdmin() ? "admin" : "user");
+        map.put("email",user.getEmail());
+        map.put("role",user.getAdmin() ? "admin" : "user");
         return map;
     }
 
     @Override
     public void modifyNickname(String id, String nickname) {
-        userDao.modifyNickname(nickname);
+        User user = new User();
+        user.setId(id);
+        user.setNickname(nickname);
+        userMapper.updateByPrimaryKeySelective(user);
     }
 
     @Override
-    public void uploadProfile(String id, MultipartFile file) {
+    public void uploadProfile(String id, MultipartFile file){
+        String name = file.getOriginalFilename();
+        InputStream fileInputStream = null;
+        try {
+            fileInputStream = file.getInputStream();
+        } catch (IOException e) {
+            throw new MyException(e.getMessage(), -1);
+        }
+        String key = id + name;
+        Configuration cfg = new Configuration(Region.region2());
+        UploadManager uploadManager = new UploadManager(cfg);
+        Auth auth = Auth.create(accessKey, secretKey);
+        String upToken = auth.uploadToken(bucket);
+        try {
+            Response response = uploadManager.put(fileInputStream, key, upToken, null, null);
+            DefaultPutRet putRet = new Gson().fromJson(response.bodyString(), DefaultPutRet.class);
+            log.info("upload file : {}", putRet);
+        } catch (QiniuException ex) {
+            throw new MyException(ResultEnum.FILE_UPLOAD_ERROR);
+        }
+        User user = new User();
+        user.setId(id);
+        user.setProfileUrl(getProfileUrl(key));
+        userMapper.updateByPrimaryKeySelective(user);
+    }
 
+    private String getProfileUrl(String filename){
+        String domainOfBucket = "http://ecnuonion.club";
+        String encodedFileName = null;
+        try {
+            encodedFileName = URLEncoder.encode(filename, "utf-8").replace("+", "%20");
+        } catch (UnsupportedEncodingException e) {
+            throw new MyException(e.getMessage(), -1);
+        }
+        String publicUrl = String.format("%s/%s", domainOfBucket, encodedFileName);
+        Auth auth = Auth.create(accessKey, secretKey);
+        return auth.privateDownloadUrl(publicUrl, expireInSeconds);
     }
 
     @Override
-    public void modifyPassword(String id, String password) {
-
+    public void modifyPassword(String id, String password, String code) {
+        String passwordCode = redisTemplate.opsForValue().get("code_" + id);
+        if(passwordCode == null){
+            throw new MyException(ResultEnum.CODE_NOT_EXIST);
+        }
+        if(!passwordCode.equals(code)){
+            throw new MyException(ResultEnum.WRONG_CODE);
+        }
+        User user = new User();
+        user.setId(id);
+        user.setPassword(encoder.encode(password));
+        userMapper.updateByPrimaryKeySelective(user);
     }
 
     @Override
@@ -118,12 +196,43 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public PageInfo<User> findAllUsers(int page, int size) {
-        return null;
+        PageHelper.startPage(page, size);
+        return new PageInfo<>(userMapper.selectAll());
     }
 
     @Override
     public void disableAccount(String userId) {
-
+        User user = new User();
+        user.setId(userId);
+        user.setDisabled(true);
+        userMapper.updateByPrimaryKeySelective(user);
     }
+
+    @Override
+    public void enableAccount(String userId) {
+        User user = new User();
+        user.setId(userId);
+        user.setDisabled(false);
+        userMapper.updateByPrimaryKeySelective(user);
+    }
+
+    @Override
+    public PageInfo<User> findAllDisabledUsers(Integer page, Integer size) {
+        PageHelper.startPage(page, size);
+        User user = new User();
+        user.setDisabled(true);
+        List<User> users = userMapper.select(user);
+        return new PageInfo<>(users);
+    }
+
+    @Override
+    public void updateCredit(String userId, Integer credit) {
+        User user = new User();
+        user.setId(userId);
+        user.setCredit(credit);
+        userMapper.updateByPrimaryKeySelective(user);
+    }
+
+
 
 }

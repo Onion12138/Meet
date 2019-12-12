@@ -22,11 +22,17 @@ public interface UserService {
 
     void uploadProfile(String id, MultipartFile file);
 
-    void modifyPassword(String id, String password);
+    void modifyPassword(String id, String password, String code);
 
     void sendCode(String email);
 
     PageInfo<User> findAllUsers(int page, int size);
 
     void disableAccount(String userId);
+
+    void updateCredit(String userId, Integer credit);
+
+    void enableAccount(String userId);
+
+    PageInfo<User> findAllDisabledUsers(Integer page, Integer size);
 }

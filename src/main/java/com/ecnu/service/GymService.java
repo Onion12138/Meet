@@ -2,6 +2,7 @@ package com.ecnu.service;
 
 import com.ecnu.domain.Gym;
 import com.ecnu.domain.GymComment;
+import com.ecnu.dto.GymFilterRequest;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
@@ -23,4 +24,8 @@ public interface GymService {
     void deleteGym(String gymId);
 
     void deleteGyms(Set<String> idList);
+
+    PageInfo<Gym> findGymsByKeyword(Integer page, Integer size, String keyword);
+
+    PageInfo<Gym> findGymsByFilter(Integer page, Integer size, GymFilterRequest request);
 }

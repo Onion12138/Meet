@@ -70,10 +70,10 @@ public class UserController {
         return ResultEntity.succeed();
     }
     @PutMapping("/modifyPassword")
-    public ResultEntity modifyPassword(@RequestParam String token, @RequestParam String password){
+    public ResultEntity modifyPassword(@RequestParam String token, @RequestParam String password, @RequestParam String code){
         Claims claims = JwtUtil.parseJwt(token);
         String id = claims.getId();
-        userService.modifyPassword(id, password);
+        userService.modifyPassword(id, password, code);
         return ResultEntity.succeed();
     }
     @GetMapping("/sendCode")
@@ -88,6 +88,13 @@ public class UserController {
         PageInfo<User> list = userService.findAllUsers(page, size);
         return ResultEntity.succeed(list);
     }
+    //更多个性化搜索
+    @GetMapping("findAllDisabledUsers")
+    @AdminOnly
+    public ResultEntity findAllDisabledUsers(@RequestParam Integer page, @RequestParam Integer size){
+        PageInfo<User> list = userService.findAllDisabledUsers(page, size);
+        return ResultEntity.succeed(list);
+    }
 
     @DeleteMapping("/disableAccount")
     @AdminOnly
@@ -96,5 +103,18 @@ public class UserController {
         return ResultEntity.succeed();
     }
 
+    @PutMapping("/enableAccount")
+    @AdminOnly
+    public ResultEntity enableAccount(@RequestParam String userId){
+        userService.enableAccount(userId);
+        return ResultEntity.succeed();
+    }
+
+    @PutMapping("/updateCredit")
+    @AdminOnly
+    public ResultEntity updateCredit(@RequestParam String userId, @RequestParam Integer credit){
+        userService.updateCredit(userId, credit);
+        return ResultEntity.succeed();
+    }
 
 }

@@ -79,6 +79,14 @@ public class OrderController {
         return ResultEntity.succeed();
     }
 
+    @PutMapping("/comment")
+    public ResultEntity commentOrder(@RequestParam String token, @RequestParam Integer score, @RequestParam String comment){
+        Claims claims = JwtUtil.parseJwt(token);
+        String userId = claims.getId();
+        orderService.commentOrder(userId, score, comment);
+        return ResultEntity.succeed();
+    }
+
     @DeleteMapping("cancelMyOrder")
     public ResultEntity cancelOrder(@RequestParam String token, @RequestParam String orderId){
         Claims claims = JwtUtil.parseJwt(token);

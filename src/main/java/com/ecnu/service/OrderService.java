@@ -38,4 +38,6 @@ public interface OrderService {
     PageInfo<Order> findAllOrdersByGymId(String gymId, Integer page, Integer size);
 
     void cancelOrders(Set<String> orderIds);
+
+    void commentOrder(String userId, Integer score, String comment);
 }

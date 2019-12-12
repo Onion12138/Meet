@@ -3,6 +3,7 @@ package com.ecnu.domain;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
  * @date 2019/12/10 -11:00 下午
  */
 @Data
-public class Order {
+public class Order implements Serializable {
     @Id
     private String id;
     private String gymId;

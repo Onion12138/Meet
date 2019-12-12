@@ -3,12 +3,14 @@ package com.ecnu.vo;
 import com.ecnu.enums.ResultEnum;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author onion
  * @date 2019/12/10 -11:07 下午
  */
 @Data
-public class ResultEntity {
+public class ResultEntity implements Serializable {
     private Object data;
     private Integer code;
     private String message;
