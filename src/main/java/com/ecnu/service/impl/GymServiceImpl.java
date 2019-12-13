@@ -93,7 +93,7 @@ public class GymServiceImpl implements GymService {
     }
 
     @Override
-    public void deleteGym(String gymId) {
+    public void deleteGym(int gymId) {
         Gym gym = new Gym();
         gym.setId(gymId);
         gym.setOpen(false);
@@ -101,7 +101,7 @@ public class GymServiceImpl implements GymService {
     }
 
     @Override
-    public void deleteGyms(Set<String> idList) {
+    public void deleteGyms(Set<Integer> idList) {
         idList.forEach(e->{
             Gym gym = new Gym();
             gym.setId(e);

@@ -17,6 +17,7 @@ public class UserRegisterRequest {
     @NotEmpty
     private String password;
     @NotEmpty
+    @Size(min = 1, max = 20)
     private String nickname;
     @Size(min = 6, max = 6)
     private String code;

@@ -15,11 +15,11 @@ import java.time.LocalDateTime;
 public class Order implements Serializable {
     @Id
     private String id;
-    private String gymId;
-    private String userId;
+    private String gym;
+    private String email;
     private LocalDate date;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private LocalDateTime start;
+    private LocalDateTime end;
     private boolean cancel; //是否被取消
     private boolean valid; //类似于一个签到系统，创建一个定时任务，更新用户信誉分数
     private Integer score;

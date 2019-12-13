@@ -3,6 +3,8 @@ package com.ecnu.domain;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import java.io.Serializable;
 
 /**
@@ -12,9 +14,10 @@ import java.io.Serializable;
 @Data
 public class Comment implements Serializable {
     @Id
-    private String id;
-    private String newsId;
-    private String parentId;
-    private String publisher;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    private String news;
+    private Integer parent;
+    private String email;
     private String content;
 }

@@ -10,7 +10,6 @@ import com.ecnu.service.MailService;
 import com.ecnu.service.UserService;
 import com.ecnu.utils.CodeUtil;
 import com.ecnu.utils.JwtUtil;
-import com.ecnu.utils.KeyUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.gson.Gson;
@@ -71,7 +70,7 @@ public class UserServiceImpl implements UserService {
         User u = new User();
         u.setEmail(email);
         User user = userMapper.selectOne(u);
-        return user != null;
+        return user == null;
     }
 
     @Override
@@ -87,7 +86,6 @@ public class UserServiceImpl implements UserService {
         user.setCredit(10);
         user.setAdmin(false);
         user.setDisabled(false);
-        user.setId(KeyUtil.genUniqueKey());
         user.setNickname(request.getNickname());
         user.setPassword(encoder.encode(request.getPassword()));
         user.setRegisterTime(LocalDateTime.now());
@@ -124,15 +122,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void modifyNickname(String id, String nickname) {
+    public void modifyNickname(String email, String nickname) {
         User user = new User();
-        user.setId(id);
+        user.setEmail(email);
         user.setNickname(nickname);
         userMapper.updateByPrimaryKeySelective(user);
     }
 
     @Override
-    public void uploadProfile(String id, MultipartFile file){
+    public void uploadProfile(String email, MultipartFile file){
         String name = file.getOriginalFilename();
         InputStream fileInputStream = null;
         try {
@@ -140,7 +138,7 @@ public class UserServiceImpl implements UserService {
         } catch (IOException e) {
             throw new MyException(e.getMessage(), -1);
         }
-        String key = id + name;
+        String key = email + name;
         Configuration cfg = new Configuration(Region.region2());
         UploadManager uploadManager = new UploadManager(cfg);
         Auth auth = Auth.create(accessKey, secretKey);
@@ -153,7 +151,7 @@ public class UserServiceImpl implements UserService {
             throw new MyException(ResultEnum.FILE_UPLOAD_ERROR);
         }
         User user = new User();
-        user.setId(id);
+        user.setEmail(email);
         user.setProfileUrl(getProfileUrl(key));
         userMapper.updateByPrimaryKeySelective(user);
     }
@@ -172,8 +170,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void modifyPassword(String id, String password, String code) {
-        String passwordCode = redisTemplate.opsForValue().get("code_" + id);
+    public void modifyPassword(String email, String password, String code) {
+        String passwordCode = redisTemplate.opsForValue().get("code_" + email);
         if(passwordCode == null){
             throw new MyException(ResultEnum.CODE_NOT_EXIST);
         }
@@ -181,7 +179,7 @@ public class UserServiceImpl implements UserService {
             throw new MyException(ResultEnum.WRONG_CODE);
         }
         User user = new User();
-        user.setId(id);
+        user.setEmail(email);
         user.setPassword(encoder.encode(password));
         userMapper.updateByPrimaryKeySelective(user);
     }
@@ -201,17 +199,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void disableAccount(String userId) {
+    public void disableAccount(String email) {
         User user = new User();
-        user.setId(userId);
+        user.setEmail(email);
         user.setDisabled(true);
         userMapper.updateByPrimaryKeySelective(user);
     }
 
     @Override
-    public void enableAccount(String userId) {
+    public void enableAccount(String email) {
         User user = new User();
-        user.setId(userId);
+        user.setEmail(email);
         user.setDisabled(false);
         userMapper.updateByPrimaryKeySelective(user);
     }
@@ -226,9 +224,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateCredit(String userId, Integer credit) {
+    public void updateCredit(String email, Integer credit) {
         User user = new User();
-        user.setId(userId);
+        user.setEmail(email);
         user.setCredit(credit);
         userMapper.updateByPrimaryKeySelective(user);
     }

@@ -63,14 +63,14 @@ public class GymController {
 
     @DeleteMapping("/deleteGym")
     @AdminOnly
-    public ResultEntity deleteGym(@RequestParam String gymId){
+    public ResultEntity deleteGym(@RequestParam Integer gymId){
         gymService.deleteGym(gymId);
         return ResultEntity.succeed();
     }
 
     @DeleteMapping("/deleteGyms")
     @AdminOnly
-    public ResultEntity deleteGyms(@RequestParam Set<String> idList){
+    public ResultEntity deleteGyms(@RequestParam Set<Integer> idList){
         gymService.deleteGyms(idList);
         return ResultEntity.succeed();
     }

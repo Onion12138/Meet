@@ -49,9 +49,9 @@ public class NewsServiceImpl implements NewsService {
         Claims claims = JwtUtil.parseJwt(token);
         String userId = claims.getId();
         Comment comment = new Comment();
-        comment.setPublisher(userId);
-        comment.setNewsId(request.getNewsId());
-        comment.setParentId(request.getParentId());
+        comment.setEmail(userId);
+        comment.setNews(request.getNewsId());
+        comment.setParent(request.getParentId());
         comment.setContent(request.getContent());
         commentMapper.insert(comment);
 //        newsMapper.insert(comment);
@@ -68,9 +68,9 @@ public class NewsServiceImpl implements NewsService {
         String nickname = (String) claims.get("nickname");
         News news = new News();
         news.setNickname(nickname);
-        news.setPublisher(claims.getId());
-        news.setPublishTime(LocalDateTime.now());
-        news.setUpdateTime(LocalDateTime.now());
+        news.setEmail(claims.getId());
+        news.setPublish(LocalDateTime.now());
+        news.setUpdate(LocalDateTime.now());
         news.setContent(newsRequest.getContent());
         newsMapper.insert(news);
     }
@@ -79,7 +79,7 @@ public class NewsServiceImpl implements NewsService {
     public void updateNews(NewsRequest newsRequest) {
         News news = new News();
         news.setId(newsRequest.getNewsId());
-        news.setUpdateTime(LocalDateTime.now());
+        news.setUpdate(LocalDateTime.now());
         news.setContent(newsRequest.getContent());
         newsMapper.updateByPrimaryKeySelective(news);
     }

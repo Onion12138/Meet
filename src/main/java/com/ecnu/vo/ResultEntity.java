@@ -14,6 +14,7 @@ public class ResultEntity implements Serializable {
     private Object data;
     private Integer code;
     private String message;
+    public ResultEntity(){ }
     private ResultEntity(Object data, Integer code, String message){
         this.data = data;
         this.code = code;

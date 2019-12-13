@@ -14,9 +14,9 @@ import java.time.LocalDateTime;
 public class News implements Serializable {
     @Id
     private String id;
-    private String publisher;
+    private String email;
     private String nickname;
-    private LocalDateTime publishTime;
-    private LocalDateTime updateTime;
+    private LocalDateTime publish;
+    private LocalDateTime update;
     private String content;
 }

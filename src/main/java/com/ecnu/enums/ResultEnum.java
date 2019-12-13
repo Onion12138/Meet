@@ -16,6 +16,8 @@ public enum ResultEnum {
     WRONG_PASSWORD(1005, "密码错误"),
     FILE_UPLOAD_ERROR(1006, "文件上传出错"),
     ACCOUNT_DISABLED(1007, "账户被禁用"),
+    MUST_LOGIN(1008, "请先登陆"),
+    NO_AUTHORITY(1009, "没有权限")
     ;
     private int code;
     private String message;

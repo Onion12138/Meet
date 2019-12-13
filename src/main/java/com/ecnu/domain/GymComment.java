@@ -14,7 +14,7 @@ import java.time.LocalDate;
 public class GymComment implements Serializable {
     @Id
     private String id;
-    private String userId;
+    private String email;
     private String nickname;
     private String profileUrl;
     private String name;

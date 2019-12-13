@@ -22,10 +22,10 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrderMapper orderMapper;
     @Override
-    public PageInfo<Order> findOrdersByUserId(String id, int page, int size) {
+    public PageInfo<Order> findOrdersByUserId(String email, int page, int size) {
         PageHelper.startPage(page, size);
         Order order = new Order();
-        order.setUserId(id);
+        order.setEmail(email);
         List<Order> orders = orderMapper.select(order);
         return new PageInfo<>(orders);
     }

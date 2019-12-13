@@ -20,15 +20,15 @@ public class JwtUtil {
     public static String createJwt(User user){
         long now = System.currentTimeMillis();
         JwtBuilder builder = Jwts.builder()
-                .setId(user.getId())
+                .setId(user.getEmail())
                 .setIssuedAt(new Date(now))
-                .claim("role", user.getAdmin())
+                .claim("role", user.getAdmin() ? "admin" : "user")
                 .claim("nickname",user.getNickname())
                 .setExpiration(new Date(now + ttl))
                 .signWith(SignatureAlgorithm.HS256, key);
         return builder.compact();
     }
-    public static Claims parseJwt(String jwtStr){
+    public static Claims parseJwt(String jwtStr) throws MyException{
         try{
             return Jwts.parser().setSigningKey(key).parseClaimsJws(jwtStr).getBody();
         }catch (Exception e){

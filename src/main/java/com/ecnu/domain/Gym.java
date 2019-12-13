@@ -17,7 +17,7 @@ import java.io.Serializable;
 public class Gym implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Integer id;
     @NotEmpty
     private String name;
     @NotEmpty

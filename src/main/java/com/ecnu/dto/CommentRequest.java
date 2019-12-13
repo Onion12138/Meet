@@ -12,7 +12,7 @@ import javax.validation.constraints.NotEmpty;
 public class CommentRequest {
     @NotEmpty
     private String newsId;
-    private String parentId;
+    private Integer parentId;
     @NotEmpty
     private String token;
     @NotEmpty

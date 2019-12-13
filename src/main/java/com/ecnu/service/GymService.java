@@ -22,9 +22,9 @@ public interface GymService {
 
     void updateGym(Gym gym);
 
-    void deleteGym(String gymId);
+    void deleteGym(int gymId);
 
-    void deleteGyms(Set<String> idList);
+    void deleteGyms(Set<Integer> idList);
 
     PageInfo<Gym> findGymsByKeyword(Integer page, Integer size, String keyword);
 
