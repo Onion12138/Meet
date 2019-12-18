@@ -187,7 +187,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void sendCode(String email) {
         String code = CodeUtil.getCode();
-        redisTemplate.opsForValue().set("code_"+email, code, expireTime, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set("code_" + email, code, expireTime, TimeUnit.SECONDS);
         String content = "your code is " + code + " , please complete your registration in 10 minutes.";
         mailService.sendMail(email,subject,content);
     }

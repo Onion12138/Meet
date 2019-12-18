@@ -1,7 +1,6 @@
 package com.ecnu.domain;
 
 import lombok.Data;
-import org.springframework.data.annotation.Id;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
@@ -15,7 +14,6 @@ import java.time.LocalDateTime;
 @Data
 @Table(name = "user")
 public class User implements Serializable {
-    @Id
     private String email;
     private String password;
     private String nickname;

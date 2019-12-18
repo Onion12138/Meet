@@ -15,8 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -56,21 +59,27 @@ public class UserController {
         return ResultEntity.succeed(map);
     }
     @PutMapping("/modifyNickname")
-    public ResultEntity modifyNickname(@RequestParam String token, @RequestParam String nickname){
+    public ResultEntity modifyNickname(@RequestParam String nickname){
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String token = request.getHeader("user_token");
         Claims claims = JwtUtil.parseJwt(token);
         String id = claims.getId();
         userService.modifyNickname(id, nickname);
         return ResultEntity.succeed();
     }
     @PutMapping("/uploadProfile")
-    public ResultEntity uploadProfile(@RequestParam String token, @RequestParam MultipartFile file){
+    public ResultEntity uploadProfile(@RequestParam MultipartFile file){
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String token = request.getHeader("user_token");
         Claims claims = JwtUtil.parseJwt(token);
         String id = claims.getId();
         userService.uploadProfile(id, file);
         return ResultEntity.succeed();
     }
     @PutMapping("/modifyPassword")
-    public ResultEntity modifyPassword(@RequestParam String token, @RequestParam String password, @RequestParam String code){
+    public ResultEntity modifyPassword(@RequestParam String password, @RequestParam String code){
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String token = request.getHeader("user_token");
         Claims claims = JwtUtil.parseJwt(token);
         String id = claims.getId();
         userService.modifyPassword(id, password, code);
@@ -84,14 +93,14 @@ public class UserController {
     }
     @GetMapping("findAllUsers")
     @AdminOnly
-    public ResultEntity findAllUsers(@RequestParam Integer page, @RequestParam Integer size){
+    public ResultEntity findAllUsers(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size){
         PageInfo<User> list = userService.findAllUsers(page, size);
         return ResultEntity.succeed(list);
     }
     //更多个性化搜索
     @GetMapping("findAllDisabledUsers")
     @AdminOnly
-    public ResultEntity findAllDisabledUsers(@RequestParam Integer page, @RequestParam Integer size){
+    public ResultEntity findAllDisabledUsers(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size){
         PageInfo<User> list = userService.findAllDisabledUsers(page, size);
         return ResultEntity.succeed(list);
     }
