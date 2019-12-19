@@ -1,15 +1,21 @@
 package com.ecnu.service.impl;
 
+import com.ecnu.dao.OrderDao;
 import com.ecnu.dao.OrderMapper;
 import com.ecnu.domain.Order;
 import com.ecnu.dto.OrderRequest;
 import com.ecnu.service.OrderService;
+import com.ecnu.utils.KeyUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
 
@@ -21,6 +27,8 @@ import java.util.Set;
 public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrderMapper orderMapper;
+    @Autowired
+    private OrderDao orderDao;
     @Override
     public PageInfo<Order> findOrdersByUserId(String email, int page, int size) {
         PageHelper.startPage(page, size);
@@ -62,8 +70,21 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void addOrder(OrderRequest request) {
-
+    public void addOrder(OrderRequest request, String email) {
+        Order order = new Order();
+        order.setOrderId(KeyUtil.genUniqueKey());
+        order.setGymId(request.getGymId());
+        order.setUserEmail(email);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        LocalDate localDate = LocalDate.parse(request.getDate(), formatter);
+        order.setOrderDate(localDate);
+        order.setScore(5);
+        order.setComment("默认好评");
+        order.setStartTime(LocalDateTime.of(localDate, LocalTime.of(request.getStartTime() / 2, request.getStartTime() % 2 == 1 ? 30 : 0)));
+        order.setEndTime(LocalDateTime.of(localDate, LocalTime.of(request.getEndTime() / 2, request.getEndTime() % 2 == 1 ? 30 : 0)));
+        order.setCancel(false);
+        order.setValid(true);
+        orderDao.save(order);
     }
 
     //是否不需要userId

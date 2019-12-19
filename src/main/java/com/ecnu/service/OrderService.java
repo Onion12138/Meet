@@ -23,7 +23,7 @@ public interface OrderService {
 
     PageInfo<Order> findMyOrdersGroupByGym(String id, Integer page, Integer size);
 
-    void addOrder(OrderRequest request);
+    void addOrder(OrderRequest request, String email);
 
     void cancelOrder(String userId, String orderId);
 

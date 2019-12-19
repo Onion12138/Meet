@@ -14,8 +14,6 @@ public class OrderRequest {
     @NotEmpty
     private String gymId;
     @NotEmpty
-    private String token;
-    @NotEmpty
     private String date;
     @Range(min = 16, max = 39)
     private Integer startTime;

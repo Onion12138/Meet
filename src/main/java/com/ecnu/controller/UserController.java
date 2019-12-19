@@ -2,6 +2,7 @@ package com.ecnu.controller;
 
 import com.ecnu.annotation.AdminOnly;
 import com.ecnu.annotation.LoginRequired;
+import com.ecnu.domain.Order;
 import com.ecnu.domain.User;
 import com.ecnu.dto.UserLoginRequest;
 import com.ecnu.dto.UserRegisterRequest;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author onion
@@ -45,6 +47,15 @@ public class UserController {
         else{
             return ResultEntity.fail(ResultEnum.EMAIL_IN_USE);
         }
+    }
+    @GetMapping("myOrders")
+    public ResultEntity findMyOrders(){
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String token = request.getHeader("user_token");
+        Claims claims = JwtUtil.parseJwt(token);
+        String id = claims.getId();
+        Set<Order> orderList = userService.findMyOrders(id);
+        return ResultEntity.succeed(orderList);
     }
     @PostMapping("/register")
     @LoginRequired(value = false)

@@ -1,6 +1,8 @@
 package com.ecnu.service.impl;
 
+import com.ecnu.dao.UserDao;
 import com.ecnu.dao.UserMapper;
+import com.ecnu.domain.Order;
 import com.ecnu.domain.User;
 import com.ecnu.dto.UserLoginRequest;
 import com.ecnu.dto.UserRegisterRequest;
@@ -33,9 +35,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -47,6 +47,8 @@ import java.util.concurrent.TimeUnit;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private UserDao userDao;
     @Autowired
     private StringRedisTemplate redisTemplate;
     @Autowired
@@ -221,6 +223,12 @@ public class UserServiceImpl implements UserService {
         user.setDisabled(true);
         List<User> users = userMapper.select(user);
         return new PageInfo<>(users);
+    }
+
+    @Override
+    public Set<Order> findMyOrders(String id) {
+        Optional<User> optional = userDao.findById(id);
+        return optional.map(User::getOrderSet).orElse(null);
     }
 
     @Override

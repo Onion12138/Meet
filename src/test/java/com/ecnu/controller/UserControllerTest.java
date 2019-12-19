@@ -135,25 +135,24 @@ public class UserControllerTest {
         ResultEntity result = JSON.parseObject(mvcResult.getResponse().getContentAsByteArray(), ResultEntity.class);
         assertEquals(0, result.getCode());
     }
+    @Test
+    public void testFindAllDisabledUsers() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get("/user/findAllDisabledUsers")).andReturn();
+        ResultEntity result = JSON.parseObject(mvcResult.getResponse().getContentAsByteArray(), ResultEntity.class);
+        assertEquals(0, result.getCode());
+    }
+    @Test
+    public void testDisableAccount() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(delete("/user/disabledAccount")).andReturn();
+        ResultEntity result = JSON.parseObject(mvcResult.getResponse().getContentAsByteArray(), ResultEntity.class);
+        assertEquals(0, result.getCode());
+    }
 //    @PutMapping("/uploadProfile")
 //    public ResultEntity uploadProfile(@RequestParam String token, @RequestParam MultipartFile file){
 //        Claims claims = JwtUtil.parseJwt(token);
 //        String id = claims.getId();
 //        userService.uploadProfile(id, file);
 //        return ResultEntity.succeed();
-//    }
-//    @GetMapping("findAllUsers")
-//    @AdminOnly
-//    public ResultEntity findAllUsers(@RequestParam Integer page, @RequestParam Integer size){
-//        PageInfo<User> list = userService.findAllUsers(page, size);
-//        return ResultEntity.succeed(list);
-//    }
-//    //更多个性化搜索
-//    @GetMapping("findAllDisabledUsers")
-//    @AdminOnly
-//    public ResultEntity findAllDisabledUsers(@RequestParam Integer page, @RequestParam Integer size){
-//        PageInfo<User> list = userService.findAllDisabledUsers(page, size);
-//        return ResultEntity.succeed(list);
 //    }
 //
 //    @DeleteMapping("/disableAccount")

@@ -25,7 +25,6 @@ public class VerifyAdmin {
     public void verifyAdminPointcut(){}
     @Before("verifyAdminPointcut()")
     public void verifyAdmin(){
-        System.out.println("verify admin");
         RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
         ServletRequestAttributes sra = (ServletRequestAttributes) attributes;
         HttpServletRequest request = sra.getRequest();

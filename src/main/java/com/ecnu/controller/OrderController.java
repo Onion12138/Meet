@@ -11,7 +11,10 @@ import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
 
 /**
@@ -74,8 +77,12 @@ public class OrderController {
     }
 
     @PostMapping("/addOrder")
-    public ResultEntity addOrder(@Validated @RequestBody OrderRequest request){
-        orderService.addOrder(request);
+    public ResultEntity addOrder(@Validated @RequestBody OrderRequest orderRequest){
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String token = request.getHeader("user_token");
+        Claims claims = JwtUtil.parseJwt(token);
+        String email = claims.getId();
+        orderService.addOrder(orderRequest, email);
         return ResultEntity.succeed();
     }
 

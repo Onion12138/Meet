@@ -28,7 +28,6 @@ public class VerifyLogin {
     public void verifyLoginPointcut(){}
     @Before("verifyLoginPointcut()")
     public void verifyLogin(){
-        System.out.println("verify login");
         RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
         ServletRequestAttributes sra = (ServletRequestAttributes) attributes;
         HttpServletRequest request = sra.getRequest();
@@ -39,9 +38,11 @@ public class VerifyLogin {
         Claims claims = JwtUtil.parseJwt(token);
         if ("admin".equals(claims.get("role", String.class))){
             request.setAttribute("admin_claims", claims);
+            System.out.println("admin");
         }
         if ("user".equals(claims.get("role", String.class))){
             request.setAttribute("user_claims", claims);
+            System.out.println("user");
         }
     }
 }

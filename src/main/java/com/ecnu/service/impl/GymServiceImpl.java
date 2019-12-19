@@ -4,6 +4,7 @@ import com.ecnu.dao.GymMapper;
 import com.ecnu.domain.Gym;
 import com.ecnu.dto.GymFilterRequest;
 import com.ecnu.service.GymService;
+import com.ecnu.utils.KeyUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +79,8 @@ public class GymServiceImpl implements GymService {
 
     @Override
     public void addGym(Gym gym) {
+        gym.setGymId(KeyUtil.genUniqueKey());
+        gym.setOpen(true);
         gymMapper.insert(gym);
     }
 
