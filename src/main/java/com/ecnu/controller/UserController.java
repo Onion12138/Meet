@@ -84,8 +84,8 @@ public class UserController {
         String token = request.getHeader("user_token");
         Claims claims = JwtUtil.parseJwt(token);
         String id = claims.getId();
-        userService.uploadProfile(id, file);
-        return ResultEntity.succeed();
+        String url = userService.uploadProfile(id, file);
+        return ResultEntity.succeed(url);
     }
     @PutMapping("/modifyPassword")
     public ResultEntity modifyPassword(@RequestParam String password, @RequestParam String code){

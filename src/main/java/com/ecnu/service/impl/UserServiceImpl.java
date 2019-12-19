@@ -132,7 +132,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void uploadProfile(String email, MultipartFile file){
+    public String uploadProfile(String email, MultipartFile file){
         String name = file.getOriginalFilename();
         InputStream fileInputStream = null;
         try {
@@ -154,8 +154,10 @@ public class UserServiceImpl implements UserService {
         }
         User user = new User();
         user.setEmail(email);
-        user.setProfile(getProfileUrl(key));
+        String url = getProfileUrl(key);
+        user.setProfile(url);
         userMapper.updateByPrimaryKeySelective(user);
+        return url;
     }
 
     private String getProfileUrl(String filename){
@@ -197,7 +199,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public PageInfo<User> findAllUsers(int page, int size) {
         PageHelper.startPage(page, size);
-        return new PageInfo<>(userMapper.selectAll());
+        List<User> userList = userMapper.selectAll();
+        return new PageInfo<>(userList);
     }
 
     @Override

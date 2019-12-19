@@ -23,7 +23,7 @@ public interface UserService {
 
     void modifyNickname(String id, String nickname);
 
-    void uploadProfile(String id, MultipartFile file);
+    String uploadProfile(String id, MultipartFile file);
 
     void modifyPassword(String id, String password, String code);
 
