@@ -2,7 +2,6 @@ package com.ecnu.service.impl;
 
 import com.ecnu.dao.GymMapper;
 import com.ecnu.domain.Gym;
-import com.ecnu.domain.GymComment;
 import com.ecnu.dto.GymFilterRequest;
 import com.ecnu.service.GymService;
 import com.github.pagehelper.PageHelper;
@@ -78,11 +77,6 @@ public class GymServiceImpl implements GymService {
 
 
     @Override
-    public List<GymComment> findGymComments(String gymId) {
-        return null;
-    }
-
-    @Override
     public void addGym(Gym gym) {
         gymMapper.insert(gym);
     }
@@ -93,18 +87,18 @@ public class GymServiceImpl implements GymService {
     }
 
     @Override
-    public void deleteGym(int gymId) {
+    public void deleteGym(String gymId) {
         Gym gym = new Gym();
-        gym.setId(gymId);
+        gym.setGymId(gymId);
         gym.setOpen(false);
         gymMapper.updateByPrimaryKeySelective(gym);
     }
 
     @Override
-    public void deleteGyms(Set<Integer> idList) {
+    public void deleteGyms(Set<String> idList) {
         idList.forEach(e->{
             Gym gym = new Gym();
-            gym.setId(e);
+            gym.setGymId(e);
             gym.setOpen(false);
             gymMapper.updateByPrimaryKeySelective(gym);
         });

@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(encoder.encode(request.getPassword()));
         user.setRegisterTime(LocalDateTime.now());
         user.setEmail(request.getEmail());
-        user.setProfileUrl("https://avatars2.githubusercontent.com/u/33611404?s=400&v=4");
+        user.setProfile("https://avatars2.githubusercontent.com/u/33611404?s=400&v=4");
         userMapper.insert(user);
     }
 
@@ -115,7 +115,7 @@ public class UserServiceImpl implements UserService {
         String nickname = user.getNickname();
         map.put("token", token);
         map.put("nickname", nickname);
-        map.put("profile",user.getProfileUrl());
+        map.put("profile",user.getProfile());
         map.put("email",user.getEmail());
         map.put("role",user.getAdmin() ? "admin" : "user");
         return map;
@@ -152,7 +152,7 @@ public class UserServiceImpl implements UserService {
         }
         User user = new User();
         user.setEmail(email);
-        user.setProfileUrl(getProfileUrl(key));
+        user.setProfile(getProfileUrl(key));
         userMapper.updateByPrimaryKeySelective(user);
     }
 

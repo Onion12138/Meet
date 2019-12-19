@@ -25,7 +25,7 @@ public class OrderServiceImpl implements OrderService {
     public PageInfo<Order> findOrdersByUserId(String email, int page, int size) {
         PageHelper.startPage(page, size);
         Order order = new Order();
-        order.setEmail(email);
+        order.setUserEmail(email);
         List<Order> orders = orderMapper.select(order);
         return new PageInfo<>(orders);
     }
@@ -70,7 +70,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void cancelOrder(String userId, String orderId) {
         Order order = new Order();
-        order.setId(orderId);
+        order.setOrderId(orderId);
         order.setCancel(true);
         orderMapper.updateByPrimaryKeySelective(order);
     }

@@ -5,7 +5,7 @@ spring:
     username: root
     password: root
   redis:
-    host: 120.77.176.55 #192.168.31.243
+    host: 120.77.176.55
     port: 6379
   mail:
     protocol: smtp
@@ -20,7 +20,10 @@ spring:
           ssl:
             enable: true
     from: 1452618379@qq.com
-
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
 qiniu:
   accessKey: "SStPJbNpriAFEzb0LvB1ooO7X__CB5xpwt8cE8UE"
   secretKey: "aMbK1T32B4_Gidwm_zbFAVPmaBG2j-DgZkEQLEmT"

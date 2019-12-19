@@ -2,7 +2,7 @@ package com.ecnu.service.impl;
 
 import com.ecnu.dao.CommentMapper;
 import com.ecnu.dao.NewsMapper;
-import com.ecnu.domain.Comment;
+import com.ecnu.domain.NewsComment;
 import com.ecnu.domain.News;
 import com.ecnu.dto.CommentRequest;
 import com.ecnu.dto.NewsRequest;
@@ -48,10 +48,10 @@ public class NewsServiceImpl implements NewsService {
         String token = request.getToken();
         Claims claims = JwtUtil.parseJwt(token);
         String userId = claims.getId();
-        Comment comment = new Comment();
+        NewsComment comment = new NewsComment();
         comment.setEmail(userId);
-        comment.setNews(request.getNewsId());
-        comment.setParent(request.getParentId());
+//        comment.setNews(request.getNewsId());
+        comment.setParentId(request.getParentId());
         comment.setContent(request.getContent());
         commentMapper.insert(comment);
 //        newsMapper.insert(comment);
@@ -69,8 +69,8 @@ public class NewsServiceImpl implements NewsService {
         News news = new News();
         news.setNickname(nickname);
         news.setEmail(claims.getId());
-        news.setPublish(LocalDateTime.now());
-        news.setUpdate(LocalDateTime.now());
+        news.setPublishTime(LocalDateTime.now());
+        news.setUpdateTime(LocalDateTime.now());
         news.setContent(newsRequest.getContent());
         newsMapper.insert(news);
     }
@@ -78,8 +78,8 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public void updateNews(NewsRequest newsRequest) {
         News news = new News();
-        news.setId(newsRequest.getNewsId());
-        news.setUpdate(LocalDateTime.now());
+        news.setNewsId(newsRequest.getNewsId());
+        news.setUpdateTime(LocalDateTime.now());
         news.setContent(newsRequest.getContent());
         newsMapper.updateByPrimaryKeySelective(news);
     }

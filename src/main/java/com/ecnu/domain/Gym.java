@@ -1,30 +1,32 @@
 package com.ecnu.domain;
 
 import lombok.Data;
-import org.springframework.data.annotation.Id;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.NotEmpty;
+import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * @author onion
  * @date 2019/12/10 -10:57 下午
  */
 @Data
+@Entity
+@Table(name = "gym")
 public class Gym implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    @NotEmpty
+    @Column(name = "gym_id")
+    private String gymId;
+    @Column
     private String name;
-    @NotEmpty
+    @Column
     private String description;
-    @NotEmpty
+    @Column
     private String address;
-    @DecimalMin(value = "0")
+    @Column
     private Double rent;
-    private boolean open;
+    @Column
+    private Boolean open;
+    @OneToMany(mappedBy = "gym")
+    private Set<Order> orderSet;
 }

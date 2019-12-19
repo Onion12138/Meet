@@ -1,6 +1,6 @@
 package com.ecnu.dao;
 
-import com.ecnu.domain.Comment;
+import com.ecnu.domain.NewsComment;
 import org.springframework.stereotype.Repository;
 import tk.mybatis.mapper.common.Mapper;
 
@@ -10,5 +10,5 @@ import tk.mybatis.mapper.common.Mapper;
  */
 @Repository
 @org.apache.ibatis.annotations.Mapper
-public interface CommentMapper extends Mapper<Comment> {
+public interface CommentMapper extends Mapper<NewsComment> {
 }

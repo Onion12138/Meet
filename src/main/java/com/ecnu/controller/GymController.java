@@ -2,7 +2,6 @@ package com.ecnu.controller;
 
 import com.ecnu.annotation.AdminOnly;
 import com.ecnu.domain.Gym;
-import com.ecnu.domain.GymComment;
 import com.ecnu.dto.GymFilterRequest;
 import com.ecnu.service.GymService;
 import com.ecnu.vo.ResultEntity;
@@ -10,7 +9,6 @@ import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,11 +39,6 @@ public class GymController {
         return ResultEntity.succeed(gyms);
     }
 
-    @GetMapping("/comments")
-    public ResultEntity findGymComments(@RequestParam String gymId){
-        List<GymComment> gymComments = gymService.findGymComments(gymId);
-        return ResultEntity.succeed(gymComments);
-    }
 
     @PutMapping("/addGym")
     @AdminOnly
@@ -63,14 +56,14 @@ public class GymController {
 
     @DeleteMapping("/deleteGym")
     @AdminOnly
-    public ResultEntity deleteGym(@RequestParam Integer gymId){
+    public ResultEntity deleteGym(@RequestParam String gymId){
         gymService.deleteGym(gymId);
         return ResultEntity.succeed();
     }
 
     @DeleteMapping("/deleteGyms")
     @AdminOnly
-    public ResultEntity deleteGyms(@RequestParam Set<Integer> idList){
+    public ResultEntity deleteGyms(@RequestParam Set<String> idList){
         gymService.deleteGyms(idList);
         return ResultEntity.succeed();
     }
