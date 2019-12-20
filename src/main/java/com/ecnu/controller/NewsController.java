@@ -25,18 +25,25 @@ public class NewsController {
     @Autowired
     private NewsService newsService;
     @GetMapping("/all")
-    public ResultEntity findAllNews(@RequestParam Integer page, @RequestParam Integer size){
+    public ResultEntity findAllNews(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
         PageInfo<News> newsPageInfo = newsService.findAllNews(page, size);
         return ResultEntity.succeed(newsPageInfo);
     }
     @GetMapping("/today")
-    public ResultEntity findTodayNews(@RequestParam Integer page, @RequestParam Integer size){
+    public ResultEntity findTodayNews(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
         PageInfo<News> newsPageInfo = newsService.findTodayNews(page, size);
         return ResultEntity.succeed(newsPageInfo);
     }
+    @GetMapping("/one")
+    public ResultEntity findOneNews(@RequestParam String newsId){
+        News news = newsService.findOneNews(newsId);
+        return ResultEntity.succeed(news);
+    }
     @PostMapping("/addComment")
-    public ResultEntity addComment(@RequestBody CommentRequest request){
-        newsService.addComment(request);
+    public ResultEntity addComment(@RequestBody CommentRequest commentRequest){
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String token = request.getHeader("user_token");
+        newsService.addComment(commentRequest, token);
         return ResultEntity.succeed();
     }
     @PostMapping("/deleteComment")

@@ -39,18 +39,34 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public PageInfo<Order> findMyCurrentOrders(String id, Integer page, Integer size) {
-        return null;
+    public PageInfo<Order> findMyCurrentOrders(String email, Integer page, Integer size) {
+        PageHelper.startPage(page, size);
+        Example example = new Example(Order.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("userEmail", email);
+        criteria.andLessThan("startTime", LocalDateTime.now());
+        criteria.andGreaterThan("endTime", LocalDateTime.now());
+        return new PageInfo<>(orderMapper.selectByExample(example));
     }
 
     @Override
-    public PageInfo<Order> findMyFutureOrders(String id, Integer page, Integer size) {
-        return null;
+    public PageInfo<Order> findMyFutureOrders(String email, Integer page, Integer size) {
+        PageHelper.startPage(page, size);
+        Example example = new Example(Order.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("userEmail", email);
+        criteria.andGreaterThan("startTime", LocalDateTime.now());
+        return new PageInfo<>(orderMapper.selectByExample(example));
     }
 
     @Override
-    public PageInfo<Order> findMyPastOrders(String id, Integer page, Integer size) {
-        return null;
+    public PageInfo<Order> findMyPastOrders(String email, Integer page, Integer size) {
+        PageHelper.startPage(page, size);
+        Example example = new Example(Order.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("userEmail", email);
+        criteria.andLessThan("endTime", LocalDateTime.now());
+        return new PageInfo<>(orderMapper.selectByExample(example));
     }
 
     @Override
@@ -66,6 +82,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public PageInfo<Order> findMyOrdersGroupByGym(String id, Integer page, Integer size) {
+        PageHelper.startPage(page,size);
+//        Example example = new Example(Order.class);
+//        Example.Criteria criteria = example.createCriteria();
+//        criteria.
+//        orderMapper.selectByExample();
         return null;
     }
 

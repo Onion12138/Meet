@@ -28,6 +28,7 @@ public class News implements Serializable {
     private LocalDateTime updateTime;
     @Column
     private String content;
-    @OneToMany(mappedBy = "news")
+    @OneToMany(targetEntity = NewsComment.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "comment_news_id", referencedColumnName = "news_id")
     private Set<NewsComment> commentSet;
 }

@@ -11,9 +11,10 @@ import com.github.pagehelper.PageInfo;
  */
 public interface NewsService {
     PageInfo<News> findAllNews(Integer page, Integer size);
+
     PageInfo<News> findTodayNews(Integer page, Integer size);
 
-    void addComment(CommentRequest request);
+    void addComment(CommentRequest request, String token);
 
     void deleteComment(String commentId);
 
@@ -22,4 +23,6 @@ public interface NewsService {
     void updateNews(NewsRequest newsRequest);
 
     void deleteNews(String newsId);
+
+    News findOneNews(String newsId);
 }

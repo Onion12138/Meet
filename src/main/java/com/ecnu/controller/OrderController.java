@@ -26,52 +26,51 @@ import java.util.Set;
 public class OrderController {
     @Autowired
     private OrderService orderService;
-    @GetMapping("/myOrder")
-    public ResultEntity findMyOrders(@RequestParam String token, @RequestParam Integer page, @RequestParam Integer size){
+    private String getId(){
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String token = request.getHeader("user_token");
         Claims claims = JwtUtil.parseJwt(token);
-        String id = claims.getId();
+        return claims.getId();
+    }
+    @GetMapping("/myOrder")
+    public ResultEntity findMyOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
+        String id = getId();
         PageInfo<Order> orderPageInfo = orderService.findOrdersByUserId(id, page, size);
         return ResultEntity.succeed(orderPageInfo);
     }
 
     @GetMapping("/myCurrentOrder")
-    public ResultEntity findMyCurrentOrders(@RequestParam String token, @RequestParam Integer page, @RequestParam Integer size){
-        Claims claims = JwtUtil.parseJwt(token);
-        String id = claims.getId();
+    public ResultEntity findMyCurrentOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
+        String id = getId();
         PageInfo<Order> orderPageInfo = orderService.findMyCurrentOrders(id, page, size);
         return ResultEntity.succeed(orderPageInfo);
     }
 
     @GetMapping("/myFutureOrder")
-    public ResultEntity findMyFutureOrders(@RequestParam String token, @RequestParam Integer page, @RequestParam Integer size){
-        Claims claims = JwtUtil.parseJwt(token);
-        String id = claims.getId();
+    public ResultEntity findMyFutureOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
+        String id = getId();
         PageInfo<Order> orderPageInfo = orderService.findMyFutureOrders(id, page, size);
         return ResultEntity.succeed(orderPageInfo);
     }
 
     @GetMapping("/myPastOrder")
-    public ResultEntity findMyPastOrders(@RequestParam String token, @RequestParam Integer page, @RequestParam Integer size) {
-        Claims claims = JwtUtil.parseJwt(token);
-        String id = claims.getId();
+    public ResultEntity findMyPastOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size) {
+        String id = getId();
         PageInfo<Order> orderPageInfo = orderService.findMyPastOrders(id, page, size);
         return ResultEntity.succeed(orderPageInfo);
     }
 
     @GetMapping("/myGymOrder") //根据Gym类别Group by
-    public ResultEntity findMyGymOrder(@RequestParam String token,
-                                       @RequestParam Integer page, @RequestParam Integer size){
-        Claims claims = JwtUtil.parseJwt(token);
-        String id = claims.getId();
+    public ResultEntity findMyGymOrder(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
+        String id = getId();
         PageInfo<Order> orderPageInfo = orderService.findMyOrdersGroupByGym(id, page, size);
         return ResultEntity.succeed(orderPageInfo);
     }
 
     @GetMapping("/myOrderByGym") //根据Gym类别查找
-    public ResultEntity findMyOrdersByGym(@RequestParam String token, @RequestParam String gymId,
+    public ResultEntity findMyOrdersByGym(@RequestParam String gymId,
                                           @RequestParam Integer page, @RequestParam Integer size){
-        Claims claims = JwtUtil.parseJwt(token);
-        String id = claims.getId();
+        String id = getId();
         PageInfo<Order> orderPageInfo = orderService.findMyOrdersByGym(id, gymId, page, size);
         return ResultEntity.succeed(orderPageInfo);
     }

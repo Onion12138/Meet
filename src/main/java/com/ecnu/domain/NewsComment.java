@@ -2,7 +2,10 @@ package com.ecnu.domain;
 
 import lombok.Data;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
@@ -26,8 +29,9 @@ public class NewsComment implements Serializable {
     private String nickname;
     @Column
     private String content;
-    @ManyToOne(targetEntity = News.class)
-    @JoinColumn(name = "comment_news_id", referencedColumnName = "news_id",
-            insertable = false, updatable = false)
-    private News news;
+//    @ManyToOne(targetEntity = News.class, fetch = FetchType.LAZY)
+//    @JoinColumn(name = "comment_news_id", referencedColumnName = "news_id",
+//            insertable = false, updatable = false)
+//    @JsonIgnore
+//    private News news;
 }

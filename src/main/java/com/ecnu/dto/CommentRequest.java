@@ -14,7 +14,5 @@ public class CommentRequest {
     private String newsId;
     private String parentId;
     @NotEmpty
-    private String token;
-    @NotEmpty
     private String content;
 }

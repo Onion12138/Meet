@@ -1,6 +1,7 @@
 package com.ecnu.service.impl;
 
 import com.ecnu.dao.CommentMapper;
+import com.ecnu.dao.NewsDao;
 import com.ecnu.dao.NewsMapper;
 import com.ecnu.domain.NewsComment;
 import com.ecnu.domain.News;
@@ -14,8 +15,11 @@ import com.github.pagehelper.PageInfo;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 /**
@@ -27,35 +31,45 @@ public class NewsServiceImpl implements NewsService {
     @Autowired
     private NewsMapper newsMapper;
     @Autowired
+    private NewsDao newsDao;
+    @Autowired
     private CommentMapper commentMapper;
     @Override
     public PageInfo<News> findAllNews(Integer page, Integer size) {
         PageHelper.startPage(page, size);
+        PageHelper.orderBy("updateTime");
         List<News> news = newsMapper.selectAll();
         return new PageInfo<>(news);
     }
 
     @Override
     public PageInfo<News> findTodayNews(Integer page, Integer size) {
-        //如何比较时间？
-//        Example example = new Example();
-//        Example.Criteria criteria = example.createCriteria();
-//        criteria.
-        return null;
+        PageHelper.startPage(page, size);
+        PageHelper.orderBy("publishTime");
+        Example example = new Example(News.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andBetween("publishTime", LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 0))
+                , LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59)));
+        return new PageInfo<>(newsMapper.selectByExample(example));
     }
 
     @Override
-    public void addComment(CommentRequest request) {
-        String token = request.getToken();
+    public News findOneNews(String newsId) {
+        return newsDao.findById(newsId).get();
+    }
+    @Override
+    public void addComment(CommentRequest request, String token) {
         Claims claims = JwtUtil.parseJwt(token);
         String userId = claims.getId();
         NewsComment comment = new NewsComment();
+        comment.setCommentId(KeyUtil.genUniqueKey());
         comment.setEmail(userId);
-//        comment.setNews(request.getNewsId());
+        comment.setCommentNewsId(request.getNewsId());
         comment.setParentId(request.getParentId());
         comment.setContent(request.getContent());
+        comment.setNickname((String)claims.get("nickname"));
         commentMapper.insert(comment);
-//        newsMapper.insert(comment);
+
     }
 
     @Override
@@ -84,9 +98,11 @@ public class NewsServiceImpl implements NewsService {
         news.setContent(newsRequest.getContent());
         newsMapper.updateByPrimaryKeySelective(news);
     }
-
+    //最好不要'删除'这个接口
     @Override
     public void deleteNews(String newsId) {
         newsMapper.deleteByPrimaryKey(newsId);
     }
+
+
 }
