@@ -12,9 +12,5 @@ import javax.validation.constraints.NotEmpty;
 public class NewsRequest {
     private String newsId;
     @NotEmpty
-    private String token;
-//    @NotEmpty
-//    private String publishTime;
-    @NotEmpty
     private String content;
 }

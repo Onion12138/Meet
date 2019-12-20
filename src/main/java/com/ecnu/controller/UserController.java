@@ -38,7 +38,7 @@ import java.util.Set;
 public class UserController {
     @Autowired
     private UserService userService;
-    @GetMapping("check")
+    @GetMapping("/check")
     @LoginRequired(value = false)
     public ResultEntity checkEmail(@RequestParam String email){
         if (userService.checkEmail(email)){
@@ -48,7 +48,7 @@ public class UserController {
             return ResultEntity.fail(ResultEnum.EMAIL_IN_USE);
         }
     }
-    @GetMapping("myOrders")
+    @GetMapping("/myOrders")
     public ResultEntity findMyOrders(){
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String token = request.getHeader("user_token");
@@ -69,7 +69,7 @@ public class UserController {
         Map<String, String> map = userService.login(request);
         return ResultEntity.succeed(map);
     }
-    @PutMapping("/modifyNickname")
+    @PostMapping("/modifyNickname")
     public ResultEntity modifyNickname(@RequestParam String nickname){
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String token = request.getHeader("user_token");
@@ -78,7 +78,7 @@ public class UserController {
         userService.modifyNickname(id, nickname);
         return ResultEntity.succeed();
     }
-    @PutMapping("/uploadProfile")
+    @PostMapping("/uploadProfile")
     public ResultEntity uploadProfile(@RequestParam MultipartFile file){
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String token = request.getHeader("user_token");
@@ -87,7 +87,7 @@ public class UserController {
         String url = userService.uploadProfile(id, file);
         return ResultEntity.succeed(url);
     }
-    @PutMapping("/modifyPassword")
+    @PostMapping("/modifyPassword")
     public ResultEntity modifyPassword(@RequestParam String password, @RequestParam String code){
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String token = request.getHeader("user_token");
@@ -102,35 +102,35 @@ public class UserController {
         userService.sendCode(email);
         return ResultEntity.succeed();
     }
-    @GetMapping("findAllUsers")
+    @GetMapping("/findAllUsers")
     @AdminOnly
     public ResultEntity findAllUsers(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size){
         PageInfo<User> list = userService.findAllUsers(page, size);
         return ResultEntity.succeed(list);
     }
     //更多个性化搜索
-    @GetMapping("findAllDisabledUsers")
+    @GetMapping("/findAllDisabledUsers")
     @AdminOnly
     public ResultEntity findAllDisabledUsers(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size){
         PageInfo<User> list = userService.findAllDisabledUsers(page, size);
         return ResultEntity.succeed(list);
     }
 
-    @DeleteMapping("/disableAccount")
+    @PostMapping("/disableAccount")
     @AdminOnly
     public ResultEntity disableAccount(@RequestParam String userId){
         userService.disableAccount(userId);
         return ResultEntity.succeed();
     }
 
-    @PutMapping("/enableAccount")
+    @PostMapping("/enableAccount")
     @AdminOnly
     public ResultEntity enableAccount(@RequestParam String userId){
         userService.enableAccount(userId);
         return ResultEntity.succeed();
     }
 
-    @PutMapping("/updateCredit")
+    @PostMapping("/updateCredit")
     @AdminOnly
     public ResultEntity updateCredit(@RequestParam String userId, @RequestParam Integer credit){
         userService.updateCredit(userId, credit);

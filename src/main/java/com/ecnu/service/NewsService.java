@@ -17,7 +17,7 @@ public interface NewsService {
 
     void deleteComment(String commentId);
 
-    void addNews(NewsRequest newsRequest);
+    void addNews(NewsRequest newsRequest, String token);
 
     void updateNews(NewsRequest newsRequest);
 

@@ -10,6 +10,10 @@ import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author onion
@@ -35,7 +39,7 @@ public class NewsController {
         newsService.addComment(request);
         return ResultEntity.succeed();
     }
-    @DeleteMapping("/deleteComment")
+    @PostMapping("/deleteComment")
     public ResultEntity deleteComment(@RequestParam String commentId){
         newsService.deleteComment(commentId);
         return ResultEntity.succeed();
@@ -43,16 +47,18 @@ public class NewsController {
     @PostMapping("/addNews")
     @AdminOnly
     public ResultEntity addNews(@Validated @RequestBody NewsRequest newsRequest){
-        newsService.addNews(newsRequest);
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String token = request.getHeader("user_token");
+        newsService.addNews(newsRequest, token);
         return ResultEntity.succeed();
     }
-    @PutMapping("/updateNews")
+    @PostMapping("/updateNews")
     @AdminOnly
     public ResultEntity updateNews(@Validated @RequestBody NewsRequest newsRequest){
         newsService.updateNews(newsRequest);
         return ResultEntity.succeed();
     }
-    @DeleteMapping("/deleteNews")
+    @PostMapping("/deleteNews")
     @AdminOnly
     public ResultEntity deleteNews(@RequestParam String newsId){
         newsService.deleteNews(newsId);

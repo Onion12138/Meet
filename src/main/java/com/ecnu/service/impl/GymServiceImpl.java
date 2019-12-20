@@ -1,7 +1,9 @@
 package com.ecnu.service.impl;
 
+import com.ecnu.dao.GymDao;
 import com.ecnu.dao.GymMapper;
 import com.ecnu.domain.Gym;
+import com.ecnu.domain.Order;
 import com.ecnu.dto.GymFilterRequest;
 import com.ecnu.service.GymService;
 import com.ecnu.utils.KeyUtil;
@@ -13,6 +15,7 @@ import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author onion
@@ -22,21 +25,14 @@ import java.util.*;
 public class GymServiceImpl implements GymService {
     @Autowired
     private GymMapper gymMapper;
+    @Autowired
+    private GymDao gymDao;
 
     @Override
-    public Map<String, Object> findAllGyms(Integer page, Integer size) {
+    public PageInfo<Gym> findAllGyms(Integer page, Integer size) {
         PageHelper.startPage(page, size);
-        Set<String> names = new TreeSet<>();
-        Set<String> address = new TreeSet<>();
         List<Gym> gyms = gymMapper.selectAll();
-        PageInfo<Gym> pageInfo = new PageInfo<>(gyms);
-        gyms.stream().map(Gym::getAddress).distinct().forEach(address::add);
-        gyms.stream().map(Gym::getName).distinct().forEach(names::add);
-        Map<String, Object> map = new HashMap<>();
-        map.put("name",names);
-        map.put("address",address);
-        map.put("pageInfo",pageInfo);
-        return map;
+        return new PageInfo<>(gyms);
     }
 
     @Override
@@ -73,6 +69,18 @@ public class GymServiceImpl implements GymService {
         }
         List<Gym> gyms = gymMapper.selectByExample(example);
         return new PageInfo<>(gyms);
+    }
+
+    @Override
+    public Map<String, Object> findScore(String gymId) {
+        Gym gym = gymDao.findById(gymId).get();
+        Set<Order> orderSet = gym.getOrderSet();
+        int sum = orderSet.stream().map(Order::getScore).reduce(Integer::sum).get();
+        List<String> comments = orderSet.stream().map(Order::getComment).collect(Collectors.toList());
+        Map<String, Object> map = new HashMap<>();
+        map.put("score",sum / (double) orderSet.size());
+        map.put("comment",comments);
+        return map;
     }
 
 

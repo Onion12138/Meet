@@ -86,7 +86,7 @@ public class OrderController {
         return ResultEntity.succeed();
     }
 
-    @PutMapping("/comment")
+    @PostMapping("/comment")
     public ResultEntity commentOrder(@RequestParam String token, @RequestParam Integer score, @RequestParam String comment){
         Claims claims = JwtUtil.parseJwt(token);
         String userId = claims.getId();
@@ -94,7 +94,7 @@ public class OrderController {
         return ResultEntity.succeed();
     }
 
-    @DeleteMapping("cancelMyOrder")
+    @PostMapping("cancelMyOrder")
     public ResultEntity cancelOrder(@RequestParam String token, @RequestParam String orderId){
         Claims claims = JwtUtil.parseJwt(token);
         String userId = claims.getId();
@@ -137,7 +137,7 @@ public class OrderController {
         return ResultEntity.succeed(orderPageInfo);
     }
 
-    @DeleteMapping("/cancelOrder")
+    @PostMapping("/cancelOrder")
     @AdminOnly
     public ResultEntity cancelOrders(@RequestParam Set<String> orderIds){
         orderService.cancelOrders(orderIds);

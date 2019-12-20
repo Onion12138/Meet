@@ -11,7 +11,7 @@ import java.util.Map;
  * @date 2019/12/11 -6:24 下午
  */
 public interface GymService {
-    Map<String, Object> findAllGyms(Integer page, Integer size);
+    PageInfo<Gym> findAllGyms(Integer page, Integer size);
 
 
     void addGym(Gym gym);
@@ -23,4 +23,6 @@ public interface GymService {
     PageInfo<Gym> findGymsByKeyword(Integer page, Integer size, String keyword);
 
     PageInfo<Gym> findGymsByFilter(Integer page, Integer size, GymFilterRequest request);
+
+    Map<String, Object> findScore(String gymId);
 }

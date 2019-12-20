@@ -22,8 +22,8 @@ public class GymController {
     private GymService gymService;
     @GetMapping("/allGyms")
     public ResultEntity findAllGyms(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
-        Map<String, Object> map = gymService.findAllGyms(page, size);
-        return ResultEntity.succeed(map);
+        PageInfo<Gym> gymPageInfo = gymService.findAllGyms(page, size);
+        return ResultEntity.succeed(gymPageInfo);
     }
 
     @GetMapping("/keyword")
@@ -37,9 +37,12 @@ public class GymController {
         PageInfo<Gym> gyms = gymService.findGymsByFilter(page, size, request);
         return ResultEntity.succeed(gyms);
     }
-
-
-    @PutMapping("/addGym")
+    @GetMapping("/score")
+    public ResultEntity findScore(@RequestParam String gymId){
+        Map<String, Object> map = gymService.findScore(gymId);
+        return ResultEntity.succeed(map);
+    }
+    @PostMapping("/addGym")
     @AdminOnly
     public ResultEntity addGym(@RequestBody Gym gym){
         gymService.addGym(gym);
@@ -53,7 +56,7 @@ public class GymController {
         return ResultEntity.succeed();
     }
 
-    @DeleteMapping("/deleteGym")
+    @PostMapping("/deleteGym")
     @AdminOnly
     public ResultEntity deleteGym(@RequestParam String gymId){
         gymService.deleteGym(gymId);

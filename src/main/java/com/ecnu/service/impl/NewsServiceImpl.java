@@ -8,6 +8,7 @@ import com.ecnu.dto.CommentRequest;
 import com.ecnu.dto.NewsRequest;
 import com.ecnu.service.NewsService;
 import com.ecnu.utils.JwtUtil;
+import com.ecnu.utils.KeyUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.jsonwebtoken.Claims;
@@ -61,12 +62,12 @@ public class NewsServiceImpl implements NewsService {
     public void deleteComment(String commentId) {
         commentMapper.deleteByPrimaryKey(commentId);
     }
-    //这个接口要改
     @Override
-    public void addNews(NewsRequest newsRequest) {
-        Claims claims = JwtUtil.parseJwt(newsRequest.getToken());
+    public void addNews(NewsRequest newsRequest, String token) {
+        Claims claims = JwtUtil.parseJwt(token);
         String nickname = (String) claims.get("nickname");
         News news = new News();
+        news.setNewsId(KeyUtil.genUniqueKey());
         news.setNickname(nickname);
         news.setEmail(claims.getId());
         news.setPublishTime(LocalDateTime.now());
