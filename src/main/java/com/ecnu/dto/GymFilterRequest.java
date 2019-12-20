@@ -8,7 +8,7 @@ import lombok.Data;
  */
 @Data
 public class GymFilterRequest {
-    private String name;
+    private String type;
     private String address;
     private Boolean highToLow;
     private Boolean openOnly;

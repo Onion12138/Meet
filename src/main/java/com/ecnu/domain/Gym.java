@@ -27,6 +27,10 @@ public class Gym implements Serializable {
     private Double rent;
     @Column
     private Boolean open;
+    @Column
+    private String photo;
+    @Column
+    private String type;
     @OneToMany(mappedBy = "gym")
     private Set<Order> orderSet;
 }

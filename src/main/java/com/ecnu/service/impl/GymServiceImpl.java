@@ -45,8 +45,8 @@ public class GymServiceImpl implements GymService {
         Example example = new Example(Gym.class);
         Example.Criteria criteria1 = example.createCriteria();
         Example.Criteria criteria2 = example.createCriteria();
-        criteria1.andLike("name", keyword);
-        criteria2.andLike("description", keyword);
+        criteria1.andLike("name", "%" + keyword + "%");
+        criteria2.andLike("description", "%" + keyword + "%");
         example.or(criteria2);
         return new PageInfo<>(gymMapper.selectByExample(example));
     }
@@ -57,11 +57,11 @@ public class GymServiceImpl implements GymService {
         PageHelper.startPage(page, size);
         Example example = new Example(Gym.class);
         Example.Criteria criteria = example.createCriteria();
-        if (!StringUtils.isEmpty(request.getName())) {
-            criteria.andEqualTo("name", request.getName());
+        if (!StringUtils.isEmpty(request.getType())) {
+            criteria.andEqualTo("type", request.getType());
         }
         if (!StringUtils.isEmpty(request.getAddress())){
-            criteria.andEqualTo("address", request.getAddress());
+            criteria.andLike("address", request.getAddress() + "%");
         }
         if (request.getOpenOnly()){
             criteria.andEqualTo("open", true);
@@ -71,7 +71,6 @@ public class GymServiceImpl implements GymService {
         } else{
             example.orderBy("rent").asc();
         }
-        example.and(criteria);
         List<Gym> gyms = gymMapper.selectByExample(example);
         return new PageInfo<>(gyms);
     }

@@ -22,19 +22,19 @@ public class GymController {
     @Autowired
     private GymService gymService;
     @GetMapping("/allGyms")
-    public ResultEntity findAllGyms(@RequestParam Integer page, @RequestParam Integer size){
+    public ResultEntity findAllGyms(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
         Map<String, Object> map = gymService.findAllGyms(page, size);
         return ResultEntity.succeed(map);
     }
 
     @GetMapping("/keyword")
-    public ResultEntity findGymsByKeyword(@RequestParam Integer page, @RequestParam Integer size, @RequestParam String keyword){
+    public ResultEntity findGymsByKeyword(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size, @RequestParam String keyword){
         PageInfo<Gym> gyms = gymService.findGymsByKeyword(page, size, keyword);
         return ResultEntity.succeed(gyms);
     }
 
     @GetMapping("/filter")
-    public ResultEntity findGymByFilter(@RequestParam Integer page, @RequestParam Integer size, @RequestBody GymFilterRequest request){
+    public ResultEntity findGymByFilter(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size, @RequestBody GymFilterRequest request){
         PageInfo<Gym> gyms = gymService.findGymsByFilter(page, size, request);
         return ResultEntity.succeed(gyms);
     }
@@ -49,7 +49,7 @@ public class GymController {
 
     @PostMapping("/updateGyms")
     @AdminOnly
-    public ResultEntity updateGym(@RequestParam Gym gym){
+    public ResultEntity updateGym(@RequestBody Gym gym){
         gymService.updateGym(gym);
         return ResultEntity.succeed();
     }
