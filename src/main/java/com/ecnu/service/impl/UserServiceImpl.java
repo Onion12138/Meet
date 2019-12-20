@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
     private BCryptPasswordEncoder encoder;
     @Value("600")
     private int expireTime;
-    @Value("This is the code from notehub")
+    @Value("This is the code from meetHere")
     private String subject;
     @Value("${qiniu.access-key}")
     private String accessKey;

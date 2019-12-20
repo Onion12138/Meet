@@ -5,7 +5,6 @@ import com.ecnu.dto.GymFilterRequest;
 import com.github.pagehelper.PageInfo;
 
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author onion
@@ -20,8 +19,6 @@ public interface GymService {
     void updateGym(Gym gym);
 
     void deleteGym(String gymId);
-
-    void deleteGyms(Set<String> idList);
 
     PageInfo<Gym> findGymsByKeyword(Integer page, Integer size, String keyword);
 

@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author onion
@@ -47,7 +46,7 @@ public class GymController {
         return ResultEntity.succeed();
     }
 
-    @PostMapping("/updateGyms")
+    @PostMapping("/updateGym")
     @AdminOnly
     public ResultEntity updateGym(@RequestBody Gym gym){
         gymService.updateGym(gym);
@@ -61,10 +60,4 @@ public class GymController {
         return ResultEntity.succeed();
     }
 
-    @DeleteMapping("/deleteGyms")
-    @AdminOnly
-    public ResultEntity deleteGyms(@RequestParam Set<String> idList){
-        gymService.deleteGyms(idList);
-        return ResultEntity.succeed();
-    }
 }

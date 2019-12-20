@@ -96,15 +96,4 @@ public class GymServiceImpl implements GymService {
         gymMapper.updateByPrimaryKeySelective(gym);
     }
 
-    @Override
-    public void deleteGyms(Set<String> idList) {
-        idList.forEach(e->{
-            Gym gym = new Gym();
-            gym.setGymId(e);
-            gym.setOpen(false);
-            gymMapper.updateByPrimaryKeySelective(gym);
-        });
-    }
-
-
 }
