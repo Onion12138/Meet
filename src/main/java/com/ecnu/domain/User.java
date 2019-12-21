@@ -1,6 +1,9 @@
 package com.ecnu.domain;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -11,7 +14,9 @@ import java.util.Set;
  * @author onion
  * @date 2019/12/10 -10:50 下午
  */
-@Data
+@Getter
+@Setter
+@ToString
 @Entity
 @Table(name = "user")
 public class User implements Serializable {
@@ -32,7 +37,9 @@ public class User implements Serializable {
     private Boolean disabled;
     @Column
     private Boolean admin;
-    @OneToMany(targetEntity = Order.class)
-    @JoinColumn(name = "user_email", referencedColumnName = "email")
+//    @OneToMany(targetEntity = Order.class)
+//    @JoinColumn(name = "user_email", referencedColumnName = "email")
+    @OneToMany(mappedBy = "user")
+    @JsonIgnoreProperties("user")
     private Set<Order> orderSet;
 }

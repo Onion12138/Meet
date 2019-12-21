@@ -1,18 +1,20 @@
 package com.ecnu.domain;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
  * @author onion
  * @date 2019/12/10 -11:00 下午
  */
-@Data
+@Getter
+@Setter
+@ToString
 @Entity
 @Table(name = "comment")
 public class NewsComment implements Serializable {
@@ -29,9 +31,9 @@ public class NewsComment implements Serializable {
     private String nickname;
     @Column
     private String content;
-//    @ManyToOne(targetEntity = News.class, fetch = FetchType.LAZY)
-//    @JoinColumn(name = "comment_news_id", referencedColumnName = "news_id",
-//            insertable = false, updatable = false)
-//    @JsonIgnore
-//    private News news;
+    @ManyToOne(targetEntity = News.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "comment_news_id", referencedColumnName = "news_id",
+            insertable = false, updatable = false)
+    @JsonIgnoreProperties("commentSet")
+    private News news;
 }

@@ -1,6 +1,9 @@
 package com.ecnu.domain;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -11,7 +14,9 @@ import java.time.LocalDateTime;
  * @author onion
  * @date 2019/12/10 -11:00 下午
  */
-@Data
+@Getter
+@Setter
+@ToString
 @Entity
 @Table(name = "orders")
 public class Order implements Serializable {
@@ -36,10 +41,12 @@ public class Order implements Serializable {
     private Integer score;
     @Column
     private String comment; //评价
-//    @ManyToOne(targetEntity = User.class)
-//    @JoinColumn(name = "user_email", referencedColumnName = "email", insertable = false, updatable = false)
-//    private User user;
-//    @ManyToOne(targetEntity = Gym.class)
-//    @JoinColumn(name = "order_gym_id", referencedColumnName = "gym_id")
-//    private Gym gym;
+    @ManyToOne(targetEntity = User.class)
+    @JsonIgnoreProperties("orderSet")
+    @JoinColumn(name = "user_email", referencedColumnName = "email", insertable = false, updatable = false)
+    private User user;
+    @ManyToOne(targetEntity = Gym.class)
+    @JsonIgnoreProperties("orderSet")
+    @JoinColumn(name = "order_gym_id", referencedColumnName = "gym_id", insertable = false, updatable = false)
+    private Gym gym;
 }
