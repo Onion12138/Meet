@@ -7,9 +7,10 @@ import com.ecnu.dto.AvailableTimeRequest;
 import com.ecnu.dto.OrderRequest;
 import com.ecnu.service.OrderService;
 import com.ecnu.utils.KeyUtil;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -19,7 +20,6 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * @author onion
@@ -31,56 +31,72 @@ public class OrderServiceImpl implements OrderService {
     private OrderMapper orderMapper;
     @Autowired
     private OrderDao orderDao;
+    @Override
+    public Page<Order> findOrderByEmail(String email, int page, int size) {
+        Sort sort = Sort.by("orderDate").descending();
+        PageRequest pageRequest = PageRequest.of(page - 1, size, sort);
+        return orderDao.findAllByUserEmail(email, pageRequest);
+    }
+
+//    @Override
+//    public PageInfo<Order> findOrdersByUserId(String email, int page, int size) {
+//        PageHelper.startPage(page, size);
+//        Order order = new Order();
+//        order.setUserEmail(email);
+//        List<Order> orders = orderMapper.select(order);
+//        return new PageInfo<>(orders);
+//    }
 
     @Override
-    public PageInfo<Order> findOrdersByUserId(String email, int page, int size) {
-        PageHelper.startPage(page, size);
-        Order order = new Order();
-        order.setUserEmail(email);
-        List<Order> orders = orderMapper.select(order);
-        return new PageInfo<>(orders);
+    public Page<Order> findMyCurrentOrders(String email, Integer page, Integer size) {
+//        PageHelper.startPage(page, size);
+//        Example example = new Example(Order.class);
+//        Example.Criteria criteria = example.createCriteria();
+//        criteria.andEqualTo("userEmail", email);
+//        criteria.andLessThan("startTime", LocalDateTime.now());
+//        criteria.andGreaterThan("endTime", LocalDateTime.now());
+        PageRequest request = PageRequest.of(page - 1, size);
+        return orderDao.findAllByUserEmailAndStartTimeBeforeAndEndTimeAfter(email, LocalDateTime.now(), LocalDateTime.now(), request);
     }
 
     @Override
-    public PageInfo<Order> findMyCurrentOrders(String email, Integer page, Integer size) {
-        PageHelper.startPage(page, size);
-        Example example = new Example(Order.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("userEmail", email);
-        criteria.andLessThan("startTime", LocalDateTime.now());
-        criteria.andGreaterThan("endTime", LocalDateTime.now());
-        return new PageInfo<>(orderMapper.selectByExample(example));
+    public Page<Order> findMyFutureOrders(String email, Integer page, Integer size) {
+//        PageHelper.startPage(page, size);
+//        Example example = new Example(Order.class);
+//        Example.Criteria criteria = example.createCriteria();
+//        criteria.andEqualTo("userEmail", email);
+//        criteria.andGreaterThan("startTime", LocalDateTime.now());
+//        return new PageInfo<>(orderMapper.selectByExample(example));
+        Sort sort = Sort.by("orderDate").ascending();
+        PageRequest request = PageRequest.of(page - 1, size, sort);
+        return orderDao.findAllByUserEmailAndStartTimeAfter(email, LocalDateTime.now(), request);
     }
 
     @Override
-    public PageInfo<Order> findMyFutureOrders(String email, Integer page, Integer size) {
-        PageHelper.startPage(page, size);
-        Example example = new Example(Order.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("userEmail", email);
-        criteria.andGreaterThan("startTime", LocalDateTime.now());
-        return new PageInfo<>(orderMapper.selectByExample(example));
+    public Page<Order> findMyPastOrders(String email, Integer page, Integer size) {
+//        PageHelper.startPage(page, size);
+//        Example example = new Example(Order.class);
+//        Example.Criteria criteria = example.createCriteria();
+//        criteria.andEqualTo("userEmail", email);
+//        criteria.andLessThan("endTime", LocalDateTime.now());
+//        return new PageInfo<>(orderMapper.selectByExample(example));
+        Sort sort = Sort.by("orderDate").descending();
+        PageRequest request = PageRequest.of(page - 1, size, sort);
+        return orderDao.findAllByUserEmailAndEndTimeBefore(email, LocalDateTime.now(), request);
     }
 
     @Override
-    public PageInfo<Order> findMyPastOrders(String email, Integer page, Integer size) {
-        PageHelper.startPage(page, size);
-        Example example = new Example(Order.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("userEmail", email);
-        criteria.andLessThan("endTime", LocalDateTime.now());
-        return new PageInfo<>(orderMapper.selectByExample(example));
-    }
-
-    @Override
-    public PageInfo<Order> findMyOrdersByGym(String id, String gymId, Integer page, Integer size) {
-        PageHelper.startPage(page,size);
-        Example example = new Example(Order.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("userId", id).andEqualTo("gymId", gymId);
-        example.and(criteria);
-        List<Order> orders = orderMapper.selectByExample(example);
-        return new PageInfo<>(orders);
+    public Page<Order> findMyOrdersByGym(String id, String gymId, Integer page, Integer size) {
+//        PageHelper.startPage(page,size);
+//        Example example = new Example(Order.class);
+//        Example.Criteria criteria = example.createCriteria();
+//        criteria.andEqualTo("userId", id).andEqualTo("gymId", gymId);
+//        example.and(criteria);
+//        List<Order> orders = orderMapper.selectByExample(example);
+//        return new PageInfo<>(orders);
+        Sort sort = Sort.by("orderDate").descending();
+        PageRequest request = PageRequest.of(page - 1, size, sort);
+        return orderDao.findAllByUserEmailAndGymId(id,gymId, request);
     }
 
     @Override
@@ -111,45 +127,57 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public PageInfo<Order> findAllOrders(Integer page, Integer size) {
-        PageHelper.startPage(page, size);
-        return new PageInfo<>(orderMapper.selectAll());
+    public Page<Order> findAllOrders(Integer page, Integer size) {
+        Sort sort = Sort.by("orderDate").descending();
+        PageRequest request = PageRequest.of(page, size, sort);
+        return orderDao.findAll(request);
     }
 
     @Override
-    public PageInfo<Order> findAllCurrentOrders(Integer page, Integer size) {
-        PageHelper.startPage(page, size);
-        Example example = new Example(Order.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andLessThan("startTime", LocalDateTime.now());
-        criteria.andGreaterThan("endTime", LocalDateTime.now());
-        return new PageInfo<>(orderMapper.selectByExample(example));
+    public Page<Order> findAllCurrentOrders(Integer page, Integer size) {
+//        PageHelper.startPage(page, size);
+//        Example example = new Example(Order.class);
+//        Example.Criteria criteria = example.createCriteria();
+//        criteria.andLessThan("startTime", LocalDateTime.now());
+//        criteria.andGreaterThan("endTime", LocalDateTime.now());
+//        return new PageInfo<>(orderMapper.selectByExample(example));
+        PageRequest request = PageRequest.of(page, size);
+        return orderDao.findAllByStartTimeBeforeAndEndTimeAfter(LocalDateTime.now(), LocalDateTime.now(),request);
     }
 
     @Override
-    public PageInfo<Order> findAllFutureOrders(Integer page, Integer size) {
-        PageHelper.startPage(page, size);
-        Example example = new Example(Order.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andGreaterThan("startTime", LocalDateTime.now());
-        return new PageInfo<>(orderMapper.selectByExample(example));
+    public Page<Order> findAllFutureOrders(Integer page, Integer size) {
+//        PageHelper.startPage(page, size);
+//        Example example = new Example(Order.class);
+//        Example.Criteria criteria = example.createCriteria();
+//        criteria.andGreaterThan("startTime", LocalDateTime.now());
+//        return new PageInfo<>(orderMapper.selectByExample(example));
+        Sort sort = Sort.by("orderDate").ascending();
+        PageRequest request = PageRequest.of(page - 1, size, sort);
+        return orderDao.findAllByStartTimeAfter(LocalDateTime.now(), request);
     }
 
     @Override
-    public PageInfo<Order> findAllPastOrders(Integer page, Integer size) {
-        PageHelper.startPage(page, size);
-        Example example = new Example(Order.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andLessThan("endTime", LocalDateTime.now());
-        return new PageInfo<>(orderMapper.selectByExample(example));
+    public Page<Order> findAllPastOrders(Integer page, Integer size) {
+//        PageHelper.startPage(page, size);
+//        Example example = new Example(Order.class);
+//        Example.Criteria criteria = example.createCriteria();
+//        criteria.andLessThan("endTime", LocalDateTime.now());
+//        return new PageInfo<>(orderMapper.selectByExample(example));
+        Sort sort = Sort.by("orderDate").descending();
+        PageRequest request = PageRequest.of(page - 1, size, sort);
+        return orderDao.findAllByEndTimeBefore(LocalDateTime.now(), request);
     }
 
     @Override
-    public PageInfo<Order> findAllOrdersByGymId(String gymId, Integer page, Integer size) {
-        PageHelper.startPage(page, size);
-        Order order = new Order();
-        order.setGymId(gymId);
-        return new PageInfo<>(orderMapper.select(order));
+    public Page<Order> findAllOrdersByGymId(String gymId, Integer page, Integer size) {
+//        PageHelper.startPage(page, size);
+//        Order order = new Order();
+//        order.setGymId(gymId);
+//        return new PageInfo<>(orderMapper.select(order));
+        Sort sort = Sort.by("orderDate").descending();
+        PageRequest request = PageRequest.of(page - 1, size, sort);
+        return orderDao.findAllByGymId(gymId, request);
     }
 
     @Override
@@ -177,29 +205,29 @@ public class OrderServiceImpl implements OrderService {
         return interval;
     }
 
-    @Override
-    public void testInsert(OrderRequest request) {
-        Random random = new Random();
-        Order order = new Order();
-        order.setOrderId(KeyUtil.genUniqueKey());
-        order.setValid(true);
-        order.setGymId(request.getGymId());
-        order.setCancel(false);
-        order.setScore(random.nextInt(3) + 3);
-        order.setComment(comment());
-        order.setUserEmail(request.getUserEmail());
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-        LocalDate localDate = LocalDate.parse(request.getDate(), formatter);
-        order.setOrderDate(localDate);
-        order.setStartTime(LocalDateTime.of(localDate, LocalTime.of(request.getStartTime() / 2, request.getStartTime() % 2 == 1 ? 30 : 0)));
-        order.setEndTime(LocalDateTime.of(localDate, LocalTime.of(request.getEndTime() / 2, request.getEndTime() % 2 == 1 ? 30 : 0)));
-        orderMapper.insertSelective(order);
-    }
-    private String comment() {
-        Random random = new Random();
-        String[] comments = {"环境不错","服务很好","帅哥多","美女多","价格实惠","器材陈旧","场地狭小","环境一般","气氛好","服务一般","人多","下次还来"};
-        return comments[random.nextInt(comments.length)];
-    }
+//    @Override
+//    public void testInsert(OrderRequest request) {
+//        Random random = new Random();
+//        Order order = new Order();
+//        order.setOrderId(KeyUtil.genUniqueKey());
+//        order.setValid(true);
+//        order.setGymId(request.getGymId());
+//        order.setCancel(false);
+//        order.setScore(random.nextInt(3) + 3);
+//        order.setComment(comment());
+//        order.setUserEmail(request.getUserEmail());
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+//        LocalDate localDate = LocalDate.parse(request.getDate(), formatter);
+//        order.setOrderDate(localDate);
+//        order.setStartTime(LocalDateTime.of(localDate, LocalTime.of(request.getStartTime() / 2, request.getStartTime() % 2 == 1 ? 30 : 0)));
+//        order.setEndTime(LocalDateTime.of(localDate, LocalTime.of(request.getEndTime() / 2, request.getEndTime() % 2 == 1 ? 30 : 0)));
+//        orderMapper.insertSelective(order);
+//    }
+//    private String comment() {
+//        Random random = new Random();
+//        String[] comments = {"环境不错","服务很好","帅哥多","美女多","价格实惠","器材陈旧","场地狭小","环境一般","气氛好","服务一般","人多","下次还来"};
+//        return comments[random.nextInt(comments.length)];
+//    }
     private Integer[] timeToInterval(Order order) {
         int start = order.getStartTime().getHour() * 2;
         start += order.getStartTime().getMinute() == 30 ? 1 : 0;

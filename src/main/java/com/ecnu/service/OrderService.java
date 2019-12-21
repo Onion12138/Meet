@@ -3,7 +3,7 @@ package com.ecnu.service;
 import com.ecnu.domain.Order;
 import com.ecnu.dto.AvailableTimeRequest;
 import com.ecnu.dto.OrderRequest;
-import com.github.pagehelper.PageInfo;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -12,33 +12,35 @@ import java.util.List;
  * @date 2019/12/11 -6:24 下午
  */
 public interface OrderService {
-    PageInfo<Order> findOrdersByUserId(String id, int page, int size);
+    Page<Order> findOrderByEmail(String email, int page, int size);
 
-    PageInfo<Order> findMyCurrentOrders(String id, Integer page, Integer size);
+//    PageInfo<Order> findOrdersByUserId(String id, int page, int size);
 
-    PageInfo<Order> findMyFutureOrders(String id, Integer page, Integer size);
+    Page<Order> findMyCurrentOrders(String id, Integer page, Integer size);
 
-    PageInfo<Order> findMyPastOrders(String id, Integer page, Integer size);
+    Page<Order> findMyFutureOrders(String id, Integer page, Integer size);
 
-    PageInfo<Order> findMyOrdersByGym(String id, String gymId, Integer page, Integer size);
+    Page<Order> findMyPastOrders(String id, Integer page, Integer size);
+
+    Page<Order> findMyOrdersByGym(String id, String gymId, Integer page, Integer size);
 
     void addOrder(OrderRequest request, String email);
 
     void cancelOrder(String orderId);
 
-    PageInfo<Order> findAllOrders(Integer page, Integer size);
+    Page<Order> findAllOrders(Integer page, Integer size);
 
-    PageInfo<Order> findAllCurrentOrders(Integer page, Integer size);
+    Page<Order> findAllCurrentOrders(Integer page, Integer size);
 
-    PageInfo<Order> findAllFutureOrders(Integer page, Integer size);
+    Page<Order> findAllFutureOrders(Integer page, Integer size);
 
-    PageInfo<Order> findAllPastOrders(Integer page, Integer size);
+    Page<Order> findAllPastOrders(Integer page, Integer size);
 
-    PageInfo<Order> findAllOrdersByGymId(String gymId, Integer page, Integer size);
+    Page<Order> findAllOrdersByGymId(String gymId, Integer page, Integer size);
 
     void commentOrder(String orderId, Integer score, String comment);
 
     List<Integer[]> findAvailableTime(AvailableTimeRequest request);
 
-    void testInsert(OrderRequest request);
+//    void testInsert(OrderRequest request);
 }
