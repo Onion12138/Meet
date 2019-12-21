@@ -1,6 +1,7 @@
 package com.ecnu.controller;
 
 import com.ecnu.annotation.AdminOnly;
+import com.ecnu.annotation.VerifyParams;
 import com.ecnu.domain.News;
 import com.ecnu.dto.CommentRequest;
 import com.ecnu.dto.NewsRequest;
@@ -8,6 +9,7 @@ import com.ecnu.service.NewsService;
 import com.ecnu.vo.ResultEntity;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -40,7 +42,8 @@ public class NewsController {
         return ResultEntity.succeed(news);
     }
     @PostMapping("/addComment")
-    public ResultEntity addComment(@RequestBody CommentRequest commentRequest){
+    @VerifyParams
+    public ResultEntity addComment(@RequestBody CommentRequest commentRequest, BindingResult result){
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String token = request.getHeader("user_token");
         newsService.addComment(commentRequest, token);
@@ -53,7 +56,8 @@ public class NewsController {
     }
     @PostMapping("/addNews")
     @AdminOnly
-    public ResultEntity addNews(@Validated @RequestBody NewsRequest newsRequest){
+    @VerifyParams
+    public ResultEntity addNews(@Validated @RequestBody NewsRequest newsRequest, BindingResult result){
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String token = request.getHeader("user_token");
         newsService.addNews(newsRequest, token);
@@ -61,7 +65,8 @@ public class NewsController {
     }
     @PostMapping("/updateNews")
     @AdminOnly
-    public ResultEntity updateNews(@Validated @RequestBody NewsRequest newsRequest){
+    @VerifyParams
+    public ResultEntity updateNews(@Validated @RequestBody NewsRequest newsRequest, BindingResult result){
         newsService.updateNews(newsRequest);
         return ResultEntity.succeed();
     }

@@ -13,6 +13,7 @@ import javax.validation.constraints.NotEmpty;
 public class OrderRequest {
     @NotEmpty
     private String gymId;
+    private String userEmail;
     @NotEmpty
     private String date;
     @Range(min = 16, max = 39)

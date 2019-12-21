@@ -32,6 +32,7 @@ public class User implements Serializable {
     private Boolean disabled;
     @Column
     private Boolean admin;
-    @OneToMany(mappedBy = "user")
+    @OneToMany(targetEntity = Order.class)
+    @JoinColumn(name = "user_email", referencedColumnName = "email")
     private Set<Order> orderSet;
 }

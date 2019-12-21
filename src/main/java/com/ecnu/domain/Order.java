@@ -36,10 +36,10 @@ public class Order implements Serializable {
     private Integer score;
     @Column
     private String comment; //评价
-    @ManyToOne(targetEntity = User.class)
-    @JoinColumn(name = "user_email", referencedColumnName = "email", insertable = false, updatable = false)
-    private User user;
-    @ManyToOne(targetEntity = Gym.class)
-    @JoinColumn(name = "order_gym_id", referencedColumnName = "gym_id", insertable = false, updatable = false)
-    private Gym gym;
+//    @ManyToOne(targetEntity = User.class)
+//    @JoinColumn(name = "user_email", referencedColumnName = "email", insertable = false, updatable = false)
+//    private User user;
+//    @ManyToOne(targetEntity = Gym.class)
+//    @JoinColumn(name = "order_gym_id", referencedColumnName = "gym_id")
+//    private Gym gym;
 }

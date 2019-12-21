@@ -2,6 +2,7 @@ package com.ecnu.controller;
 
 import com.ecnu.annotation.AdminOnly;
 import com.ecnu.annotation.LoginRequired;
+import com.ecnu.annotation.VerifyParams;
 import com.ecnu.domain.Order;
 import com.ecnu.domain.User;
 import com.ecnu.dto.UserLoginRequest;
@@ -59,12 +60,14 @@ public class UserController {
     }
     @PostMapping("/register")
     @LoginRequired(value = false)
+    @VerifyParams
     public ResultEntity register(@Validated @RequestBody UserRegisterRequest request, BindingResult result){
         userService.register(request);
         return ResultEntity.succeed();
     }
     @PostMapping("/login")
     @LoginRequired(value = false)
+    @VerifyParams
     public ResultEntity login(@Validated @RequestBody UserLoginRequest request, BindingResult result){
         Map<String, String> map = userService.login(request);
         return ResultEntity.succeed(map);

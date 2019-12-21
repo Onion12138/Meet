@@ -14,7 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -82,6 +85,14 @@ public class GymServiceImpl implements GymService {
         map.put("comment",comments);
         return map;
     }
+
+//    @Override
+//    public List<Integer> findAvailableTime(AvailableTimeRequest request) {
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+//        LocalDate localDate = LocalDate.parse(request.getDate(), formatter);
+//        request.getGymId();
+//        return null;
+//    }
 
 
     @Override

@@ -13,7 +13,6 @@ import java.util.Map;
 public interface GymService {
     PageInfo<Gym> findAllGyms(Integer page, Integer size);
 
-
     void addGym(Gym gym);
 
     void updateGym(Gym gym);
@@ -25,4 +24,6 @@ public interface GymService {
     PageInfo<Gym> findGymsByFilter(Integer page, Integer size, GymFilterRequest request);
 
     Map<String, Object> findScore(String gymId);
+
+//    List<Integer> findAvailableTime(AvailableTimeRequest request);
 }

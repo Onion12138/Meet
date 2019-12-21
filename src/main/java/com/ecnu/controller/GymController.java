@@ -42,6 +42,7 @@ public class GymController {
         Map<String, Object> map = gymService.findScore(gymId);
         return ResultEntity.succeed(map);
     }
+
     @PostMapping("/addGym")
     @AdminOnly
     public ResultEntity addGym(@RequestBody Gym gym){
