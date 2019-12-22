@@ -45,7 +45,7 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public PageInfo<News> findTodayNews(Integer page, Integer size) {
         PageHelper.startPage(page, size);
-        PageHelper.orderBy("publishTime");
+        PageHelper.orderBy("publish_time");
         Example example = new Example(News.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andBetween("publishTime", LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 0))
@@ -69,7 +69,6 @@ public class NewsServiceImpl implements NewsService {
         comment.setContent(request.getContent());
         comment.setNickname((String)claims.get("nickname"));
         commentMapper.insert(comment);
-
     }
 
     @Override

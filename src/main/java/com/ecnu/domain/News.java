@@ -24,6 +24,8 @@ public class News implements Serializable {
     @Column(name = "news_id")
     private String newsId;
     @Column
+    private String title;
+    @Column
     private String email;
     @Column
     private String nickname;
@@ -36,7 +38,7 @@ public class News implements Serializable {
 //    @OneToMany(targetEntity = NewsComment.class, fetch = FetchType.LAZY)
 //    @JoinColumn(name = "comment_news_id", referencedColumnName = "news_id")
 //    private Set<NewsComment> commentSet;
-    @OneToMany(mappedBy = "news")
+    @OneToMany(mappedBy = "news", cascade = CascadeType.ALL)
     @JsonIgnoreProperties("news")
 //    @JoinColumn(name = "comment_news_id", referencedColumnName = "news_id")
     private Set<NewsComment> commentSet;

@@ -12,5 +12,7 @@ import javax.validation.constraints.NotEmpty;
 public class NewsRequest {
     private String newsId;
     @NotEmpty
+    private String title;
+    @NotEmpty
     private String content;
 }

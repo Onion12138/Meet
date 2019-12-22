@@ -155,6 +155,9 @@ public class OrderController {
         return ResultEntity.succeed(orderPageInfo);
     }
 
+    /*
+    * 查看所有当前进行的订单
+    * */
     @GetMapping("/currentOrder")
     @AdminOnly
     public ResultEntity findAllCurrentOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
@@ -162,6 +165,9 @@ public class OrderController {
         return ResultEntity.succeed(orderPageInfo);
     }
 
+    /*
+    * 查看所有将来的订单
+    * */
     @GetMapping("/futureOrder")
     @AdminOnly
     public ResultEntity findAllFutureOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
@@ -169,6 +175,9 @@ public class OrderController {
         return ResultEntity.succeed(orderPageInfo);
     }
 
+    /*
+     * 查看所有过去的订单
+     * */
     @GetMapping("/pastOrder")
     @AdminOnly
     public ResultEntity findAllPastOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
@@ -176,6 +185,9 @@ public class OrderController {
         return ResultEntity.succeed(orderPageInfo);
     }
 
+    /*
+    * 根据场馆id来查询订单
+    * */
     @GetMapping("/gymOrder")
     @AdminOnly
     public ResultEntity findOrdersByGym(@RequestParam String gymId, @RequestParam(defaultValue = "1") Integer page,

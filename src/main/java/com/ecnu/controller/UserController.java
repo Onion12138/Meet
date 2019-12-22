@@ -33,6 +33,7 @@ import java.util.Set;
  * 2. Post：注册/登陆
  * 3. Put：修改昵称/头像/密码
  * 4. Delete：禁用账户
+ * 这个controller的文档参考群里的pdf
  */
 @RestController
 @RequestMapping("/user")
