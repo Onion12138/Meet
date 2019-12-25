@@ -45,7 +45,7 @@ public class GymController {
     * Boolean highToLow 租金价格从高到低排序还是从低到高排序，不能为空，一定要有默认值，比如默认从低到高排序;
     * Boolean openOnly 意思为查询全部还是查询开放的场馆。（有的场馆可能被关闭了，open值为false）不能为空，一定有默认值，比如默认为查询全部;
     * */
-    @GetMapping("/filter")
+    @PostMapping("/filter")
     public ResultEntity findGymByFilter(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size, @RequestBody GymFilterRequest request){
         PageInfo<Gym> gyms = gymService.findGymsByFilter(page, size, request);
         return ResultEntity.succeed(gyms);

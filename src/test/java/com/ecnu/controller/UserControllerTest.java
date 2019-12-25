@@ -96,15 +96,15 @@
 //    }
 //    @Test
 //    public void testModifyNickname() throws Exception{
-//        MvcResult mvcResult = mockMvc.perform(put("/user/modifyNickname")
-//                .param("token", "token")
-//                .param("nickname", "mushroom")).andReturn();
+////        MvcResult mvcResult = mockMvc.perform(post("/user/modifyNickname")
+////                .param("token", "token")
+////                .param("nickname", "mushroom")).andReturn();
+////        ResultEntity result = JSON.parseObject(mvcResult.getResponse().getContentAsByteArray(), ResultEntity.class);
+////        assertEquals(-1, result.getCode());
+//         MvcResult mvcResult = mockMvc.perform(post("/user/modifyNickname")
+//                .param("nickname", "mushroom").header("user_token",token)).andReturn();
 //        ResultEntity result = JSON.parseObject(mvcResult.getResponse().getContentAsByteArray(), ResultEntity.class);
-//        assertEquals(-1, result.getCode());
-//        mvcResult = mockMvc.perform(put("/user/modifyNickname")
-//                .param("token", token)
-//                .param("nickname", "mushroom")).andReturn();
-//        result = JSON.parseObject(mvcResult.getResponse().getContentAsByteArray(), ResultEntity.class);
+//        System.out.println(token);
 //        assertEquals(0,result.getCode());
 //    }
 //    // sth wrong! how to test it?
@@ -117,7 +117,7 @@
 //    }
 //    @Test
 //    public void testModifyPassword() throws Exception {
-//        MvcResult mvcResult = mockMvc.perform(put("/user/modifyPassword")
+//        MvcResult mvcResult = mockMvc.perform(post("/user/modifyPassword")
 //                .param("password","654321")
 //                .param("code", "969023").header("user_token", token)).andReturn();
 //        ResultEntity result = JSON.parseObject(mvcResult.getResponse().getContentAsByteArray(), ResultEntity.class);
@@ -143,7 +143,7 @@
 //    }
 //    @Test
 //    public void testDisableAccount() throws Exception {
-//        MvcResult mvcResult = mockMvc.perform(delete("/user/disabledAccount")).andReturn();
+//        MvcResult mvcResult = mockMvc.perform(post("/user/disabledAccount").param("userId","969023014@qq.com").header("user_token",token)).andReturn();
 //        ResultEntity result = JSON.parseObject(mvcResult.getResponse().getContentAsByteArray(), ResultEntity.class);
 //        assertEquals(0, result.getCode());
 //    }

@@ -1,6 +1,7 @@
 package com.ecnu.aop;
 
 import com.ecnu.exception.MyException;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -15,6 +16,7 @@ import org.springframework.validation.FieldError;
  */
 @Aspect
 @Order(3)
+@Slf4j
 public class VerifyParameters {
     @Pointcut("@annotation(com.ecnu.annotation.VerifyParams)")
     public void verifyParamsPoint(){}
@@ -22,6 +24,7 @@ public class VerifyParameters {
     public void verifyParams(JoinPoint joinPoint){
         Object[] args = joinPoint.getArgs();
         BindingResult result = (BindingResult) args[1];
+        log.info("before verifying params");
         if (result.hasErrors()){
             StringBuilder sb = new StringBuilder();
             result.getAllErrors().forEach(e->{
@@ -32,5 +35,6 @@ public class VerifyParameters {
             });
             throw new MyException(sb.toString(), -1);
         }
+        log.info("after verifying params");
     }
 }
