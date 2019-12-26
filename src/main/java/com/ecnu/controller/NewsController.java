@@ -1,11 +1,11 @@
 package com.ecnu.controller;
 
 import com.ecnu.annotation.AdminOnly;
-import com.ecnu.annotation.VerifyParams;
 import com.ecnu.domain.News;
 import com.ecnu.dto.CommentRequest;
 import com.ecnu.dto.NewsRequest;
 import com.ecnu.service.NewsService;
+import com.ecnu.utils.ParamUtil;
 import com.ecnu.vo.ResultEntity;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +16,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 /**
  * @author onion
@@ -61,11 +62,11 @@ public class NewsController {
         @NotEmpty
         private String content;
      *
-     *
+     * 参数校验失败，为什么？
      * */
     @PostMapping("/addComment")
-    @VerifyParams
-    public ResultEntity addComment(@RequestBody CommentRequest commentRequest, BindingResult result){
+    public ResultEntity addComment(@RequestBody @Valid CommentRequest commentRequest, BindingResult result){
+        ParamUtil.verifyParam(result);
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String token = request.getHeader("user_token");
         newsService.addComment(commentRequest, token);
@@ -92,8 +93,8 @@ public class NewsController {
     * */
     @PostMapping("/addNews")
     @AdminOnly
-    @VerifyParams
     public ResultEntity addNews(@Validated @RequestBody NewsRequest newsRequest, BindingResult result){
+        ParamUtil.verifyParam(result);
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String token = request.getHeader("user_token");
         newsService.addNews(newsRequest, token);
@@ -104,8 +105,8 @@ public class NewsController {
     * */
     @PostMapping("/updateNews")
     @AdminOnly
-    @VerifyParams
     public ResultEntity updateNews(@Validated @RequestBody NewsRequest newsRequest, BindingResult result){
+        ParamUtil.verifyParam(result);
         newsService.updateNews(newsRequest);
         return ResultEntity.succeed();
     }

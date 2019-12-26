@@ -1,13 +1,13 @@
 package com.ecnu.controller;
 
 import com.ecnu.annotation.AdminOnly;
-import com.ecnu.annotation.VerifyParams;
 import com.ecnu.domain.Order;
 import com.ecnu.dto.AvailableTimeRequest;
 import com.ecnu.dto.OrderCommentRequest;
 import com.ecnu.dto.OrderRequest;
 import com.ecnu.service.OrderService;
 import com.ecnu.utils.JwtUtil;
+import com.ecnu.utils.ParamUtil;
 import com.ecnu.vo.ResultEntity;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,9 +45,9 @@ public class OrderController {
     * 需要的参数封装为AvailableTimeRequest
     * 该对象两个属性，一个为预约日期date，格式为字符串yyyy/MM/dd，一个为场馆gymId。两者缺一不可
      * */
-    @GetMapping("/available")
-    @VerifyParams
+    @PostMapping("/available")
     public ResultEntity findAvailableTime(@Validated @RequestBody AvailableTimeRequest request, BindingResult result){
+        ParamUtil.verifyParam(result);
         List<Integer[]> timeInterval = orderService.findAvailableTime(request);
         return ResultEntity.succeed(timeInterval);
     }
@@ -96,10 +96,10 @@ public class OrderController {
     * */
 
     @GetMapping("/myOrderByGym")
-    public ResultEntity findMyOrdersByGym(@RequestParam String gymId, @RequestParam(defaultValue = "1") Integer page,
+    public ResultEntity findMyOrdersByGym(@RequestParam String type, @RequestParam(defaultValue = "1") Integer page,
                                           @RequestParam(defaultValue = "5") Integer size){
         String id = getId();
-        Page<Order> orderPageInfo = orderService.findMyOrdersByGym(id, gymId, page, size);
+        Page<Order> orderPageInfo = orderService.findMyOrdersByGym(id, type, page, size);
         return ResultEntity.succeed(orderPageInfo);
     }
 
@@ -114,8 +114,8 @@ public class OrderController {
     * 调用下一个comment方法进行评价订单
     * */
     @PostMapping("/addOrder")
-    @VerifyParams
     public ResultEntity addOrder(@Validated @RequestBody OrderRequest orderRequest, BindingResult result){
+        ParamUtil.verifyParam(result);
         String email = getId();
         orderService.addOrder(orderRequest, email);
         return ResultEntity.succeed();
@@ -130,8 +130,8 @@ public class OrderController {
     * */
 
     @PostMapping("/comment")
-    @VerifyParams
     public ResultEntity commentOrder(@Validated @RequestBody OrderCommentRequest request, BindingResult result){
+        ParamUtil.verifyParam(result);
         orderService.commentOrder(request.getOrderId(), request.getScore(), request.getComment());
         return ResultEntity.succeed();
     }

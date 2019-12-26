@@ -14,15 +14,13 @@ import java.util.List;
 public interface OrderService {
     Page<Order> findOrderByEmail(String email, int page, int size);
 
-//    PageInfo<Order> findOrdersByUserId(String id, int page, int size);
-
     Page<Order> findMyCurrentOrders(String id, Integer page, Integer size);
 
     Page<Order> findMyFutureOrders(String id, Integer page, Integer size);
 
     Page<Order> findMyPastOrders(String id, Integer page, Integer size);
 
-    Page<Order> findMyOrdersByGym(String id, String gymId, Integer page, Integer size);
+    Page<Order> findMyOrdersByGym(String id, String type, Integer page, Integer size);
 
     void addOrder(OrderRequest request, String email);
 

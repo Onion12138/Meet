@@ -2,7 +2,6 @@ package com.ecnu.controller;
 
 import com.ecnu.annotation.AdminOnly;
 import com.ecnu.annotation.LoginRequired;
-import com.ecnu.annotation.VerifyParams;
 import com.ecnu.domain.Order;
 import com.ecnu.domain.User;
 import com.ecnu.dto.UserLoginRequest;
@@ -10,6 +9,7 @@ import com.ecnu.dto.UserRegisterRequest;
 import com.ecnu.enums.ResultEnum;
 import com.ecnu.service.UserService;
 import com.ecnu.utils.JwtUtil;
+import com.ecnu.utils.ParamUtil;
 import com.ecnu.vo.ResultEntity;
 import com.github.pagehelper.PageInfo;
 import io.jsonwebtoken.Claims;
@@ -22,6 +22,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.Map;
 import java.util.Set;
 
@@ -61,15 +62,15 @@ public class UserController {
     }
     @PostMapping("/register")
     @LoginRequired(value = false)
-    @VerifyParams
     public ResultEntity register(@Validated @RequestBody UserRegisterRequest request, BindingResult result){
+        ParamUtil.verifyParam(result);
         userService.register(request);
         return ResultEntity.succeed();
     }
     @PostMapping("/login")
     @LoginRequired(value = false)
-    @VerifyParams
-    public ResultEntity login(@Validated @RequestBody UserLoginRequest request, BindingResult result){
+    public ResultEntity login(@RequestBody @Valid UserLoginRequest request, BindingResult result){
+        ParamUtil.verifyParam(result);
         Map<String, String> map = userService.login(request);
         return ResultEntity.succeed(map);
     }

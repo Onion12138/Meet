@@ -86,7 +86,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Page<Order> findMyOrdersByGym(String id, String gymId, Integer page, Integer size) {
+    public Page<Order> findMyOrdersByGym(String id, String type, Integer page, Integer size) {
 //        PageHelper.startPage(page,size);
 //        Example example = new Example(Order.class);
 //        Example.Criteria criteria = example.createCriteria();
@@ -94,9 +94,9 @@ public class OrderServiceImpl implements OrderService {
 //        example.and(criteria);
 //        List<Order> orders = orderMapper.selectByExample(example);
 //        return new PageInfo<>(orders);
-        Sort sort = Sort.by("orderDate").descending();
+        Sort sort = Sort.by("order_date").descending();
         PageRequest request = PageRequest.of(page - 1, size, sort);
-        return orderDao.findAllByUserEmailAndGymId(id,gymId, request);
+        return orderDao.findAllByUserEmailAndType(id, type, request);
     }
 
     @Override
