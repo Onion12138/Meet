@@ -34,11 +34,13 @@ public interface OrderService {
 
     Page<Order> findAllPastOrders(Integer page, Integer size);
 
-    Page<Order> findAllOrdersByGymId(String gymId, Integer page, Integer size);
+    Page<Order> findAllOrdersByType(String type, Integer page, Integer size);
 
     void commentOrder(String orderId, Integer score, String comment);
 
     List<Integer[]> findAvailableTime(AvailableTimeRequest request);
 
-//    void testInsert(OrderRequest request);
+    Page<Order> findMyCanceledOrder(String email, Integer page, Integer size);
+
+    Page<Order> findAllCanceledOrders(Integer page, Integer size);
 }

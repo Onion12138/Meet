@@ -7,7 +7,9 @@ import io.jsonwebtoken.Claims;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestAttributes;
@@ -24,6 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 @Order(1)
 public class VerifyLogin {
+    @Autowired
+    private StringRedisTemplate redisTemplate;
     @Pointcut("within(com.ecnu.controller..*) && !@annotation(com.ecnu.annotation.LoginRequired)")
     public void verifyLoginPointcut(){}
     @Before("verifyLoginPointcut()")
@@ -34,6 +38,9 @@ public class VerifyLogin {
         String token = request.getHeader("user_token");
         if (StringUtils.isEmpty(token)){
             throw new MyException(ResultEnum.MUST_LOGIN);
+        }
+        if (redisTemplate.opsForValue().get(token) == null) {
+            throw new MyException(ResultEnum.LOGOUT);
         }
         Claims claims = JwtUtil.parseJwt(token);
         if ("admin".equals(claims.get("role", String.class))){

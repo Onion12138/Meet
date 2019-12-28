@@ -52,10 +52,19 @@ public class OrderController {
         return ResultEntity.succeed(timeInterval);
     }
     /*
-    * 查看我所有的订单，用的JPA查询，返回的Page和用PageHelper返回的PageInfo不太一样，注意！
-    * 使用了join查询，还会返回场馆的信息
-    * 按照时间降序排列
+    * 查看我取消的订单
     * */
+    @GetMapping("/myCanceledOrder")
+    public ResultEntity findMyCanceledOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size) {
+        String email = getId();
+        Page<Order> pageInfo = orderService.findMyCanceledOrder(email, page, size);
+        return ResultEntity.succeed(pageInfo);
+    }
+    /*
+     * 查看我所有的订单，用的JPA查询，返回的Page和用PageHelper返回的PageInfo不太一样，注意！
+     * 使用了join查询，还会返回场馆的信息
+     * 按照时间降序排列
+     * */
     @GetMapping("/myOrder")
     public ResultEntity findMyOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
         String email = getId();
@@ -92,7 +101,8 @@ public class OrderController {
         return ResultEntity.succeed(orderPageInfo);
     }
     /*
-    * 通过gymId查询我的订单
+    * 通过type查询我的订单
+    * 诸如：乒乓球、篮球
     * */
 
     @GetMapping("/myOrderByGym")
@@ -186,13 +196,14 @@ public class OrderController {
     }
 
     /*
-    * 根据场馆id来查询订单
+    * 根据场馆type来查询订单
+    * 诸如：乒乓球、篮球
     * */
     @GetMapping("/gymOrder")
     @AdminOnly
-    public ResultEntity findOrdersByGym(@RequestParam String gymId, @RequestParam(defaultValue = "1") Integer page,
+    public ResultEntity findOrdersByGym(@RequestParam String type, @RequestParam(defaultValue = "1") Integer page,
                                         @RequestParam(defaultValue = "5") Integer size){
-        Page<Order> orderPageInfo = orderService.findAllOrdersByGymId(gymId, page, size);
+        Page<Order> orderPageInfo = orderService.findAllOrdersByType(type, page, size);
         return ResultEntity.succeed(orderPageInfo);
     }
 
@@ -204,6 +215,14 @@ public class OrderController {
     public ResultEntity findOrdersByUser(@RequestParam String email,@RequestParam(defaultValue = "1") Integer page,
                                          @RequestParam(defaultValue = "5") Integer size){
         Page<Order> orderPageInfo = orderService.findOrderByEmail(email, page, size);
+        return ResultEntity.succeed(orderPageInfo);
+    }
+
+    @GetMapping("/allCanceledOrder")
+    @AdminOnly
+    public ResultEntity findAllCanceledOrders(@RequestParam(defaultValue = "1") Integer page,
+                                              @RequestParam(defaultValue = "5") Integer size) {
+        Page<Order> orderPageInfo = orderService.findAllCanceledOrders(page, size);
         return ResultEntity.succeed(orderPageInfo);
     }
 

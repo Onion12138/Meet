@@ -21,9 +21,12 @@ public interface OrderDao extends JpaRepository<Order, String> {
     Page<Order> findAllByUserEmailAndEndTimeBefore(String email, LocalDateTime end, Pageable pageable);
     @Query(nativeQuery = true, value = "select * from orders, gym where user_email = ?1 and type = ?2 and order_gym_id = gym_id")
     Page<Order> findAllByUserEmailAndType(String email, String type, Pageable pageable);
+    @Query(nativeQuery = true, value = "select * from orders, gym where type = ?1 and order_gym_id = gym_id")
+    Page<Order> findAllByType(String type, Pageable pageable);
     Page<Order> findAll(Pageable pageable);
     Page<Order> findAllByStartTimeBeforeAndEndTimeAfter(LocalDateTime start, LocalDateTime end, Pageable pageable);
     Page<Order> findAllByStartTimeAfter(LocalDateTime start, Pageable pageable);
     Page<Order> findAllByEndTimeBefore(LocalDateTime end, Pageable pageable);
-    Page<Order> findAllByGymId(String gymId, Pageable pageable);
+    Page<Order> findByUserEmailAndCancel(String email, boolean cancel, Pageable pageable);
+    Page<Order> findByCancel(boolean b, Pageable pageable);
 }

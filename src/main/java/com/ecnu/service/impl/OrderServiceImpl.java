@@ -10,6 +10,7 @@ import com.ecnu.utils.KeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
@@ -170,14 +171,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Page<Order> findAllOrdersByGymId(String gymId, Integer page, Integer size) {
+    public Page<Order> findAllOrdersByType(String type, Integer page, Integer size) {
 //        PageHelper.startPage(page, size);
 //        Order order = new Order();
 //        order.setGymId(gymId);
 //        return new PageInfo<>(orderMapper.select(order));
         Sort sort = Sort.by("orderDate").descending();
         PageRequest request = PageRequest.of(page - 1, size, sort);
-        return orderDao.findAllByGymId(gymId, request);
+        return orderDao.findAllByType(type, request);
     }
 
     @Override
@@ -199,13 +200,28 @@ public class OrderServiceImpl implements OrderService {
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("gymId", gymId);
         criteria.andEqualTo("orderDate",localDate);
+        criteria.andEqualTo("cancel", false);
         List<Order> orderList = orderMapper.selectByExample(example);
         List<Integer[]> interval = new ArrayList<>();
         orderList.stream().map(this::timeToInterval).forEach(interval::add);
         return interval;
     }
 
-//    @Override
+    @Override
+    public Page<Order> findMyCanceledOrder(String email, Integer page, Integer size) {
+        Sort sort = Sort.by("order_date").descending();
+        Pageable pageable = PageRequest.of(page - 1, size, sort);
+        return orderDao.findByUserEmailAndCancel(email, true, pageable);
+    }
+
+    @Override
+    public Page<Order> findAllCanceledOrders(Integer page, Integer size) {
+        Sort sort = Sort.by("order_date").descending();
+        Pageable pageable = PageRequest.of(page - 1, size, sort);
+        return orderDao.findByCancel(true, pageable);
+    }
+
+    //    @Override
 //    public void testInsert(OrderRequest request) {
 //        Random random = new Random();
 //        Order order = new Order();

@@ -2,7 +2,6 @@ package com.ecnu.controller;
 
 import com.ecnu.annotation.AdminOnly;
 import com.ecnu.annotation.LoginRequired;
-import com.ecnu.domain.Order;
 import com.ecnu.domain.User;
 import com.ecnu.dto.UserLoginRequest;
 import com.ecnu.dto.UserRegisterRequest;
@@ -24,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author onion
@@ -41,6 +39,12 @@ import java.util.Set;
 public class UserController {
     @Autowired
     private UserService userService;
+    private String getEmail() {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String token = request.getHeader("user_token");
+        Claims claims = JwtUtil.parseJwt(token);
+        return claims.getId();
+    }
     @GetMapping("/check")
     @LoginRequired(value = false)
     public ResultEntity checkEmail(@RequestParam String email){
@@ -51,20 +55,25 @@ public class UserController {
             return ResultEntity.fail(ResultEnum.EMAIL_IN_USE);
         }
     }
+    /* 不需要了？Order里面有
     @GetMapping("/myOrders")
     public ResultEntity findMyOrders(){
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String token = request.getHeader("user_token");
-        Claims claims = JwtUtil.parseJwt(token);
-        String id = claims.getId();
-        Set<Order> orderList = userService.findMyOrders(id);
+        String email = getEmail();
+        Set<Order> orderList = userService.findMyOrders(email);
         return ResultEntity.succeed(orderList);
-    }
+    }*/
     @PostMapping("/register")
     @LoginRequired(value = false)
     public ResultEntity register(@Validated @RequestBody UserRegisterRequest request, BindingResult result){
         ParamUtil.verifyParam(result);
         userService.register(request);
+        return ResultEntity.succeed();
+    }
+    @PostMapping("/logout")
+    public ResultEntity logout() {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String token = request.getHeader("user_token");
+        userService.logout(token);
         return ResultEntity.succeed();
     }
     @PostMapping("/login")
@@ -76,29 +85,17 @@ public class UserController {
     }
     @PostMapping("/modifyNickname")
     public ResultEntity modifyNickname(@RequestParam String nickname){
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String token = request.getHeader("user_token");
-        Claims claims = JwtUtil.parseJwt(token);
-        String id = claims.getId();
-        userService.modifyNickname(id, nickname);
+        userService.modifyNickname(getEmail(), nickname);
         return ResultEntity.succeed();
     }
     @PostMapping("/uploadProfile")
     public ResultEntity uploadProfile(@RequestParam MultipartFile file){
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String token = request.getHeader("user_token");
-        Claims claims = JwtUtil.parseJwt(token);
-        String id = claims.getId();
-        String url = userService.uploadProfile(id, file);
+        String url = userService.uploadProfile(getEmail(), file);
         return ResultEntity.succeed(url);
     }
     @PostMapping("/modifyPassword")
     public ResultEntity modifyPassword(@RequestParam String password, @RequestParam String code){
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String token = request.getHeader("user_token");
-        Claims claims = JwtUtil.parseJwt(token);
-        String id = claims.getId();
-        userService.modifyPassword(id, password, code);
+        userService.modifyPassword(getEmail(), password, code);
         return ResultEntity.succeed();
     }
     @GetMapping("/sendCode")

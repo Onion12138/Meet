@@ -40,4 +40,6 @@ public interface UserService {
     PageInfo<User> findAllDisabledUsers(Integer page, Integer size);
 
     Set<Order> findMyOrders(String id);
+
+    void logout(String token);
 }

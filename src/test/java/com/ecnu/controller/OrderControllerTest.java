@@ -3,6 +3,8 @@ package com.ecnu.controller;
 import com.alibaba.fastjson.JSON;
 import com.ecnu.domain.User;
 import com.ecnu.dto.AvailableTimeRequest;
+import com.ecnu.dto.OrderCommentRequest;
+import com.ecnu.dto.OrderRequest;
 import com.ecnu.service.OrderService;
 import com.ecnu.utils.JwtUtil;
 import org.junit.Before;
@@ -20,8 +22,8 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -108,109 +110,114 @@ public class OrderControllerTest {
         verify(orderService).findMyOrdersByGym(anyString(), anyString(), anyInt(), anyInt());
     }
 
-//
-//    /*
-//     * 发布订单，封装为OrderRequest对象，需要四个参数
-//     * gymId: String
-//     * date: String 格式：yyyy/MM/dd
-//     * startTime: Integer，范围16-39
-//     * endTime: Integer，范围17-40
-//     * 确保1<=endTime-startTime<=4，后端不校验
-//     * 发布订单后，订单会生成默认评语和默认评分，并且将字段valid设为false，表示此单未评价
-//     * 调用下一个comment方法进行评价订单
-//     * */
-//    @PostMapping("/addOrder")
-//    @VerifyParams
-//    public ResultEntity addOrder(@Validated @RequestBody OrderRequest orderRequest, BindingResult result){
-//        String email = getId();
-//        orderService.addOrder(orderRequest, email);
-//        return ResultEntity.succeed();
-//    }
-//    /*
-//     * 评价订单，仅限于对未评价的订单进行评价（通过valid字段判断，如果为false，则表示未评价）
-//     * 评价后，valid字段会变为true
-//     * 评价封装成对象OrderCommentRequest
-//     * orderId：String
-//     * score：Integer，范围1-5
-//     * comment：String 评语
-//     * */
-//
-//    @PostMapping("/comment")
-//    @VerifyParams
-//    public ResultEntity commentOrder(@Validated @RequestBody OrderCommentRequest request, BindingResult result){
-//        orderService.commentOrder(request.getOrderId(), request.getScore(), request.getComment());
-//        return ResultEntity.succeed();
-//    }
-//
-//    /*
-//     * 取消订单
-//     * */
-//    @PostMapping("cancelMyOrder")
-//    public ResultEntity cancelOrder(@RequestParam String orderId){
-//        orderService.cancelOrder(orderId);
-//        return ResultEntity.succeed();
-//    }
-//
-//    /*
-//     * 查看所有订单
-//     * */
-//    @GetMapping("/allOrder")
-//    @AdminOnly
-//    public ResultEntity findAllOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
-//        Page<Order> orderPageInfo = orderService.findAllOrders(page, size);
-//        return ResultEntity.succeed(orderPageInfo);
-//    }
-//
-//    /*
-//     * 查看所有当前进行的订单
-//     * */
-//    @GetMapping("/currentOrder")
-//    @AdminOnly
-//    public ResultEntity findAllCurrentOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
-//        Page<Order> orderPageInfo = orderService.findAllCurrentOrders(page, size);
-//        return ResultEntity.succeed(orderPageInfo);
-//    }
-//
-//    /*
-//     * 查看所有将来的订单
-//     * */
-//    @GetMapping("/futureOrder")
-//    @AdminOnly
-//    public ResultEntity findAllFutureOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
-//        Page<Order> orderPageInfo = orderService.findAllFutureOrders(page, size);
-//        return ResultEntity.succeed(orderPageInfo);
-//    }
-//
-//    /*
-//     * 查看所有过去的订单
-//     * */
-//    @GetMapping("/pastOrder")
-//    @AdminOnly
-//    public ResultEntity findAllPastOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
-//        Page<Order> orderPageInfo = orderService.findAllPastOrders(page, size);
-//        return ResultEntity.succeed(orderPageInfo);
-//    }
-//
-//    /*
-//     * 根据场馆id来查询订单
-//     * */
-//    @GetMapping("/gymOrder")
-//    @AdminOnly
-//    public ResultEntity findOrdersByGym(@RequestParam String gymId, @RequestParam(defaultValue = "1") Integer page,
-//                                        @RequestParam(defaultValue = "5") Integer size){
-//        Page<Order> orderPageInfo = orderService.findAllOrdersByGymId(gymId, page, size);
-//        return ResultEntity.succeed(orderPageInfo);
-//    }
-//
-//    /*
-//     * 用于管理员根据email查询其订单
-//     * */
-//    @GetMapping("/userOrder")
-//    @AdminOnly
-//    public ResultEntity findOrdersByUser(@RequestParam String email,@RequestParam(defaultValue = "1") Integer page,
-//                                         @RequestParam(defaultValue = "5") Integer size){
-//        Page<Order> orderPageInfo = orderService.findOrderByEmail(email, page, size);
-//        return ResultEntity.succeed(orderPageInfo);
-//    }
+    @Test
+    @DisplayName("用户提交订单")
+    public void testAddOrder() throws Exception {
+        OrderRequest orderRequest = new OrderRequest();
+        orderRequest.setGymId("1576735101615918632");
+        orderRequest.setUserEmail("969023014@qq.com");
+        orderRequest.setDate("2019/12/25");
+        orderRequest.setStartTime(18);
+        orderRequest.setEndTime(20);
+        String content = JSON.toJSONString(orderRequest);
+        ResultActions perform = mockMvc.perform(post("/order/addOrder").header("user_token",token).contentType(MediaType.APPLICATION_JSON).content(content));
+        perform.andExpect(status().isOk());
+        perform.andExpect(jsonPath("$.code").value(0));
+        verify(orderService).addOrder(any(), anyString());
+    }
 
+    @Test
+    @DisplayName("用户评价订单")
+    public void testComment() throws Exception {
+        OrderCommentRequest commentRequest = new OrderCommentRequest();
+        commentRequest.setComment("you can really dance");
+        commentRequest.setScore(5);
+        commentRequest.setOrderId("1576857609777930559");
+        String content = JSON.toJSONString(commentRequest);
+        ResultActions perform = mockMvc.perform(post("/order/comment").header("user_token",token).contentType(MediaType.APPLICATION_JSON).content(content));
+        perform.andExpect(status().isOk());
+        perform.andExpect(jsonPath("$.code").value(0));
+        verify(orderService).commentOrder(anyString(), anyInt(), anyString());
+    }
+
+    @Test
+    @DisplayName("用户取消订单")
+    public void testCancelMyOrder() throws Exception {
+        String orderId = "1576857609777930559";
+        ResultActions perform = mockMvc.perform(post("/order/cancelMyOrder").header("user_token",token).param("orderId", orderId));
+        perform.andExpect(status().isOk());
+        perform.andExpect(jsonPath("$.code").value(0));
+        verify(orderService).cancelOrder(anyString());
+    }
+
+    @Test
+    @DisplayName("管理员查看所有订单")
+    public void testFindAllOrders() throws Exception{
+        ResultActions perform = mockMvc.perform(get("/order/allOrder").header("user_token",adminToken));
+        perform.andExpect(status().isOk());
+        perform.andExpect(jsonPath("$.code").value(0));
+        verify(orderService).findAllOrders(anyInt(), anyInt());
+    }
+
+    @Test
+    @DisplayName("管理员查看正在进行的订单")
+    public void testFindCurrentOrders() throws Exception{
+        ResultActions perform = mockMvc.perform(get("/order/currentOrder").header("user_token",adminToken));
+        perform.andExpect(status().isOk());
+        perform.andExpect(jsonPath("$.code").value(0));
+        verify(orderService).findAllCurrentOrders(anyInt(), anyInt());
+    }
+    @Test
+    @DisplayName("管理员查看将来的订单")
+    public void testFindFutureOrders() throws Exception{
+        ResultActions perform = mockMvc.perform(get("/order/futureOrder").header("user_token",adminToken));
+        perform.andExpect(status().isOk());
+        perform.andExpect(jsonPath("$.code").value(0));
+        verify(orderService).findAllFutureOrders(anyInt(), anyInt());
+    }
+
+    @Test
+    @DisplayName("管理员查看过去的订单")
+    public void testFindPastOrders() throws Exception{
+        ResultActions perform = mockMvc.perform(get("/order/pastOrder").header("user_token",adminToken));
+        perform.andExpect(status().isOk());
+        perform.andExpect(jsonPath("$.code").value(0));
+        verify(orderService).findAllPastOrders(anyInt(), anyInt());
+    }
+
+    @Test
+    @DisplayName("管理员通过场馆类型查找订单")
+    public void testFindOrdersByType() throws Exception{
+        ResultActions perform = mockMvc.perform(get("/order/gymOrder").header("user_token",adminToken).param("type","乒乓球"));
+        perform.andExpect(status().isOk());
+        perform.andExpect(jsonPath("$.code").value(0));
+        verify(orderService).findAllOrdersByType(anyString(), anyInt(), anyInt());
+    }
+
+    @Test
+    @DisplayName("管理员通过用户查找订单")
+    public void testFindOrdersByUser() throws Exception{
+        ResultActions perform = mockMvc.perform(get("/order/userOrder").header("user_token",adminToken).param("email","969023014@qq.com"));
+        perform.andExpect(status().isOk());
+        perform.andExpect(jsonPath("$.code").value(0));
+        verify(orderService).findOrderByEmail(anyString(), anyInt(), anyInt());
+    }
+
+    @Test
+    @DisplayName("用户查找自己取消的订单")
+    public void testFindMyCanceledOrders() throws Exception {
+        ResultActions perform = mockMvc.perform(get("/order/myCanceledOrder").header("user_token", token));
+        perform.andExpect(status().isOk());
+        perform.andExpect(jsonPath("$.code").value(0));
+        verify(orderService).findMyCanceledOrder(anyString(), anyInt(), anyInt());
+    }
+
+    @Test
+    @DisplayName("管理员查找所有取消的订单")
+    public void testFindAllCanceledOrders() throws Exception {
+        ResultActions perform = mockMvc.perform(get("/order/allCanceledOrder").header("user_token", adminToken));
+        perform.andExpect(status().isOk());
+        perform.andExpect(jsonPath("$.code").value(0));
+        verify(orderService).findAllCanceledOrders(anyInt(), anyInt());
+    }
 }

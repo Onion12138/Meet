@@ -1,179 +1,159 @@
-//package com.ecnu.controller;
+package com.ecnu.controller;
+
+import com.ecnu.domain.User;
+import com.ecnu.enums.ResultEnum;
+import com.ecnu.service.UserService;
+import com.ecnu.utils.JwtUtil;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+public class UserControllerTest {
+    @MockBean
+    private UserService userService;
+    @Autowired
+    private MockMvc mockMvc;
+    private String email;
+    private String newEmail;
+    private String token;
+    private String adminToken;
+    @Before
+    public void before() {
+        email = "969023014";
+        newEmail = "10175101227@stu.ecnu.edn.cn";
+        User user = new User();
+        User admin = new User();
+        user.setEmail(email);
+        user.setNickname("onion");
+        user.setAdmin(false);
+        token = JwtUtil.createJwt(user);
+        admin.setEmail(email);
+        admin.setNickname(user.getNickname());
+        admin.setAdmin(true);
+        adminToken = JwtUtil.createJwt(admin);
+    }
+    @Test
+    @DisplayName("测试已经注册的邮箱，会返回已经注册的提示信息")
+    public void testEmailInUse () throws Exception {
+        when(userService.checkEmail(anyString())).thenReturn(false);
+        ResultActions perform = mockMvc.perform(get("/user/check").param("email", email));
+        perform.andExpect(status().isOk());
+        perform.andExpect(jsonPath("$.code").value(ResultEnum.EMAIL_IN_USE.getCode()));
+        perform.andExpect(jsonPath("$.message" ).value(ResultEnum.EMAIL_IN_USE.getMessage()));
+        verify(userService).checkEmail(anyString());
+    }
+    @Test
+    @DisplayName("测试未注册的邮箱，会返回已经注册的提示信息")
+    public void testNewEmailInUse () throws Exception {
+        when(userService.checkEmail(anyString())).thenReturn(true);
+        ResultActions perform = mockMvc.perform(get("/user/check").param("email", newEmail));
+        perform.andExpect(status().isOk());
+        perform.andExpect(jsonPath("$.code").value(0));
+        verify(userService).checkEmail(anyString());
+    }
+    @Test
+    @DisplayName("测试注册")
+    public void testRegister() throws Exception {
+
+    }
+//    @GetMapping("/myOrders")
+//    public ResultEntity findMyOrders(){
+//        String email = getEmail();
+//        Set<Order> orderList = userService.findMyOrders(email);
+//        return ResultEntity.succeed(orderList);
+//    }
+//    @PostMapping("/register")
+//    @LoginRequired(value = false)
+//    public ResultEntity register(@Validated @RequestBody UserRegisterRequest request, BindingResult result){
+//        ParamUtil.verifyParam(result);
+//        userService.register(request);
+//        return ResultEntity.succeed();
+//    }
+//    @PostMapping("/logout")
+//    public ResultEntity logout() {
+//        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+//        String token = request.getHeader("user_token");
+//        userService.logout(token);
+//        return ResultEntity.succeed();
+//    }
+//    @PostMapping("/login")
+//    @LoginRequired(value = false)
+//    public ResultEntity login(@RequestBody @Valid UserLoginRequest request, BindingResult result){
+//        ParamUtil.verifyParam(result);
+//        Map<String, String> map = userService.login(request);
+//        return ResultEntity.succeed(map);
+//    }
+//    @PostMapping("/modifyNickname")
+//    public ResultEntity modifyNickname(@RequestParam String nickname){
+//        userService.modifyNickname(getEmail(), nickname);
+//        return ResultEntity.succeed();
+//    }
+//    @PostMapping("/uploadProfile")
+//    public ResultEntity uploadProfile(@RequestParam MultipartFile file){
+//        String url = userService.uploadProfile(getEmail(), file);
+//        return ResultEntity.succeed(url);
+//    }
+//    @PostMapping("/modifyPassword")
+//    public ResultEntity modifyPassword(@RequestParam String password, @RequestParam String code){
+//        userService.modifyPassword(getEmail(), password, code);
+//        return ResultEntity.succeed();
+//    }
+//    @GetMapping("/sendCode")
+//    @LoginRequired(value = false)
+//    public ResultEntity sendCode(@RequestParam String email){
+//        userService.sendCode(email);
+//        return ResultEntity.succeed();
+//    }
+//    @GetMapping("/findAllUsers")
+//    @AdminOnly
+//    public ResultEntity findAllUsers(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size){
+//        PageInfo<User> list = userService.findAllUsers(page, size);
+//        return ResultEntity.succeed(list);
+//    }
+//    //更多个性化搜索
+//    @GetMapping("/findAllDisabledUsers")
+//    @AdminOnly
+//    public ResultEntity findAllDisabledUsers(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size){
+//        PageInfo<User> list = userService.findAllDisabledUsers(page, size);
+//        return ResultEntity.succeed(list);
+//    }
 //
-//import com.alibaba.fastjson.JSON;
-//import com.ecnu.domain.User;
-//import com.ecnu.dto.UserLoginRequest;
-//import com.ecnu.dto.UserRegisterRequest;
-//import com.ecnu.service.UserService;
-//import com.ecnu.utils.JwtUtil;
-//import com.ecnu.vo.ResultEntity;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-//import org.springframework.boot.test.mock.mockito.MockBean;
-//import org.springframework.http.MediaType;
-//import org.springframework.test.web.servlet.MockMvc;
-//import org.springframework.test.web.servlet.MvcResult;
+//    @PostMapping("/disableAccount")
+//    @AdminOnly
+//    public ResultEntity disableAccount(@RequestParam String userId){
+//        userService.disableAccount(userId);
+//        return ResultEntity.succeed();
+//    }
 //
-//import java.util.Map;
+//    @PostMapping("/enableAccount")
+//    @AdminOnly
+//    public ResultEntity enableAccount(@RequestParam String userId){
+//        userService.enableAccount(userId);
+//        return ResultEntity.succeed();
+//    }
 //
-//import static org.junit.jupiter.api.Assertions.assertEquals;
-//import static org.junit.jupiter.api.Assertions.assertTrue;
-//import static org.mockito.ArgumentMatchers.anyString;
-//import static org.mockito.Mockito.when;
-//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-//
-///**
-// * @author onion
-// * @date 2019/12/13 -6:17 下午
-// */
-//@WebMvcTest(value = UserController.class)
-//public class UserControllerTest {
-//    @Autowired
-//    private MockMvc mockMvc;
-//    @MockBean
-//    private UserService userService;
-//
-//    User user;
-//    String token;
-//    @BeforeEach
-//    public void generateToken(){
-//        user = new User();
-//        user.setEmail("969023014@qq.com");
-//        user.setNickname("onion");
-//        user.setAdmin(false);
-//        token = JwtUtil.createJwt(user);
+//    @PostMapping("/updateCredit")
+//    @AdminOnly
+//    public ResultEntity updateCredit(@RequestParam String userId, @RequestParam Integer credit){
+//        userService.updateCredit(userId, credit);
+//        return ResultEntity.succeed();
 //    }
-//    @Test
-//    public void testCheckExistEmail() throws Exception{
-//        when(userService.checkEmail(anyString())).thenReturn(false);
-//        MvcResult mvcResult = mockMvc.perform(get("/user/check").param("email", "969023014@qq.com")).andReturn();
-//        ResultEntity result = JSON.parseObject(mvcResult.getResponse().getContentAsByteArray(), ResultEntity.class);
-//        assertEquals(1001, result.getCode());
-//    }
-//    @Test
-//    public void testCheckNotExistEmail() throws Exception{
-//        when(userService.checkEmail(anyString())).thenReturn(true);
-//        MvcResult mvcResult = mockMvc.perform(get("/user/check").param("email", "96902301@qq.com")).andReturn();
-//        ResultEntity result = JSON.parseObject(mvcResult.getResponse().getContentAsByteArray(), ResultEntity.class);
-//        assertEquals(0, result.getCode());
-//    }
-//    @Test
-//    public void testRightRegister() throws Exception{
-//        UserRegisterRequest request = new UserRegisterRequest();
-//        request.setCode("123456");
-//        request.setEmail("969023014@qq.com");
-//        request.setNickname("Onion");
-//        request.setPassword("123456");
-//        String content = JSON.toJSONString(request);
-//        MvcResult mvcResult = mockMvc.perform(post("/user/register").contentType(MediaType.APPLICATION_JSON).content(content)).andReturn();
-//        ResultEntity result = JSON.parseObject(mvcResult.getResponse().getContentAsByteArray(), ResultEntity.class);
-//        assertEquals(0, result.getCode());
-//    }
-//    @Test
-//    public void testRegister() throws Exception{
-//        UserRegisterRequest request = new UserRegisterRequest();
-//        request.setCode("123456");
-//        request.setEmail("969023014@qq.com");
-//        request.setNickname("Onion");
-//        request.setPassword("123456");
-//        String content = JSON.toJSONString(request);
-//        MvcResult mvcResult = mockMvc.perform(post("/user/register").contentType(MediaType.APPLICATION_JSON).content(content)).andReturn();
-//        ResultEntity result = JSON.parseObject(mvcResult.getResponse().getContentAsByteArray(), ResultEntity.class);
-//        assertEquals(0, result.getCode());
-//    }
-//    @Test
-//    public void testLogin() throws Exception{
-//        UserLoginRequest request = new UserLoginRequest();
-//        request.setEmail("969023014@qq.com");
-//        request.setPassword("123456");
-//        String content = JSON.toJSONString(request);
-//        MvcResult mvcResult = mockMvc.perform(post("/user/login").contentType(MediaType.APPLICATION_JSON).content(content)).andReturn();
-//        ResultEntity result = JSON.parseObject(mvcResult.getResponse().getContentAsByteArray(), ResultEntity.class);
-//        assertEquals(result.getCode(), 0);
-//        assertTrue(result.getData() instanceof Map);
-//    }
-//    @Test
-//    public void testModifyNickname() throws Exception{
-////        MvcResult mvcResult = mockMvc.perform(post("/user/modifyNickname")
-////                .param("token", "token")
-////                .param("nickname", "mushroom")).andReturn();
-////        ResultEntity result = JSON.parseObject(mvcResult.getResponse().getContentAsByteArray(), ResultEntity.class);
-////        assertEquals(-1, result.getCode());
-//         MvcResult mvcResult = mockMvc.perform(post("/user/modifyNickname")
-//                .param("nickname", "mushroom").header("user_token",token)).andReturn();
-//        ResultEntity result = JSON.parseObject(mvcResult.getResponse().getContentAsByteArray(), ResultEntity.class);
-//        System.out.println(token);
-//        assertEquals(0,result.getCode());
-//    }
-//    // sth wrong! how to test it?
-//    @Test
-//    public void testUploadProfile() throws Exception {
-////        when(userService.uploadProfile(anyString(), any())).thenReturn();
-//        MvcResult mvcResult = mockMvc.perform(multipart("/uploadProfile").file("file", "123".getBytes())).andReturn();
-//        ResultEntity result = JSON.parseObject(mvcResult.getResponse().getContentAsByteArray(), ResultEntity.class);
-//        assertEquals(0, result.getCode());
-//    }
-//    @Test
-//    public void testModifyPassword() throws Exception {
-//        MvcResult mvcResult = mockMvc.perform(post("/user/modifyPassword")
-//                .param("password","654321")
-//                .param("code", "969023").header("user_token", token)).andReturn();
-//        ResultEntity result = JSON.parseObject(mvcResult.getResponse().getContentAsByteArray(), ResultEntity.class);
-//        assertEquals(0, result.getCode());
-//    }
-//    @Test
-//    public void testSendCode() throws Exception{
-//        MvcResult mvcResult = mockMvc.perform(get("/user/sendCode").param("email", "969023014@qq.com")).andReturn();
-//        ResultEntity result = JSON.parseObject(mvcResult.getResponse().getContentAsByteArray(), ResultEntity.class);
-//        assertEquals(0, result.getCode());
-//    }
-//    @Test
-//    public void testFindAllUsers() throws Exception{
-//        MvcResult mvcResult = mockMvc.perform(get("/user/findAllUsers")).andReturn();
-//        ResultEntity result = JSON.parseObject(mvcResult.getResponse().getContentAsByteArray(), ResultEntity.class);
-//        assertEquals(0, result.getCode());
-//    }
-//    @Test
-//    public void testFindAllDisabledUsers() throws Exception {
-//        MvcResult mvcResult = mockMvc.perform(get("/user/findAllDisabledUsers")).andReturn();
-//        ResultEntity result = JSON.parseObject(mvcResult.getResponse().getContentAsByteArray(), ResultEntity.class);
-//        assertEquals(0, result.getCode());
-//    }
-//    @Test
-//    public void testDisableAccount() throws Exception {
-//        MvcResult mvcResult = mockMvc.perform(post("/user/disabledAccount").param("userId","969023014@qq.com").header("user_token",token)).andReturn();
-//        ResultEntity result = JSON.parseObject(mvcResult.getResponse().getContentAsByteArray(), ResultEntity.class);
-//        assertEquals(0, result.getCode());
-//    }
-////    @PutMapping("/uploadProfile")
-////    public ResultEntity uploadProfile(@RequestParam String token, @RequestParam MultipartFile file){
-////        Claims claims = JwtUtil.parseJwt(token);
-////        String id = claims.getId();
-////        userService.uploadProfile(id, file);
-////        return ResultEntity.succeed();
-////    }
-////
-////    @DeleteMapping("/disableAccount")
-////    @AdminOnly
-////    public ResultEntity disableAccount(@RequestParam String userId){
-////        userService.disableAccount(userId);
-////        return ResultEntity.succeed();
-////    }
-////
-////    @PutMapping("/enableAccount")
-////    @AdminOnly
-////    public ResultEntity enableAccount(@RequestParam String userId){
-////        userService.enableAccount(userId);
-////        return ResultEntity.succeed();
-////    }
-////
-////    @PutMapping("/updateCredit")
-////    @AdminOnly
-////    public ResultEntity updateCredit(@RequestParam String userId, @RequestParam Integer credit){
-////        userService.updateCredit(userId, credit);
-////        return ResultEntity.succeed();
-////    }
-//
-//}
+}

@@ -97,6 +97,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void logout(String token) {
+        redisTemplate.delete(token);
+    }
+
+    @Override
     public Map<String, String> login(UserLoginRequest request) {
         String email = request.getEmail();
         String password = request.getPassword();
@@ -114,6 +119,7 @@ public class UserServiceImpl implements UserService {
         }
         Map <String, String> map = new HashMap<>();
         String token = JwtUtil.createJwt(user);
+        redisTemplate.opsForValue().set(token, user.getEmail());
         String nickname = user.getNickname();
         map.put("token", token);
         map.put("nickname", nickname);
@@ -233,6 +239,8 @@ public class UserServiceImpl implements UserService {
         Optional<User> optional = userDao.findById(id);
         return optional.map(User::getOrderSet).orElse(null);
     }
+
+
 
     @Override
     public void updateCredit(String email, Integer credit) {
