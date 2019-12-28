@@ -80,6 +80,7 @@ public class NewsServiceImpl implements NewsService {
         Claims claims = JwtUtil.parseJwt(token);
         String nickname = (String) claims.get("nickname");
         News news = new News();
+        news.setTitle(newsRequest.getTitle());
         news.setNewsId(KeyUtil.genUniqueKey());
         news.setNickname(nickname);
         news.setEmail(claims.getId());
@@ -92,6 +93,7 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public void updateNews(NewsRequest newsRequest) {
         News news = new News();
+        news.setTitle(newsRequest.getTitle());
         news.setNewsId(newsRequest.getNewsId());
         news.setUpdateTime(LocalDateTime.now());
         news.setContent(newsRequest.getContent());

@@ -12,11 +12,11 @@ import javax.validation.constraints.Size;
  */
 @Data
 public class UserRegisterRequest {
-    @Email
+    @Email(message = "请输入合法邮箱")
     private String email;
-    @NotEmpty
+    @NotEmpty(message = "密码不能为空")
     private String password;
-    @NotEmpty
+    @NotEmpty(message = "字符在1-20个之间")
     @Size(min = 1, max = 20)
     private String nickname;
     @Size(min = 6, max = 6)
