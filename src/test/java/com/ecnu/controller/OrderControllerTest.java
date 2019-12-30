@@ -7,16 +7,15 @@ import com.ecnu.dto.OrderCommentRequest;
 import com.ecnu.dto.OrderRequest;
 import com.ecnu.service.OrderService;
 import com.ecnu.utils.JwtUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -32,17 +31,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @date 2019/12/26 -2:01 下午
  */
 @SpringBootTest
-@RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
 public class OrderControllerTest {
     @Autowired
     private MockMvc mockMvc;
+
     @MockBean
     private OrderService orderService;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     private String token;
     private String adminToken;
-    @Before
+    @BeforeEach
     public void init(){
         User user = new User();
         User admin = new User();
@@ -54,6 +55,8 @@ public class OrderControllerTest {
         admin.setNickname(user.getNickname());
         admin.setAdmin(true);
         adminToken = JwtUtil.createJwt(admin);
+        redisTemplate.opsForValue().set(token, user.getEmail());
+        redisTemplate.opsForValue().set(adminToken, admin.getEmail());
     }
     @Test
     @DisplayName("用户查看可以预约的时间")

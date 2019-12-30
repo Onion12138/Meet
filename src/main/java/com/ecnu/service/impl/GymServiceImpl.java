@@ -78,22 +78,18 @@ public class GymServiceImpl implements GymService {
     public Map<String, Object> findScore(String gymId) {
         Gym gym = gymDao.findById(gymId).get();
         Set<Order> orderSet = gym.getOrderSet();
+        Map<String, Object> map = new HashMap<>();
+        if (orderSet == null) {
+            map.put("score", 0);
+            map.put("comment", "暂无订单和评论");
+            return map;
+        }
         int sum = orderSet.stream().map(Order::getScore).reduce(Integer::sum).get();
         List<String> comments = orderSet.stream().map(Order::getComment).collect(Collectors.toList());
-        Map<String, Object> map = new HashMap<>();
-        map.put("score",sum / (double) orderSet.size());
-        map.put("comment",comments);
+        map.put("score", sum / (double) orderSet.size());
+        map.put("comment", comments);
         return map;
     }
-
-//    @Override
-//    public List<Integer> findAvailableTime(AvailableTimeRequest request) {
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-//        LocalDate localDate = LocalDate.parse(request.getDate(), formatter);
-//        request.getGymId();
-//        return null;
-//    }
-
 
     @Override
     public void addGym(Gym gym) {

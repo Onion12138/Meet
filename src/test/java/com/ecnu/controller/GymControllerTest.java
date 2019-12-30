@@ -7,16 +7,15 @@ import com.ecnu.dto.GymFilterRequest;
 import com.ecnu.enums.ResultEnum;
 import com.ecnu.service.GymService;
 import com.ecnu.utils.JwtUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -33,17 +32,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @date 2019/12/25 -9:55 下午
  */
 @SpringBootTest
-@RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
 public class GymControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
     private GymService gymService;
-
+    @Autowired
+    private StringRedisTemplate redisTemplate;
     private String token;
     private String adminToken;
-    @Before
+    @BeforeEach
     public void init(){
         User user = new User();
         User admin = new User();
@@ -55,7 +54,8 @@ public class GymControllerTest {
         admin.setNickname(user.getNickname());
         admin.setAdmin(true);
         adminToken = JwtUtil.createJwt(admin);
-
+        redisTemplate.opsForValue().set(token, user.getEmail());
+        redisTemplate.opsForValue().set(adminToken, admin.getEmail());
     }
 
     @Test

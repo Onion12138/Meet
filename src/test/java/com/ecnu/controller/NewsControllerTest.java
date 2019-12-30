@@ -6,16 +6,15 @@ import com.ecnu.dto.CommentRequest;
 import com.ecnu.dto.NewsRequest;
 import com.ecnu.service.NewsService;
 import com.ecnu.utils.JwtUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -32,17 +31,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * 删除接口、异常情况暂未测试
  */
 @SpringBootTest
-@RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
 public class NewsControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
     private NewsService newsService;
-
+    @Autowired
+    private StringRedisTemplate redisTemplate;
     private String token;
     private String adminToken;
-    @Before
+    @BeforeEach
     public void init(){
         User user = new User();
         User admin = new User();
@@ -54,7 +53,8 @@ public class NewsControllerTest {
         admin.setNickname(user.getNickname());
         admin.setAdmin(true);
         adminToken = JwtUtil.createJwt(admin);
-
+        redisTemplate.opsForValue().set(token, user.getEmail());
+        redisTemplate.opsForValue().set(adminToken, admin.getEmail());
     }
     @Test
     @DisplayName("用户登陆后查看所有的新闻")
