@@ -235,8 +235,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Set<Order> findMyOrders(String id) {
-        Optional<User> optional = userDao.findById(id);
+    public Set<Order> findUserOrders(String email) {
+        Optional<User> optional = userDao.findById(email);
         return optional.map(User::getOrderSet).orElse(null);
     }
 

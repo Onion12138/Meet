@@ -39,7 +39,7 @@ public interface UserService {
 
     PageInfo<User> findAllDisabledUsers(Integer page, Integer size);
 
-    Set<Order> findMyOrders(String id);
+    Set<Order> findUserOrders(String email);
 
     void logout(String token);
 }

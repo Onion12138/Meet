@@ -2,6 +2,7 @@ package com.ecnu.controller;
 
 import com.ecnu.annotation.AdminOnly;
 import com.ecnu.annotation.LoginRequired;
+import com.ecnu.domain.Order;
 import com.ecnu.domain.User;
 import com.ecnu.dto.UserLoginRequest;
 import com.ecnu.dto.UserRegisterRequest;
@@ -23,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author onion
@@ -55,13 +57,16 @@ public class UserController {
             return ResultEntity.fail(ResultEnum.EMAIL_IN_USE);
         }
     }
-    /* 不需要了？Order里面有
-    @GetMapping("/myOrders")
-    public ResultEntity findMyOrders(){
-        String email = getEmail();
-        Set<Order> orderList = userService.findMyOrders(email);
+    /*
+    * 只提供给管理员使用，用户查看自己的订单在OrderController里面有接口。
+    * 场景：管理员先是查看所有的用户，点击具体用户后可以查看其订单情况。
+    * */
+    @AdminOnly
+    @GetMapping("/UserOrders")
+    public ResultEntity findMyOrders(@RequestParam String email){
+        Set<Order> orderList = userService.findUserOrders(email);
         return ResultEntity.succeed(orderList);
-    }*/
+    }
     @PostMapping("/register")
     @LoginRequired(value = false)
     public ResultEntity register(@Validated @RequestBody UserRegisterRequest request, BindingResult result){
