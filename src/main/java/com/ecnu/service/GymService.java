@@ -13,9 +13,9 @@ import java.util.Map;
 public interface GymService {
     PageInfo<Gym> findAllGyms(Integer page, Integer size);
 
-    void addGym(Gym gym);
+    Gym addGym(Gym gym);
 
-    void updateGym(Gym gym);
+    Gym updateGym(Gym gym);
 
     void deleteGym(String gymId);
 

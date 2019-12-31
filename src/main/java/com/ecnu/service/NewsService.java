@@ -1,6 +1,7 @@
 package com.ecnu.service;
 
 import com.ecnu.domain.News;
+import com.ecnu.domain.NewsComment;
 import com.ecnu.request.CommentRequest;
 import com.ecnu.request.NewsRequest;
 import com.github.pagehelper.PageInfo;
@@ -14,13 +15,13 @@ public interface NewsService {
 
     PageInfo<News> findTodayNews(Integer page, Integer size);
 
-    void addComment(CommentRequest request, String token);
+    NewsComment addComment(CommentRequest request, String token);
 
     void deleteComment(String commentId);
 
-    void addNews(NewsRequest newsRequest, String token);
+    News addNews(NewsRequest newsRequest, String token);
 
-    void updateNews(NewsRequest newsRequest);
+    News updateNews(NewsRequest newsRequest);
 
     void deleteNews(String newsId);
 

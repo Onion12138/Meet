@@ -58,7 +58,7 @@ public class NewsServiceImpl implements NewsService {
         return newsDao.findById(newsId).get();
     }
     @Override
-    public void addComment(CommentRequest request, String token) {
+    public NewsComment addComment(CommentRequest request, String token) {
         Claims claims = JwtUtil.parseJwt(token);
         String userId = claims.getId();
         NewsComment comment = new NewsComment();
@@ -69,6 +69,7 @@ public class NewsServiceImpl implements NewsService {
         comment.setContent(request.getContent());
         comment.setNickname((String)claims.get("nickname"));
         commentMapper.insert(comment);
+        return comment;
     }
 
     @Override
@@ -76,7 +77,7 @@ public class NewsServiceImpl implements NewsService {
         commentMapper.deleteByPrimaryKey(commentId);
     }
     @Override
-    public void addNews(NewsRequest newsRequest, String token) {
+    public News addNews(NewsRequest newsRequest, String token) {
         Claims claims = JwtUtil.parseJwt(token);
         String nickname = (String) claims.get("nickname");
         News news = new News();
@@ -88,16 +89,18 @@ public class NewsServiceImpl implements NewsService {
         news.setUpdateTime(LocalDateTime.now());
         news.setContent(newsRequest.getContent());
         newsMapper.insert(news);
+        return news;
     }
 
     @Override
-    public void updateNews(NewsRequest newsRequest) {
+    public News updateNews(NewsRequest newsRequest) {
         News news = new News();
         news.setTitle(newsRequest.getTitle());
         news.setNewsId(newsRequest.getNewsId());
         news.setUpdateTime(LocalDateTime.now());
         news.setContent(newsRequest.getContent());
         newsMapper.updateByPrimaryKeySelective(news);
+        return newsMapper.selectOne(news);
     }
     @Override
     public void deleteNews(String newsId) {

@@ -75,8 +75,8 @@ public class GymController {
     @PostMapping("/addGym")
     @AdminOnly
     public ResultVO addGym(@RequestBody Gym gym){
-        gymService.addGym(gym);
-        return ResultVO.succeed();
+        gym = gymService.addGym(gym);
+        return ResultVO.succeed(gym);
     }
     /*
     * 更新场馆信息
@@ -85,8 +85,8 @@ public class GymController {
     @PostMapping("/updateGym")
     @AdminOnly
     public ResultVO updateGym(@RequestBody Gym gym){
-        gymService.updateGym(gym);
-        return ResultVO.succeed();
+        gym = gymService.updateGym(gym);
+        return ResultVO.succeed(gym);
     }
     /*
     * 逻辑删除，把open置为false

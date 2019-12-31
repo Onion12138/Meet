@@ -92,15 +92,17 @@ public class GymServiceImpl implements GymService {
     }
 
     @Override
-    public void addGym(Gym gym) {
+    public Gym addGym(Gym gym) {
         gym.setGymId(KeyUtil.genUniqueKey());
         gym.setOpen(true);
         gymMapper.insert(gym);
+        return gym;
     }
 
     @Override
-    public void updateGym(Gym gym) {
+    public Gym updateGym(Gym gym) {
         gymMapper.updateByPrimaryKeySelective(gym);
+        return gymMapper.selectOne(gym);
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.ecnu.controller;
 
 import com.ecnu.annotation.AdminOnly;
 import com.ecnu.domain.News;
+import com.ecnu.domain.NewsComment;
 import com.ecnu.request.CommentRequest;
 import com.ecnu.request.NewsRequest;
 import com.ecnu.service.NewsService;
@@ -69,8 +70,8 @@ public class NewsController {
         ParamUtil.verifyParam(result);
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String token = request.getHeader("user_token");
-        newsService.addComment(commentRequest, token);
-        return ResultVO.succeed();
+        NewsComment newsComment = newsService.addComment(commentRequest, token);
+        return ResultVO.succeed(newsComment);
     }
     /*
     * 没有提供修改评论的接口，类似微信，只能删除和添加
@@ -97,8 +98,8 @@ public class NewsController {
         ParamUtil.verifyParam(result);
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String token = request.getHeader("user_token");
-        newsService.addNews(newsRequest, token);
-        return ResultVO.succeed();
+        News news = newsService.addNews(newsRequest, token);
+        return ResultVO.succeed(news);
     }
     /*
     * 见上一条
@@ -107,8 +108,8 @@ public class NewsController {
     @AdminOnly
     public ResultVO updateNews(@Validated @RequestBody NewsRequest newsRequest, BindingResult result){
         ParamUtil.verifyParam(result);
-        newsService.updateNews(newsRequest);
-        return ResultVO.succeed();
+        News news = newsService.updateNews(newsRequest);
+        return ResultVO.succeed(news);
     }
     /*
     * 慎用！会导致级联删除
