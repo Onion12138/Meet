@@ -3,6 +3,7 @@ package com.ecnu.controller;
 import com.ecnu.dao.UserDao;
 import com.ecnu.domain.Gym;
 import com.ecnu.domain.User;
+import com.ecnu.request.GymFilterRequest;
 import com.ecnu.utils.JwtUtil;
 import com.ecnu.vo.ResultVO;
 import com.github.pagehelper.PageInfo;
@@ -105,6 +106,77 @@ public class IntegrationTestForGymController {
         );
 
     }
+
+    @Test
+    @DisplayName("测试通过模糊查找查看所有的场馆，需要登陆")
+    @Transactional
+    public void testKeywords() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForUser);
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("page",1);
+        map.put("size",5);
+        map.put("keyword","乒乓球");
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.exchange(
+                REQUEST_MAPPING + "/keyword?page={page}&size={size}&keyword={keyword}",
+                HttpMethod.GET,
+                entity,
+                ResultVO.class,
+                map
+        );
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> {
+                    assert result != null;
+                    assertEquals(0,result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                    assertEquals(1,((LinkedHashMap) result.getData()).get("pageNum"));
+                    assertEquals(5,((LinkedHashMap) result.getData()).get("pageSize"));
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("测试通过过滤器高级查找来查看所有的场馆，需要登陆")
+    @Transactional
+    public void testFilter() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForUser);
+
+        Map<String,Integer> map = new HashMap<>();
+        map.put("page",1);
+        map.put("size",5);
+        GymFilterRequest request = GymFilterRequest.builder()
+                .address("大学生活动中心一楼")
+                .highToLow(true)
+                .openOnly(true)
+                .type("乒乓球")
+                .build();
+        HttpEntity<GymFilterRequest> entity = new HttpEntity<>(request,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.exchange(
+                REQUEST_MAPPING + "/filter?page={page}&size={size}",
+                HttpMethod.POST,
+                entity,
+                ResultVO.class,
+                map
+        );
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> {
+                    assert result != null;
+                    assertEquals(0,result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                    assertEquals(1,((LinkedHashMap) result.getData()).get("pageNum"));
+                    assertEquals(5,((LinkedHashMap) result.getData()).get("pageSize"));
+                }
+        );
+    }
+
+
 
 
 
