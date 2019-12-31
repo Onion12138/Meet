@@ -88,6 +88,7 @@ public class NewsServiceImpl implements NewsService {
         comment.setEmail(userId);
         comment.setCommentNewsId(request.getNewsId());
         comment.setProfile(request.getProfile());
+        comment.setPublishTime(LocalDateTime.now());
         comment.setParentName(request.getParentName());
         comment.setParentId(request.getParentId());
         comment.setContent(request.getContent());
