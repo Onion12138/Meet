@@ -16,6 +16,7 @@ import com.github.pagehelper.PageInfo;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.time.LocalDate;
@@ -62,8 +63,8 @@ public class NewsServiceImpl implements NewsService {
             Set<NewsComment> commentSet = news.getCommentSet();
 //            List<NewsComment> orderList = new ArrayList<>();
             List<NewsComment> orderList = new LinkedList<>();
-            commentSet.stream().filter(e->e.getParentId() == null).sorted(Comparator.comparing(NewsComment::getPublishTime)).forEach(orderList::add);
-            commentSet.stream().filter(e->e.getParentId() != null).sorted(Comparator.comparing(NewsComment::getPublishTime)).forEach(e->{
+            commentSet.stream().filter(e->StringUtils.isEmpty(e.getParentId())).sorted(Comparator.comparing(NewsComment::getPublishTime)).forEach(orderList::add);
+            commentSet.stream().filter(e->!StringUtils.isEmpty(e.getParentId())).sorted(Comparator.comparing(NewsComment::getPublishTime)).forEach(e->{
                 for (int i = 0; i < orderList.size(); i++) {
                     if (e.getParentId().equals(orderList.get(i).getCommentId())) {
                         orderList.add(i + 1, e);
