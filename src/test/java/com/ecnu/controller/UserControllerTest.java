@@ -2,8 +2,8 @@ package com.ecnu.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.ecnu.domain.User;
-import com.ecnu.dto.UserLoginRequest;
-import com.ecnu.dto.UserRegisterRequest;
+import com.ecnu.request.UserLoginRequest;
+import com.ecnu.request.UserRegisterRequest;
 import com.ecnu.enums.ResultEnum;
 import com.ecnu.service.UserService;
 import com.ecnu.utils.JwtUtil;
@@ -79,11 +79,12 @@ public class UserControllerTest {
     @Test
     @DisplayName("测试注册")
     public void testRegister() throws Exception {
-        UserRegisterRequest request = new UserRegisterRequest();
-        request.setCode("123456");
-        request.setEmail(email);
-        request.setNickname("onion");
-        request.setPassword("123456");
+        UserRegisterRequest request = UserRegisterRequest.builder()
+                .code("123456")
+                .email(email)
+                .nickname("onion")
+                .password("123456")
+                .build();
         ResultActions perform = mockMvc.perform(post("/user/register").contentType(MediaType.APPLICATION_JSON).content(JSON.toJSONString(request)));
         perform.andExpect(status().isOk());
         perform.andExpect(jsonPath("$.code").value(0));
@@ -100,9 +101,7 @@ public class UserControllerTest {
     @Test
     @DisplayName("测试登录")
     public void testLogin() throws Exception {
-        UserLoginRequest request = new UserLoginRequest();
-        request.setEmail(email);
-        request.setPassword("123456");
+        UserLoginRequest request = new UserLoginRequest(email,"123456");
         ResultActions perform = mockMvc.perform(post("/user/login").contentType(MediaType.APPLICATION_JSON).content(JSON.toJSONString(request)));
         perform.andExpect(status().isOk());
         perform.andExpect(jsonPath("$.code").value(0));

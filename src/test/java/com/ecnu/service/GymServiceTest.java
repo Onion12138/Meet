@@ -4,7 +4,7 @@ import com.ecnu.dao.GymDao;
 import com.ecnu.dao.GymMapper;
 import com.ecnu.domain.Gym;
 import com.ecnu.domain.Order;
-import com.ecnu.dto.GymFilterRequest;
+import com.ecnu.request.GymFilterRequest;
 import com.ecnu.service.impl.GymServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

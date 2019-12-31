@@ -2,8 +2,8 @@ package com.ecnu.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.ecnu.domain.User;
-import com.ecnu.dto.CommentRequest;
-import com.ecnu.dto.NewsRequest;
+import com.ecnu.request.CommentRequest;
+import com.ecnu.request.NewsRequest;
 import com.ecnu.service.NewsService;
 import com.ecnu.utils.JwtUtil;
 import org.junit.jupiter.api.Test;

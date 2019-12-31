@@ -1,7 +1,7 @@
 package com.ecnu;
 
 import com.alibaba.fastjson.JSON;
-import com.ecnu.dto.OrderRequest;
+import com.ecnu.request.OrderRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

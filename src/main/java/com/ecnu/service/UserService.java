@@ -2,8 +2,8 @@ package com.ecnu.service;
 
 import com.ecnu.domain.Order;
 import com.ecnu.domain.User;
-import com.ecnu.dto.UserLoginRequest;
-import com.ecnu.dto.UserRegisterRequest;
+import com.ecnu.request.UserLoginRequest;
+import com.ecnu.request.UserRegisterRequest;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.multipart.MultipartFile;
 

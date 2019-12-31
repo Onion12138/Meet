@@ -2,13 +2,13 @@ package com.ecnu.controller;
 
 import com.ecnu.annotation.AdminOnly;
 import com.ecnu.domain.Order;
-import com.ecnu.dto.AvailableTimeRequest;
-import com.ecnu.dto.OrderCommentRequest;
-import com.ecnu.dto.OrderRequest;
+import com.ecnu.request.AvailableTimeRequest;
+import com.ecnu.request.OrderCommentRequest;
+import com.ecnu.request.OrderRequest;
 import com.ecnu.service.OrderService;
 import com.ecnu.utils.JwtUtil;
 import com.ecnu.utils.ParamUtil;
-import com.ecnu.vo.ResultEntity;
+import com.ecnu.vo.ResultVO;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -46,19 +46,19 @@ public class OrderController {
     * 该对象两个属性，一个为预约日期date，格式为字符串yyyy/MM/dd，一个为场馆gymId。两者缺一不可
      * */
     @PostMapping("/available")
-    public ResultEntity findAvailableTime(@Validated @RequestBody AvailableTimeRequest request, BindingResult result){
+    public ResultVO findAvailableTime(@Validated @RequestBody AvailableTimeRequest request, BindingResult result){
         ParamUtil.verifyParam(result);
         List<Integer[]> timeInterval = orderService.findAvailableTime(request);
-        return ResultEntity.succeed(timeInterval);
+        return ResultVO.succeed(timeInterval);
     }
     /*
     * 查看我取消的订单
     * */
     @GetMapping("/myCanceledOrder")
-    public ResultEntity findMyCanceledOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size) {
+    public ResultVO findMyCanceledOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size) {
         String email = getId();
         Page<Order> pageInfo = orderService.findMyCanceledOrder(email, page, size);
-        return ResultEntity.succeed(pageInfo);
+        return ResultVO.succeed(pageInfo);
     }
     /*
      * 查看我所有的订单，用的JPA查询，返回的Page和用PageHelper返回的PageInfo不太一样，注意！
@@ -66,39 +66,39 @@ public class OrderController {
      * 按照时间降序排列
      * */
     @GetMapping("/myOrder")
-    public ResultEntity findMyOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
+    public ResultVO findMyOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
         String email = getId();
         Page<Order> pageInfo = orderService.findOrderByEmail(email, page, size);
-        return ResultEntity.succeed(pageInfo);
+        return ResultVO.succeed(pageInfo);
     }
     /*
     * 查看我正在进行中的订单，数目很少
      */
     @GetMapping("/myCurrentOrder")
-    public ResultEntity findMyCurrentOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
+    public ResultVO findMyCurrentOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
         String id = getId();
         Page<Order> orderPageInfo = orderService.findMyCurrentOrders(id, page, size);
-        return ResultEntity.succeed(orderPageInfo);
+        return ResultVO.succeed(orderPageInfo);
     }
     /*
     * 查看我将来的订单，按照时间升序排列
     * */
 
     @GetMapping("/myFutureOrder")
-    public ResultEntity findMyFutureOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
+    public ResultVO findMyFutureOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
         String id = getId();
         Page<Order> orderPageInfo = orderService.findMyFutureOrders(id, page, size);
-        return ResultEntity.succeed(orderPageInfo);
+        return ResultVO.succeed(orderPageInfo);
     }
 
     /*
     * 查看过去的订单，按照时间降序排列
     * */
     @GetMapping("/myPastOrder")
-    public ResultEntity findMyPastOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size) {
+    public ResultVO findMyPastOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size) {
         String id = getId();
         Page<Order> orderPageInfo = orderService.findMyPastOrders(id, page, size);
-        return ResultEntity.succeed(orderPageInfo);
+        return ResultVO.succeed(orderPageInfo);
     }
     /*
     * 通过type查询我的订单
@@ -106,11 +106,11 @@ public class OrderController {
     * */
 
     @GetMapping("/myOrderByGym")
-    public ResultEntity findMyOrdersByGym(@RequestParam String type, @RequestParam(defaultValue = "1") Integer page,
-                                          @RequestParam(defaultValue = "5") Integer size){
+    public ResultVO findMyOrdersByGym(@RequestParam String type, @RequestParam(defaultValue = "1") Integer page,
+                                      @RequestParam(defaultValue = "5") Integer size){
         String id = getId();
         Page<Order> orderPageInfo = orderService.findMyOrdersByGym(id, type, page, size);
-        return ResultEntity.succeed(orderPageInfo);
+        return ResultVO.succeed(orderPageInfo);
     }
 
     /*
@@ -124,11 +124,11 @@ public class OrderController {
     * 调用下一个comment方法进行评价订单
     * */
     @PostMapping("/addOrder")
-    public ResultEntity addOrder(@Validated @RequestBody OrderRequest orderRequest, BindingResult result){
+    public ResultVO addOrder(@Validated @RequestBody OrderRequest orderRequest, BindingResult result){
         ParamUtil.verifyParam(result);
         String email = getId();
         orderService.addOrder(orderRequest, email);
-        return ResultEntity.succeed();
+        return ResultVO.succeed();
     }
     /*
     * 评价订单，仅限于对未评价的订单进行评价（通过valid字段判断，如果为false，则表示未评价）
@@ -140,19 +140,19 @@ public class OrderController {
     * */
 
     @PostMapping("/comment")
-    public ResultEntity commentOrder(@Validated @RequestBody OrderCommentRequest request, BindingResult result){
+    public ResultVO commentOrder(@Validated @RequestBody OrderCommentRequest request, BindingResult result){
         ParamUtil.verifyParam(result);
         orderService.commentOrder(request.getOrderId(), request.getScore(), request.getComment());
-        return ResultEntity.succeed();
+        return ResultVO.succeed();
     }
 
     /*
     * 取消订单
     * */
     @PostMapping("cancelMyOrder")
-    public ResultEntity cancelOrder(@RequestParam String orderId){
+    public ResultVO cancelOrder(@RequestParam String orderId){
         orderService.cancelOrder(orderId);
-        return ResultEntity.succeed();
+        return ResultVO.succeed();
     }
 
     /*
@@ -160,9 +160,9 @@ public class OrderController {
     * */
     @GetMapping("/allOrder")
     @AdminOnly
-    public ResultEntity findAllOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
+    public ResultVO findAllOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
         Page<Order> orderPageInfo = orderService.findAllOrders(page, size);
-        return ResultEntity.succeed(orderPageInfo);
+        return ResultVO.succeed(orderPageInfo);
     }
 
     /*
@@ -170,9 +170,9 @@ public class OrderController {
     * */
     @GetMapping("/currentOrder")
     @AdminOnly
-    public ResultEntity findAllCurrentOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
+    public ResultVO findAllCurrentOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
         Page<Order> orderPageInfo = orderService.findAllCurrentOrders(page, size);
-        return ResultEntity.succeed(orderPageInfo);
+        return ResultVO.succeed(orderPageInfo);
     }
 
     /*
@@ -180,9 +180,9 @@ public class OrderController {
     * */
     @GetMapping("/futureOrder")
     @AdminOnly
-    public ResultEntity findAllFutureOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
+    public ResultVO findAllFutureOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
         Page<Order> orderPageInfo = orderService.findAllFutureOrders(page, size);
-        return ResultEntity.succeed(orderPageInfo);
+        return ResultVO.succeed(orderPageInfo);
     }
 
     /*
@@ -190,9 +190,9 @@ public class OrderController {
      * */
     @GetMapping("/pastOrder")
     @AdminOnly
-    public ResultEntity findAllPastOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
+    public ResultVO findAllPastOrders(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
         Page<Order> orderPageInfo = orderService.findAllPastOrders(page, size);
-        return ResultEntity.succeed(orderPageInfo);
+        return ResultVO.succeed(orderPageInfo);
     }
 
     /*
@@ -201,10 +201,10 @@ public class OrderController {
     * */
     @GetMapping("/gymOrder")
     @AdminOnly
-    public ResultEntity findOrdersByGym(@RequestParam String type, @RequestParam(defaultValue = "1") Integer page,
-                                        @RequestParam(defaultValue = "5") Integer size){
+    public ResultVO findOrdersByGym(@RequestParam String type, @RequestParam(defaultValue = "1") Integer page,
+                                    @RequestParam(defaultValue = "5") Integer size){
         Page<Order> orderPageInfo = orderService.findAllOrdersByType(type, page, size);
-        return ResultEntity.succeed(orderPageInfo);
+        return ResultVO.succeed(orderPageInfo);
     }
 
     /*
@@ -212,24 +212,24 @@ public class OrderController {
     * */
     @GetMapping("/userOrder")
     @AdminOnly
-    public ResultEntity findOrdersByUser(@RequestParam String email,@RequestParam(defaultValue = "1") Integer page,
-                                         @RequestParam(defaultValue = "5") Integer size){
+    public ResultVO findOrdersByUser(@RequestParam String email, @RequestParam(defaultValue = "1") Integer page,
+                                     @RequestParam(defaultValue = "5") Integer size){
         Page<Order> orderPageInfo = orderService.findOrderByEmail(email, page, size);
-        return ResultEntity.succeed(orderPageInfo);
+        return ResultVO.succeed(orderPageInfo);
     }
 
     @GetMapping("/allCanceledOrder")
     @AdminOnly
-    public ResultEntity findAllCanceledOrders(@RequestParam(defaultValue = "1") Integer page,
-                                              @RequestParam(defaultValue = "5") Integer size) {
+    public ResultVO findAllCanceledOrders(@RequestParam(defaultValue = "1") Integer page,
+                                          @RequestParam(defaultValue = "5") Integer size) {
         Page<Order> orderPageInfo = orderService.findAllCanceledOrders(page, size);
-        return ResultEntity.succeed(orderPageInfo);
+        return ResultVO.succeed(orderPageInfo);
     }
 
 //    @PostMapping("/testOnly")
 //    @LoginRequired(value = false)
-//    public ResultEntity insertOrder(@RequestBody OrderRequest request){
+//    public ResultVO insertOrder(@RequestBody OrderRequest request){
 //        orderService.testInsert(request);
-//        return ResultEntity.succeed();
+//        return ResultVO.succeed();
 //    }
 }

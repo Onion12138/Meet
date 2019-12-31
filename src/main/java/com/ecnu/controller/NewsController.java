@@ -2,11 +2,11 @@ package com.ecnu.controller;
 
 import com.ecnu.annotation.AdminOnly;
 import com.ecnu.domain.News;
-import com.ecnu.dto.CommentRequest;
-import com.ecnu.dto.NewsRequest;
+import com.ecnu.request.CommentRequest;
+import com.ecnu.request.NewsRequest;
 import com.ecnu.service.NewsService;
 import com.ecnu.utils.ParamUtil;
-import com.ecnu.vo.ResultEntity;
+import com.ecnu.vo.ResultVO;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -31,17 +31,17 @@ public class NewsController {
     * 查看所有的news，不会返回news有关的NewsComment
     * */
     @GetMapping("/all")
-    public ResultEntity findAllNews(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
+    public ResultVO findAllNews(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
         PageInfo<News> newsPageInfo = newsService.findAllNews(page, size);
-        return ResultEntity.succeed(newsPageInfo);
+        return ResultVO.succeed(newsPageInfo);
     }
     /*
     * 查看今天的news，不会返回NewsComment
     * */
     @GetMapping("/today")
-    public ResultEntity findTodayNews(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
+    public ResultVO findTodayNews(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
         PageInfo<News> newsPageInfo = newsService.findTodayNews(page, size);
-        return ResultEntity.succeed(newsPageInfo);
+        return ResultVO.succeed(newsPageInfo);
     }
     /*
     * 查看某个news，会返回相关的评论
@@ -50,9 +50,9 @@ public class NewsController {
     * 目前这个API只是简单返回News，News里面有Comment的集合
     * */
     @GetMapping("/one")
-    public ResultEntity findOneNews(@RequestParam String newsId){
+    public ResultVO findOneNews(@RequestParam String newsId){
         News news = newsService.findOneNews(newsId);
-        return ResultEntity.succeed(news);
+        return ResultVO.succeed(news);
     }
     /*
      *  添加评论，如下
@@ -65,20 +65,20 @@ public class NewsController {
      * 参数校验失败，为什么？
      * */
     @PostMapping("/addComment")
-    public ResultEntity addComment(@RequestBody @Valid CommentRequest commentRequest, BindingResult result){
+    public ResultVO addComment(@RequestBody @Valid CommentRequest commentRequest, BindingResult result){
         ParamUtil.verifyParam(result);
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String token = request.getHeader("user_token");
         newsService.addComment(commentRequest, token);
-        return ResultEntity.succeed();
+        return ResultVO.succeed();
     }
     /*
     * 没有提供修改评论的接口，类似微信，只能删除和添加
     * */
     @PostMapping("/deleteComment")
-    public ResultEntity deleteComment(@RequestParam String commentId){
+    public ResultVO deleteComment(@RequestParam String commentId){
         newsService.deleteComment(commentId);
-        return ResultEntity.succeed();
+        return ResultVO.succeed();
     }
     /*
     * 还没有提供上传图片的接口。暂且就添加网络图片吧？
@@ -93,22 +93,22 @@ public class NewsController {
     * */
     @PostMapping("/addNews")
     @AdminOnly
-    public ResultEntity addNews(@Validated @RequestBody NewsRequest newsRequest, BindingResult result){
+    public ResultVO addNews(@Validated @RequestBody NewsRequest newsRequest, BindingResult result){
         ParamUtil.verifyParam(result);
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String token = request.getHeader("user_token");
         newsService.addNews(newsRequest, token);
-        return ResultEntity.succeed();
+        return ResultVO.succeed();
     }
     /*
     * 见上一条
     * */
     @PostMapping("/updateNews")
     @AdminOnly
-    public ResultEntity updateNews(@Validated @RequestBody NewsRequest newsRequest, BindingResult result){
+    public ResultVO updateNews(@Validated @RequestBody NewsRequest newsRequest, BindingResult result){
         ParamUtil.verifyParam(result);
         newsService.updateNews(newsRequest);
-        return ResultEntity.succeed();
+        return ResultVO.succeed();
     }
     /*
     * 慎用！会导致级联删除
@@ -116,8 +116,8 @@ public class NewsController {
     * */
     @PostMapping("/deleteNews")
     @AdminOnly
-    public ResultEntity deleteNews(@RequestParam String newsId){
+    public ResultVO deleteNews(@RequestParam String newsId){
         newsService.deleteNews(newsId);
-        return ResultEntity.succeed();
+        return ResultVO.succeed();
     }
 }

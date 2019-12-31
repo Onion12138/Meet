@@ -2,9 +2,9 @@ package com.ecnu.controller;
 
 import com.ecnu.annotation.AdminOnly;
 import com.ecnu.domain.Gym;
-import com.ecnu.dto.GymFilterRequest;
+import com.ecnu.request.GymFilterRequest;
 import com.ecnu.service.GymService;
-import com.ecnu.vo.ResultEntity;
+import com.ecnu.vo.ResultVO;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,17 +24,17 @@ public class GymController {
     * 查看所有的场馆
     * */
     @GetMapping("/allGyms")
-    public ResultEntity findAllGyms(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
+    public ResultVO findAllGyms(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size){
         PageInfo<Gym> gymPageInfo = gymService.findAllGyms(page, size);
-        return ResultEntity.succeed(gymPageInfo);
+        return ResultVO.succeed(gymPageInfo);
     }
     /*
     * 通过关键字查看，模糊匹配场馆的地址和名字
     * */
     @GetMapping("/keyword")
-    public ResultEntity findGymsByKeyword(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size, @RequestParam String keyword){
+    public ResultVO findGymsByKeyword(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size, @RequestParam String keyword){
         PageInfo<Gym> gyms = gymService.findGymsByKeyword(page, size, keyword);
-        return ResultEntity.succeed(gyms);
+        return ResultVO.succeed(gyms);
     }
 
     /*
@@ -46,9 +46,9 @@ public class GymController {
     * Boolean openOnly 意思为查询全部还是查询开放的场馆。（有的场馆可能被关闭了，open值为false）不能为空，一定有默认值，比如默认为查询全部;
     * */
     @PostMapping("/filter")
-    public ResultEntity findGymByFilter(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size, @RequestBody GymFilterRequest request){
+    public ResultVO findGymByFilter(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer size, @RequestBody GymFilterRequest request){
         PageInfo<Gym> gyms = gymService.findGymsByFilter(page, size, request);
-        return ResultEntity.succeed(gyms);
+        return ResultVO.succeed(gyms);
     }
     /*
     * 查看此场馆的评分和评价，返回一个map，里面有如下信息
@@ -56,9 +56,9 @@ public class GymController {
     * comment：评价内容，字符串类型
     * */
     @GetMapping("/score")
-    public ResultEntity findScore(@RequestParam String gymId){
+    public ResultVO findScore(@RequestParam String gymId){
         Map<String, Object> map = gymService.findScore(gymId);
-        return ResultEntity.succeed(map);
+        return ResultVO.succeed(map);
     }
 
     /*
@@ -74,9 +74,9 @@ public class GymController {
     * */
     @PostMapping("/addGym")
     @AdminOnly
-    public ResultEntity addGym(@RequestBody Gym gym){
+    public ResultVO addGym(@RequestBody Gym gym){
         gymService.addGym(gym);
-        return ResultEntity.succeed();
+        return ResultVO.succeed();
     }
     /*
     * 更新场馆信息
@@ -84,18 +84,18 @@ public class GymController {
     * */
     @PostMapping("/updateGym")
     @AdminOnly
-    public ResultEntity updateGym(@RequestBody Gym gym){
+    public ResultVO updateGym(@RequestBody Gym gym){
         gymService.updateGym(gym);
-        return ResultEntity.succeed();
+        return ResultVO.succeed();
     }
     /*
     * 逻辑删除，把open置为false
     * */
     @PostMapping("/deleteGym")
     @AdminOnly
-    public ResultEntity deleteGym(@RequestParam String gymId){
+    public ResultVO deleteGym(@RequestParam String gymId){
         gymService.deleteGym(gymId);
-        return ResultEntity.succeed();
+        return ResultVO.succeed();
     }
 
 }

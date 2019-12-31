@@ -1,8 +1,8 @@
 package com.ecnu.service;
 
 import com.ecnu.domain.Order;
-import com.ecnu.dto.AvailableTimeRequest;
-import com.ecnu.dto.OrderRequest;
+import com.ecnu.request.AvailableTimeRequest;
+import com.ecnu.request.OrderRequest;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

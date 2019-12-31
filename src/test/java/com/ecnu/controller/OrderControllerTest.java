@@ -2,9 +2,9 @@ package com.ecnu.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.ecnu.domain.User;
-import com.ecnu.dto.AvailableTimeRequest;
-import com.ecnu.dto.OrderCommentRequest;
-import com.ecnu.dto.OrderRequest;
+import com.ecnu.request.AvailableTimeRequest;
+import com.ecnu.request.OrderCommentRequest;
+import com.ecnu.request.OrderRequest;
 import com.ecnu.service.OrderService;
 import com.ecnu.utils.JwtUtil;
 import org.junit.jupiter.api.Test;

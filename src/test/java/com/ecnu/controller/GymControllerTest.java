@@ -3,7 +3,7 @@ package com.ecnu.controller;
 import com.alibaba.fastjson.JSON;
 import com.ecnu.domain.Gym;
 import com.ecnu.domain.User;
-import com.ecnu.dto.GymFilterRequest;
+import com.ecnu.request.GymFilterRequest;
 import com.ecnu.enums.ResultEnum;
 import com.ecnu.service.GymService;
 import com.ecnu.utils.JwtUtil;

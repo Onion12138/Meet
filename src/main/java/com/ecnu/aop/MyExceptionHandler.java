@@ -1,6 +1,6 @@
 package com.ecnu.aop;
 
-import com.ecnu.vo.ResultEntity;
+import com.ecnu.vo.ResultVO;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class MyExceptionHandler {
     @ExceptionHandler(value = Exception.class)
-    public ResultEntity exception(Exception e){
+    public ResultVO exception(Exception e){
         e.printStackTrace();
-        return ResultEntity.fail(e.getMessage());
+        return ResultVO.fail(e.getMessage());
     }
 }

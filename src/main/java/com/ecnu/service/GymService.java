@@ -1,7 +1,7 @@
 package com.ecnu.service;
 
 import com.ecnu.domain.Gym;
-import com.ecnu.dto.GymFilterRequest;
+import com.ecnu.request.GymFilterRequest;
 import com.github.pagehelper.PageInfo;
 
 import java.util.Map;
