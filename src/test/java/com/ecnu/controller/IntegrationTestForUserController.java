@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -72,11 +73,12 @@ public class IntegrationTestForUserController {
 
     @BeforeEach
     public void choseTestUserAndAdmin() {
-        testUser = userDao.getOne("leodpen@gmail.com");
-        log.info(testUser.getAdmin().toString());
-        admin = userDao.getOne("969023014@qq.com");
+        testUser = userDao.findById("leodpen@gmail.com").get();
+//        testUser.setAdmin(false);
+        admin = userDao.findById("969023014@qq.com").get();
+//        admin.setAdmin(true);
         tokenForUser = JwtUtil.createJwt(testUser);
-        log.info(tokenForUser);
+//        log.info(tokenForUser);
         tokenForAdmin = JwtUtil.createJwt(admin);
 
         redisTemplate.opsForValue().set(tokenForAdmin,admin.getEmail(),144, TimeUnit.SECONDS);
@@ -463,7 +465,12 @@ public class IntegrationTestForUserController {
         // 默认使用这个配置
         map.put("page",1);
         map.put("size",20);
-        ResponseEntity<ResultVO> response = restTemplate.getForEntity(REQUEST_MAPPING + "/findAllUsers?page={page}&size={size}", ResultVO.class, map);
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.exchange(REQUEST_MAPPING + "/findAllUsers?page={page}&size={size}",
+                HttpMethod.GET,
+                entity,
+                ResultVO.class,
+                map);
         ResultVO result = response.getBody();
         int statusCode = response.getStatusCode().value();
         assertAll(
@@ -472,8 +479,8 @@ public class IntegrationTestForUserController {
                     assert result != null;
                     assertEquals(0, result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
-                    assertEquals(1,((PageInfo)result.getData()).getPageNum());
-                    assertEquals(20,((PageInfo)result.getData()).getPageSize());
+                    assertEquals(1,((LinkedHashMap)result.getData()).get("pageNum"));
+                    assertEquals(20,((LinkedHashMap)result.getData()).get("pageSize"));
                 }
         );
     }
@@ -488,7 +495,12 @@ public class IntegrationTestForUserController {
         // 默认使用这个配置
         map.put("page",1);
         map.put("size",20);
-        ResponseEntity<ResultVO> response = restTemplate.getForEntity(REQUEST_MAPPING + "/findAllDisabledUsers?page={page}&size={size}", ResultVO.class, map);
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.exchange(REQUEST_MAPPING + "/findAllDisabledUsers?page={page}&size={size}",
+                HttpMethod.GET,
+                entity,
+                ResultVO.class,
+                map);
         ResultVO result = response.getBody();
         int statusCode = response.getStatusCode().value();
         assertAll(
@@ -497,8 +509,8 @@ public class IntegrationTestForUserController {
                     assert result != null;
                     assertEquals(0, result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
-                    assertEquals(1,((PageInfo)result.getData()).getPageNum());
-                    assertEquals(20,((PageInfo)result.getData()).getPageSize());
+                    assertEquals(1,((LinkedHashMap) result.getData()).get("pageNum"));
+                    assertEquals(20,((LinkedHashMap) result.getData()).get("pageSize"));
                 }
         );
     }
@@ -565,6 +577,7 @@ public class IntegrationTestForUserController {
     // todo have some bugs which I haven't found yet here??
     @Test
     @DisplayName("更新信誉值")
+    @Transactional
     public void testUpdateCredit(){
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("user_token",tokenForAdmin);
