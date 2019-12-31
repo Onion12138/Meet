@@ -87,7 +87,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Page<Order> findMyOrdersByGym(String id, String type, Integer page, Integer size) {
+    public Page<Order> findMyOrdersByGym(String email, String type, Integer page, Integer size) {
 //        PageHelper.startPage(page,size);
 //        Example example = new Example(Order.class);
 //        Example.Criteria criteria = example.createCriteria();
@@ -97,7 +97,7 @@ public class OrderServiceImpl implements OrderService {
 //        return new PageInfo<>(orders);
         Sort sort = Sort.by("order_date").descending();
         PageRequest request = PageRequest.of(page - 1, size, sort);
-        return orderDao.findAllByUserEmailAndType(id, type, request);
+        return orderDao.findAllByUserEmailAndType(email, type, request);
     }
 
     @Override
@@ -130,7 +130,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Page<Order> findAllOrders(Integer page, Integer size) {
         Sort sort = Sort.by("orderDate").descending();
-        PageRequest request = PageRequest.of(page, size, sort);
+        PageRequest request = PageRequest.of(page - 1, size, sort);
         return orderDao.findAll(request);
     }
 
@@ -142,7 +142,7 @@ public class OrderServiceImpl implements OrderService {
 //        criteria.andLessThan("startTime", LocalDateTime.now());
 //        criteria.andGreaterThan("endTime", LocalDateTime.now());
 //        return new PageInfo<>(orderMapper.selectByExample(example));
-        PageRequest request = PageRequest.of(page, size);
+        PageRequest request = PageRequest.of(page - 1, size);
         return orderDao.findAllByStartTimeBeforeAndEndTimeAfter(LocalDateTime.now(), LocalDateTime.now(),request);
     }
 

@@ -37,7 +37,7 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public PageInfo<News> findAllNews(Integer page, Integer size) {
         PageHelper.startPage(page, size);
-        PageHelper.orderBy("update_time");
+        PageHelper.orderBy("update_time desc");
         List<News> news = newsMapper.selectAll();
         return new PageInfo<>(news);
     }
