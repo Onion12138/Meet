@@ -3,7 +3,6 @@ package com.ecnu.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -15,10 +14,24 @@ import java.time.LocalDateTime;
  */
 @Getter
 @Setter
-@ToString
 @Entity
 @Table(name = "comment")
 public class NewsComment implements Serializable {
+    @Override
+    public String toString() {
+        return "NewsComment{" +
+                "commentId='" + commentId + '\'' +
+                ", commentNewsId='" + commentNewsId + '\'' +
+                ", parentId='" + parentId + '\'' +
+                ", email='" + email + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", content='" + content + '\'' +
+                ", profile='" + profile + '\'' +
+                ", parentName='" + parentName + '\'' +
+                ", publishTime=" + publishTime +
+                '}';
+    }
+
     @Id
     @Column(name = "comment_id")
     private String commentId;

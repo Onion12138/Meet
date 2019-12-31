@@ -67,16 +67,23 @@ public class NewsServiceImpl implements NewsService {
                 map.put("comment", new LinkedList<>());
                 return map;
             }
+            commentSet.forEach(System.out::println);
             List<NewsComment> orderList = new LinkedList<>();
             commentSet.stream().filter(e->StringUtils.isEmpty(e.getParentId())).sorted(Comparator.comparing(NewsComment::getPublishTime)).forEach(orderList::add);
+            System.out.println("initial add -----");
+            orderList.forEach(System.out::println);
             commentSet.stream().filter(e->!StringUtils.isEmpty(e.getParentId())).sorted(Comparator.comparing(NewsComment::getPublishTime)).forEach(e->{
                 for (int i = 0; i < orderList.size(); i++) {
                     if (e.getParentId().equals(orderList.get(i).getCommentId())) {
                         orderList.add(i + 1, e);
+                        System.out.println("reply insert -----");
+                        orderList.forEach(System.out::println);
                         break;
                     }
                 }
             });
+            System.out.println("final -----");
+            orderList.forEach(System.out::println);
             map.put("comment", orderList);
             return map;
         }else {
@@ -103,7 +110,10 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public void deleteComment(String commentId) {
+        NewsComment comment = new NewsComment();
+        comment.setParentId(commentId);
         commentMapper.deleteByPrimaryKey(commentId);
+        commentMapper.delete(comment);
     }
     @Override
     public News addNews(NewsRequest newsRequest, String token) {
