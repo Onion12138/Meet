@@ -53,7 +53,7 @@ public class NewsServiceTest {
         user.setAdmin(true);
         user.setNickname("Onion");
         token = JwtUtil.createJwt(user);
-        newsId = "1576853552102104862";
+        newsId = "1577783239316202442";
         newsRequest = new NewsRequest();
         newsRequest.setTitle("冬季恒温游泳馆面向本科生开放了");
         newsRequest.setNewsId(newsId);

@@ -59,9 +59,14 @@ public class NewsServiceImpl implements NewsService {
     public Map<String, Object> findOneNews(String newsId) {
         Optional<News> optional = newsDao.findById(newsId);
         if (optional.isPresent()) {
+            Map<String, Object> map = new HashMap<>();
             News news = optional.get();
+            map.put("news", news);
             Set<NewsComment> commentSet = news.getCommentSet();
-//            List<NewsComment> orderList = new ArrayList<>();
+            if (commentSet == null) {
+                map.put("comment", new LinkedList<>());
+                return map;
+            }
             List<NewsComment> orderList = new LinkedList<>();
             commentSet.stream().filter(e->StringUtils.isEmpty(e.getParentId())).sorted(Comparator.comparing(NewsComment::getPublishTime)).forEach(orderList::add);
             commentSet.stream().filter(e->!StringUtils.isEmpty(e.getParentId())).sorted(Comparator.comparing(NewsComment::getPublishTime)).forEach(e->{
@@ -72,8 +77,6 @@ public class NewsServiceImpl implements NewsService {
                     }
                 }
             });
-            Map<String, Object> map = new HashMap<>();
-            map.put("news", news);
             map.put("comment", orderList);
             return map;
         }else {
