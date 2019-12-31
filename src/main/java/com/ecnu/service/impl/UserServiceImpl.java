@@ -244,10 +244,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateCredit(String email, Integer credit) {
-        User user = new User();
+        User user = userDao.findById(email).get();
         user.setEmail(email);
         user.setCredit(credit);
-        userMapper.updateByPrimaryKeySelective(user);
+        userDao.save(user);
+//        userMapper.updateByPrimaryKeySelective(user);
     }
 
 

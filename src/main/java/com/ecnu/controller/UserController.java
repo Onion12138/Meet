@@ -126,13 +126,15 @@ public class UserController {
 
     @PostMapping("/disableAccount")
     @AdminOnly
+//    @LoginRequired(value = false)
     public ResultVO disableAccount(@RequestParam String userId){
         userService.disableAccount(userId);
         return ResultVO.succeed();
     }
 
     @PostMapping("/enableAccount")
-    @AdminOnly
+//    @AdminOnly
+    @LoginRequired(value = false)
     public ResultVO enableAccount(@RequestParam String userId){
         userService.enableAccount(userId);
         return ResultVO.succeed();

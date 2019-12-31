@@ -1,15 +1,24 @@
 package com.ecnu.controller;
 
+import com.ecnu.dao.UserDao;
+import com.ecnu.domain.User;
 import com.ecnu.request.UserLoginRequest;
 import com.ecnu.request.UserRegisterRequest;
 import com.ecnu.enums.ResultEnum;
+import com.ecnu.utils.JwtUtil;
 import com.ecnu.vo.ResultVO;
+import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.commons.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -22,6 +31,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -40,9 +50,13 @@ public class IntegrationTestForUserController {
 
     private final static String new_email = "10175101227@stu.ecnu.edn.cn";
 
-    private final static String password = "123456";
+    private String tokenForUser;
 
-    private final static String nickname = "onion";
+    private String tokenForAdmin;
+
+    private User testUser;
+
+    private User admin;
 
 //    private final String code = "";
 
@@ -50,11 +64,36 @@ public class IntegrationTestForUserController {
     @Autowired
     private TestRestTemplate restTemplate;
 
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+    @Autowired
+    private UserDao userDao;
+
+    @BeforeEach
+    public void choseTestUserAndAdmin() {
+        testUser = userDao.getOne("leodpen@gmail.com");
+        log.info(testUser.getAdmin().toString());
+        admin = userDao.getOne("969023014@qq.com");
+        tokenForUser = JwtUtil.createJwt(testUser);
+        log.info(tokenForUser);
+        tokenForAdmin = JwtUtil.createJwt(admin);
+
+        redisTemplate.opsForValue().set(tokenForAdmin,admin.getEmail(),144, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(tokenForUser,testUser.getEmail(),144, TimeUnit.SECONDS);
+    }
+
+    @AfterEach
+    public void deleteTokens() {
+        redisTemplate.delete(tokenForAdmin);
+        redisTemplate.delete(tokenForUser);
+    }
+
 
     @Test
     @DisplayName("邮箱已经被使用，返回提示信息")
     @Transactional
-    public void testEmailInUse(){
+    public void testEmailInUse() {
         ResponseEntity<ResultVO> response = restTemplate.getForEntity( REQUEST_MAPPING + "/check?email={email}", ResultVO.class, used_email);
         ResultVO result = response.getBody();
         int statusCode = response.getStatusCode().value();
@@ -278,7 +317,7 @@ public class IntegrationTestForUserController {
 
         HttpHeaders httpHeaders = new HttpHeaders();
         // 放到最后
-        httpHeaders.add("user_token","ieyJqdGkiJpYXQiOLCOiI2MjAjE.eJGciyOiJIhb1NI1UzNiJ9zc2EC3MOTY1MzDtouiEI6MTU3NvBEMcEKQsAIQQOsImVMw.dOzt_hZeJkjX04cTczvakZGCTKmpAUc");
+        httpHeaders.add("user_token",tokenForUser);
 
         ResponseEntity<ResultVO> response = restTemplate.exchange(
                 REQUEST_MAPPING + "/logout",
@@ -306,15 +345,16 @@ public class IntegrationTestForUserController {
     public void testModifyNickname(){
         HttpHeaders httpHeaders = new HttpHeaders();
         // 放到最后
-        httpHeaders.add("user_token","ieyJqdGkiJpYXQiOLCOiI2MjAjE.eJGciyOiJIhb1NI1UzNiJ9zc2EC3MOTY1MzDtouiEI6MTU3NvBEMcEKQsAIQQOsImVMw.dOzt_hZeJkjX04cTczvakZGCTKmpAUc");
+        httpHeaders.add("user_token",tokenForUser);
         Map<String,String> map = new HashMap<>();
-        map.put("nickname","yyyyy");
-        HttpEntity<Map<String,String>> entity = new HttpEntity<>(map,httpHeaders);
+        map.put("nickname","祖安狂人");
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
         ResponseEntity<ResultVO> response = restTemplate.exchange(
-                REQUEST_MAPPING + "/modifyNickname",
+                REQUEST_MAPPING + "/modifyNickname?nickname={nickname}",
                 HttpMethod.POST,
                 entity,
-                ResultVO.class);
+                ResultVO.class,
+                map);
         ResultVO result = response.getBody();
         int statusCode = response.getStatusCode().value();
         assertAll(
@@ -333,22 +373,25 @@ public class IntegrationTestForUserController {
     @Transactional
     public void testModifyProfile() throws IOException {
         HttpHeaders httpHeaders = new HttpHeaders();
-        File file = new File("/Users/Desktop/新头像.jpg");
+        File file = new File("/Users/pengfeng/Desktop/yyy.png");
         MultipartFile multipartFile = new MockMultipartFile(
-                "新头像.jpg", //文件名
-                "新头像.jpg", //originalName 相当于上传文件在客户机上的文件名
+                "新头像.png", //文件名
+                "yyy.png", //originalName 相当于上传文件在客户机上的文件名
                 "application/octet-stream",        //ContentType.APPLICATION_OCTET_STREAM.toString(), //文件类型
                 new FileInputStream(file) //文件流
         );
-        httpHeaders.add("user_token","ieyJqdGkiJpYXQiOLCOiI2MjAjE.eJGciyOiJIhb1NI1UzNiJ9zc2EC3MOTY1MzDtouiEI6MTU3NvBEMcEKQsAIQQOsImVMw.dOzt_hZeJkjX04cTczvakZGCTKmpAUc");
+        httpHeaders.add("user_token",tokenForUser);
+        httpHeaders.add("Content-Type","multipart/form-data");
         Map<String, MultipartFile> map = new HashMap<>();
         map.put("file", multipartFile);
-        HttpEntity<Map<String,MultipartFile>> entity = new HttpEntity<>(map,httpHeaders);
+//        HttpEntity<Map<String,MultipartFile>> entity = new HttpEntity<>(map,httpHeaders);
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
         ResponseEntity<ResultVO> response = restTemplate.exchange(
                 REQUEST_MAPPING + "/uploadProfile",
                 HttpMethod.POST,
                 entity,
-                ResultVO.class);
+                ResultVO.class,
+                map);
         ResultVO result = response.getBody();
         int statusCode = response.getStatusCode().value();
         assertAll(
@@ -367,7 +410,7 @@ public class IntegrationTestForUserController {
     public void testModifyPassword(){
         HttpHeaders httpHeaders = new HttpHeaders();
         // 放到最后
-        httpHeaders.add("user_token","ieyJqdGkiJpYXQiOLCOiI2MjAjE.eJGciyOiJIhb1NI1UzNiJ9zc2EC3MOTY1MzDtouiEI6MTU3NvBEMcEKQsAIQQOsImVMw.dOzt_hZeJkjX04cTczvakZGCTKmpAUc");
+        httpHeaders.add("user_token",tokenForUser);
         Map<String,String> map = new HashMap<>();
         map.put("password","654321");
         map.put("code","ptr521");
@@ -415,31 +458,139 @@ public class IntegrationTestForUserController {
     public void testFindAllUsersByAdmin(){
         HttpHeaders httpHeaders = new HttpHeaders();
         // 放到最后
-        httpHeaders.add("user_token","ieyJqdGkiJpYXQiOLCOiI2MjAjE.eJGciyOiJIhb1NI1UzNiJ9zc2EC3MOTY1MzDtouiEI6MTU3NvBEMcEKQsAIQQOsImVMw.dOzt_hZeJkjX04cTczvakZGCTKmpAUc");
+        httpHeaders.add("user_token",tokenForAdmin);
         Map<String,Integer> map = new HashMap<>();
         // 默认使用这个配置
         map.put("page",1);
         map.put("size",20);
-
-
+        ResponseEntity<ResultVO> response = restTemplate.getForEntity(REQUEST_MAPPING + "/findAllUsers?page={page}&size={size}", ResultVO.class, map);
+        ResultVO result = response.getBody();
+        int statusCode = response.getStatusCode().value();
+        assertAll(
+                () -> assertEquals(OK, statusCode),
+                () ->{
+                    assert result != null;
+                    assertEquals(0, result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                    assertEquals(1,((PageInfo)result.getData()).getPageNum());
+                    assertEquals(20,((PageInfo)result.getData()).getPageSize());
+                }
+        );
     }
 
+    @Test
+    @DisplayName("测试管理员查看所有禁用的用户")
+    public void testFindAllDisabledUsersByAdmin(){
+        HttpHeaders httpHeaders = new HttpHeaders();
+        // 放到最后
+        httpHeaders.add("user_token",tokenForAdmin);
+        Map<String,Integer> map = new HashMap<>();
+        // 默认使用这个配置
+        map.put("page",1);
+        map.put("size",20);
+        ResponseEntity<ResultVO> response = restTemplate.getForEntity(REQUEST_MAPPING + "/findAllDisabledUsers?page={page}&size={size}", ResultVO.class, map);
+        ResultVO result = response.getBody();
+        int statusCode = response.getStatusCode().value();
+        assertAll(
+                () -> assertEquals(OK, statusCode),
+                () ->{
+                    assert result != null;
+                    assertEquals(0, result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                    assertEquals(1,((PageInfo)result.getData()).getPageNum());
+                    assertEquals(20,((PageInfo)result.getData()).getPageSize());
+                }
+        );
+    }
 
+    @Test
+    @DisplayName("测试管理员禁用用户")
+    @Transactional
+    public void testDisableAccountByAdmin(){
+        HttpHeaders httpHeaders = new HttpHeaders();
+        // 放到最后
+        httpHeaders.add("user_token",tokenForAdmin);
+        Map<String,String> map = new HashMap<>();
+        map.put("userId",testUser.getEmail());
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
 
+        ResponseEntity<ResultVO> response = restTemplate.exchange(
+                REQUEST_MAPPING + "/disableAccount?userId={userId}",
+                HttpMethod.POST,
+                entity,
+                ResultVO.class,
+                map
+        );
+        ResultVO result = response.getBody();
+        int statusCode = response.getStatusCode().value();
+        assertAll(
+                () -> assertEquals(OK, statusCode),
+                () ->{
+                    assert result != null;
+                    assertEquals(0, result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                }
+        );
+    }
 
+    @Test
+    @DisplayName("测试管理员取消用户禁用")
+    @Transactional
+    public void testEnableAccountByAdmin(){
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForAdmin);
+        Map<String,String> map = new HashMap<>();
+        map.put("userId",testUser.getEmail());
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
 
+        ResponseEntity<ResultVO> response = restTemplate.exchange(
+                REQUEST_MAPPING + "/enableAccount?userId={userId}",
+                HttpMethod.POST,
+                entity,
+                ResultVO.class,
+                map
+        );
+        ResultVO result = response.getBody();
+        int statusCode = response.getStatusCode().value();
+        assertAll(
+                () -> assertEquals(OK, statusCode),
+                () ->{
+                    assert result != null;
+                    assertEquals(0, result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                }
+        );
+    }
 
+    // todo have some bugs which I haven't found yet here??
+    @Test
+    @DisplayName("更新信誉值")
+    public void testUpdateCredit(){
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForAdmin);
+        Map<String,Object> map = new HashMap<>();
+        map.put("userId",testUser.getEmail());
+        map.put("credit",20);
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
 
+        ResponseEntity<ResultVO> response = restTemplate.exchange(
+                REQUEST_MAPPING + "/updateCredit?userId={userId}&credit={credit}",
+                HttpMethod.POST,
+                entity,
+                ResultVO.class,
+                map
+        );
+        ResultVO result = response.getBody();
+        int statusCode = response.getStatusCode().value();
+        assertAll(
+                () -> assertEquals(OK, statusCode),
+                () ->{
+                    assert result != null;
+                    assertEquals(0, result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                }
+        );
 
-
-
-
-
-
-
-
-
-
-
+    }
 
 }
