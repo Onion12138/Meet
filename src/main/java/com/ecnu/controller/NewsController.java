@@ -112,8 +112,7 @@ public class NewsController {
     }
     /*
     * 慎用！会导致级联删除
-    * 目前测试此借口会报外键约束的错误，还没有解决
-    * 暂且不要使用这个接口
+    * 此接口已经修复
     * */
     @PostMapping("/deleteNews")
     @AdminOnly

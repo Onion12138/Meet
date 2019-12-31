@@ -99,10 +99,9 @@ public class NewsServiceImpl implements NewsService {
         news.setContent(newsRequest.getContent());
         newsMapper.updateByPrimaryKeySelective(news);
     }
-    //最好不要'删除'这个接口
     @Override
     public void deleteNews(String newsId) {
-        newsMapper.deleteByPrimaryKey(newsId);
+        newsDao.deleteById(newsId);
     }
 
 
