@@ -31,6 +31,10 @@ public class NewsComment implements Serializable {
     private String nickname;
     @Column
     private String content;
+    @Column
+    private String profile;
+    @Column(name = "parent_name")
+    private String parentName;
     @ManyToOne(targetEntity = News.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_news_id", referencedColumnName = "news_id",
             insertable = false, updatable = false)

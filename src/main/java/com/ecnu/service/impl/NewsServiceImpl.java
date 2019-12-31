@@ -65,6 +65,8 @@ public class NewsServiceImpl implements NewsService {
         comment.setCommentId(KeyUtil.genUniqueKey());
         comment.setEmail(userId);
         comment.setCommentNewsId(request.getNewsId());
+        comment.setProfile(request.getProfile());
+        comment.setParentName(request.getParentName());
         comment.setParentId(request.getParentId());
         comment.setContent(request.getContent());
         comment.setNickname((String)claims.get("nickname"));

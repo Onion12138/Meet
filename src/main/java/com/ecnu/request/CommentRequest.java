@@ -19,6 +19,9 @@ public class CommentRequest {
     @NotBlank
     private String newsId;
     private String parentId;
+    private String parentName;
+    @NotBlank
+    private String profile;
     @NotBlank
     private String content;
 }
