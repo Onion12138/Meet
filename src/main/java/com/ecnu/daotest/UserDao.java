@@ -1,0 +1,13 @@
+package com.ecnu.daotest;
+
+import com.ecnu.domain.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+/**
+ * @author onion
+ * @date 2019/12/19 -1:01 下午
+ */
+@Repository
+public interface UserDao extends JpaRepository<User, String> {
+}
