@@ -8,7 +8,7 @@ import lombok.Getter;
  * @date 2019/12/10 -11:09 下午
  */
 @Getter
-public class MyException extends RuntimeException{
+public class MyException extends RuntimeException {
     private Integer code;
     public MyException(ResultEnum resultEnums){
         super(resultEnums.getMessage());

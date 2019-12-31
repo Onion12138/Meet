@@ -6,6 +6,8 @@ import com.ecnu.request.CommentRequest;
 import com.ecnu.request.NewsRequest;
 import com.github.pagehelper.PageInfo;
 
+import java.util.Map;
+
 /**
  * @author onion
  * @date 2019/12/11 -6:24 下午
@@ -25,5 +27,5 @@ public interface NewsService {
 
     void deleteNews(String newsId);
 
-    News findOneNews(String newsId);
+    Map<String, Object> findOneNews(String newsId);
 }

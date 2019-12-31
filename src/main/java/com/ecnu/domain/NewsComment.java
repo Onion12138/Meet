@@ -7,6 +7,7 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * @author onion
@@ -35,6 +36,8 @@ public class NewsComment implements Serializable {
     private String profile;
     @Column(name = "parent_name")
     private String parentName;
+    @Column(name = "publish_time")
+    private LocalDateTime publishTime;
     @ManyToOne(targetEntity = News.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_news_id", referencedColumnName = "news_id",
             insertable = false, updatable = false)

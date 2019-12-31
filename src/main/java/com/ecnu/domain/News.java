@@ -1,5 +1,6 @@
 package com.ecnu.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,6 +41,7 @@ public class News implements Serializable {
 //    private Set<NewsComment> commentSet;
     @OneToMany(mappedBy = "news", cascade = CascadeType.ALL)
     @JsonIgnoreProperties("news")
+    @JsonIgnore
 //    @JoinColumn(name = "comment_news_id", referencedColumnName = "news_id")
     private Set<NewsComment> commentSet;
 }

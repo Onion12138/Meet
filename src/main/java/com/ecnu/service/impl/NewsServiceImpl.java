@@ -3,8 +3,9 @@ package com.ecnu.service.impl;
 import com.ecnu.dao.CommentMapper;
 import com.ecnu.dao.NewsDao;
 import com.ecnu.dao.NewsMapper;
-import com.ecnu.domain.NewsComment;
 import com.ecnu.domain.News;
+import com.ecnu.domain.NewsComment;
+import com.ecnu.exception.MyException;
 import com.ecnu.request.CommentRequest;
 import com.ecnu.request.NewsRequest;
 import com.ecnu.service.NewsService;
@@ -20,7 +21,7 @@ import tk.mybatis.mapper.entity.Example;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author onion
@@ -54,8 +55,29 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public News findOneNews(String newsId) {
-        return newsDao.findById(newsId).get();
+    public Map<String, Object> findOneNews(String newsId) {
+        Optional<News> optional = newsDao.findById(newsId);
+        if (optional.isPresent()) {
+            News news = optional.get();
+            Set<NewsComment> commentSet = news.getCommentSet();
+//            List<NewsComment> orderList = new ArrayList<>();
+            List<NewsComment> orderList = new LinkedList<>();
+            commentSet.stream().filter(e->e.getParentId() == null).sorted(Comparator.comparing(NewsComment::getPublishTime)).forEach(orderList::add);
+            commentSet.stream().filter(e->e.getParentId() != null).sorted(Comparator.comparing(NewsComment::getPublishTime)).forEach(e->{
+                for (int i = 0; i < orderList.size(); i++) {
+                    if (e.getParentId().equals(orderList.get(i).getCommentId())) {
+                        orderList.add(i + 1, e);
+                        break;
+                    }
+                }
+            });
+            Map<String, Object> map = new HashMap<>();
+            map.put("news", news);
+            map.put("comment", orderList);
+            return map;
+        }else {
+            throw new MyException("当前新闻不存在", -1);
+        }
     }
     @Override
     public NewsComment addComment(CommentRequest request, String token) {

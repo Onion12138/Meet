@@ -18,6 +18,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.Map;
 
 /**
  * @author onion
@@ -52,8 +53,8 @@ public class NewsController {
     * */
     @GetMapping("/one")
     public ResultVO findOneNews(@RequestParam String newsId){
-        News news = newsService.findOneNews(newsId);
-        return ResultVO.succeed(news);
+        Map<String, Object> map = newsService.findOneNews(newsId);
+        return ResultVO.succeed(map);
     }
     /*
      *  添加评论，如下
