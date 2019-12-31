@@ -90,6 +90,7 @@ public class NewsControllerTest {
         CommentRequest commentRequest = new CommentRequest();
         commentRequest.setNewsId("1577023172697340825");
         commentRequest.setContent("评论");
+        commentRequest.setProfile("http://ecnuonion.club/744673725%40qq.com20150731150348_kVn8e.thumb.700_0.jpg?e=1579745128&token=SStPJbNpriAFEzb0LvB1ooO7X__CB5xpwt8cE8UE:_dSH19C5epJmUk5p3XmyI9ZSiOw=");
         String content = JSON.toJSONString(commentRequest);
         ResultActions perform = mockMvc.perform(post("/news/addComment").contentType(MediaType.APPLICATION_JSON)
                 .content(content).header("user_token",token));

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -17,10 +16,22 @@ import java.util.Set;
  */
 @Getter
 @Setter
-@ToString
 @Entity
 @Table(name = "news")
 public class News implements Serializable {
+    @Override
+    public String toString() {
+        return "News{" +
+                "newsId='" + newsId + '\'' +
+                ", title='" + title + '\'' +
+                ", email='" + email + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", publishTime=" + publishTime +
+                ", updateTime=" + updateTime +
+                ", content='" + content + '\'' +
+                '}';
+    }
+
     @Id
     @Column(name = "news_id")
     private String newsId;
