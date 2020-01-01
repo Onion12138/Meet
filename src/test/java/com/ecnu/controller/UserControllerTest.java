@@ -164,7 +164,7 @@ public class UserControllerTest {
         verify(userService).disableAccount(anyString());
     }
     @Test
-    @DisplayName("测试管理员禁用用户")
+    @DisplayName("测试管理员启用用户")
     public void testEnableAccount() throws Exception {
         ResultActions perform = mockMvc.perform(post("/user/enableAccount").header("user_token", adminToken).param("userId", email));
         perform.andExpect(status().isOk());

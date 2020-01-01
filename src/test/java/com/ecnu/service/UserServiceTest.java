@@ -21,6 +21,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -141,7 +142,7 @@ public class UserServiceTest {
     @Test
     @DisplayName("测试用户正确登陆后返回map信息")
     public void testSuccessLogin() {
-        when(userMapper.selectOne(any())).thenReturn(user);
+        when(userMapper.selectByPrimaryKey(any())).thenReturn(user);
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         Map<String, String> info = userService.login(loginRequest);
         assertAll(() -> assertFalse(info.get("token").isEmpty()),
@@ -231,9 +232,10 @@ public class UserServiceTest {
     @Test
     @DisplayName("测试更新信誉积分")
     public void testUpdateCredit() {
+        when(userDao.findById(anyString())).thenReturn(Optional.of(user));
         userService.updateCredit(user.getEmail(), 100);
         ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
-        verify(userMapper).updateByPrimaryKeySelective(captor.capture());
+        verify(userDao).save(captor.capture());
         assertEquals(100, captor.getValue().getCredit());
         assertEquals(user.getEmail(), captor.getValue().getEmail());
     }

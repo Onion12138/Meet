@@ -18,7 +18,8 @@ public enum ResultEnum {
     ACCOUNT_DISABLED(1007, "账户被禁用"),
     MUST_LOGIN(1008, "请先登陆"),
     NO_AUTHORITY(1009, "没有权限"),
-    LOGOUT(1010, "已注销，请重新登陆")
+    LOGOUT(1010, "已注销，请重新登陆"),
+    CONFLICT(1011, "订单时间冲突")
     ;
     private int code;
     private String message;

@@ -65,13 +65,13 @@ public class OrderServiceTest {
     @Test
     @DisplayName("测试通过Email查询将来中的订单")
     public void testFindMyFutureOrders() {
-        orderService.findMyCurrentOrders(email, 1, 5);
+        orderService.findMyFutureOrders(email, 1, 5);
         verify(orderDao).findAllByUserEmailAndStartTimeAfter(anyString(), any(LocalDateTime.class), any(PageRequest.class));
     }
     @Test
     @DisplayName("测试通过Email查询过去的订单")
     public void testFindMyPastOrders() {
-        orderService.findMyCurrentOrders(email, 1, 5);
+        orderService.findMyPastOrders(email, 1, 5);
         verify(orderDao).findAllByUserEmailAndEndTimeBefore(anyString(), any(LocalDateTime.class), any(PageRequest.class));
     }
     @Test

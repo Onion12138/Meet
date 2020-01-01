@@ -3,6 +3,8 @@ package com.ecnu.service.impl;
 import com.ecnu.dao.OrderDao;
 import com.ecnu.dao.OrderMapper;
 import com.ecnu.domain.Order;
+import com.ecnu.enums.ResultEnum;
+import com.ecnu.exception.MyException;
 import com.ecnu.request.AvailableTimeRequest;
 import com.ecnu.request.OrderRequest;
 import com.ecnu.service.OrderService;
@@ -102,6 +104,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void addOrder(OrderRequest request, String email) {
+        if (isTimeConflict(request)) {
+            throw new MyException(ResultEnum.CONFLICT);
+        }
         Order order = new Order();
         order.setOrderId(KeyUtil.genUniqueKey());
         order.setGymId(request.getGymId());
@@ -191,6 +196,16 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.updateByPrimaryKeySelective(order);
     }
 
+    private boolean isTimeConflict(OrderRequest orderRequest) {
+        AvailableTimeRequest timeRequest = new AvailableTimeRequest();
+        timeRequest.setDate(orderRequest.getDate());
+        timeRequest.setGymId(orderRequest.getGymId());
+        List<Integer[]> timeInterval = findAvailableTime(timeRequest);
+        for (Integer[] integers : timeInterval)
+            if (integers[1] > orderRequest.getStartTime() || integers[0] < orderRequest.getEndTime())
+                return true;
+        return false;
+    }
     @Override
     public List<Integer[]> findAvailableTime(AvailableTimeRequest request) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
