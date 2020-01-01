@@ -1,6 +1,7 @@
 package com.ecnu.controller;
 
 import com.ecnu.annotation.AdminOnly;
+import com.ecnu.dao.GymDao;
 import com.ecnu.domain.Gym;
 import com.ecnu.request.GymFilterRequest;
 import com.ecnu.service.GymService;

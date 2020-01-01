@@ -202,6 +202,32 @@ public class IntegrationTestForGymController {
     }
 
     @Test
+    @DisplayName("测试gymId查找其评分，无对应的gym，失败，需要登陆")
+    @Transactional
+    public void testBadScore() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForUser);
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("gymId","not_exists");
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.exchange(
+                REQUEST_MAPPING + "/score?gymId={gymId}",
+                HttpMethod.GET,
+                entity,
+                ResultVO.class,
+                map
+        );
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> {
+                    assertEquals(-1,result.getCode());
+                }
+        );
+    }
+
+    @Test
     @DisplayName("测试添加gym，需要管理员的登陆")
     @Transactional
     public void testAddGym() {
@@ -273,6 +299,35 @@ public class IntegrationTestForGymController {
     }
 
     @Test
+    @DisplayName("测试更新gym，无对应的gym，失败，但仍然返回成功消息，需要管理员的登陆")
+    @Transactional
+    public void testBadUpdateGym() {
+        Gym gym = new Gym();
+        gym.setGymId("not_exists");
+        gym.setAddress("共青场");
+        gym.setDescription("最烂的篮球场的更改");
+        gym.setName("改造场地test篮球场的更改");
+        gym.setOpen(true);
+        gym.setRent(20.0);
+        gym.setType("篮球场");
+        gym.setPhoto("yyy");
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForAdmin);
+        HttpEntity<Gym> entity = new HttpEntity<>(gym,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.postForEntity(REQUEST_MAPPING + "/updateGym",
+                entity,
+                ResultVO.class);
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> {
+                    log.info("还是返回成功，只是实际无变化");
+                    assertEquals(0,result.getCode());
+                }
+        );
+    }
+
+    @Test
     @DisplayName("测试删除gym，需要管理员的登陆")
     @Transactional
     public void testDeleteGym() {
@@ -292,6 +347,26 @@ public class IntegrationTestForGymController {
                     assertEquals(0,result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
                 }
+        );
+    }
+
+    @Test
+    @DisplayName("测试删除gym，无对应gym，失败，但仍然返回成功消息，需要管理员的登陆")
+    @Transactional
+    public void testBadDeleteGym() {
+        Map<String,String> map = new HashMap<>();
+        map.put("gymId","not_exists");
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForAdmin);
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.postForEntity(REQUEST_MAPPING + "/deleteGym?gymId={gymId}",
+                entity,
+                ResultVO.class,
+                map);
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> assertEquals(0,result.getCode())
         );
     }
 }
