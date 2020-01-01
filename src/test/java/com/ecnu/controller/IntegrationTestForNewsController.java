@@ -272,7 +272,7 @@ public class IntegrationTestForNewsController {
     @Transactional
     public void testDeleteNews() {
         Map<String,String> map = new HashMap<>();
-        map.put("newsId","1577860750751112024");
+        map.put("newsId","1577891814936236465");
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("user_token",tokenForAdmin);
         HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);

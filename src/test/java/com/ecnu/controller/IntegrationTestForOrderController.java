@@ -272,7 +272,7 @@ public class IntegrationTestForOrderController {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("user_token",tokenForAdmin);
         OrderRequest request = OrderRequest.builder()
-                .date("2020/01/01")
+                .date("2020/01/05")
                 .startTime(26)
                 .endTime(40)
                 .gymId(testGymId)

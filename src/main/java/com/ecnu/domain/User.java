@@ -36,7 +36,7 @@ public class User implements Serializable {
     @Column
     private Boolean disabled;
     @Column
-    private Boolean admin = false;
+    private Boolean admin;
 //    @OneToMany(targetEntity = Order.class)
 //    @JoinColumn(name = "user_email", referencedColumnName = "email")
     @OneToMany(mappedBy = "user")
