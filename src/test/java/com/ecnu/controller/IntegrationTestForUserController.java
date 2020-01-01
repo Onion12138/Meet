@@ -103,7 +103,6 @@ public class IntegrationTestForUserController {
         assertAll(
                 () -> assertEquals(OK, statusCode),
                 () -> {
-                    assert result != null;
                     assertEquals(ResultEnum.EMAIL_IN_USE.getCode(), result.getCode());
                     assertNull(result.getData());
                     assertEquals(ResultEnum.EMAIL_IN_USE.getMessage(), result.getMessage());
@@ -114,7 +113,7 @@ public class IntegrationTestForUserController {
     @Test
     @DisplayName("邮箱未被使用，返回成功的ResultEntity")
     @Transactional
-    public void testEmailNotInUse(){
+    public void testEmailNotInUse() {
         ResponseEntity<ResultVO> response = restTemplate.getForEntity( REQUEST_MAPPING + "/check?email={email}", ResultVO.class, new_email);
         ResultVO result = response.getBody();
         int statusCode = response.getStatusCode().value();
@@ -122,7 +121,6 @@ public class IntegrationTestForUserController {
         assertAll(
                 () -> assertEquals(OK, statusCode),
                 () ->{
-                    assert result != null;
                     assertEquals(0, result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
                     assertNull(result.getData());
@@ -133,7 +131,7 @@ public class IntegrationTestForUserController {
     @Test
     @DisplayName("注册邮箱填写格式非法")
     @Transactional
-    public void testBadEmailWhenCallRegister(){
+    public void testBadEmailWhenCallRegister() {
         UserRegisterRequest request = UserRegisterRequest.builder()
                 .email("cewhiuygieoh") // 非法的邮箱
                 .password("123456")
@@ -147,7 +145,6 @@ public class IntegrationTestForUserController {
         assertAll(
                 () -> assertEquals(OK,statusCode),
                 () -> {
-                    assert result != null;
                     assertEquals(-1, result.getCode());
                     // 具体报错信息暂不展示
                     assertNull(result.getData());
@@ -158,7 +155,7 @@ public class IntegrationTestForUserController {
     @Test
     @DisplayName("注册姓名长度非法")
     @Transactional
-    public void testBadNickNameLengthWhenCallRegister(){
+    public void testBadNickNameLengthWhenCallRegister() {
         UserRegisterRequest request = UserRegisterRequest.builder()
                 .email("yyy@qq.com")
                 .password("123456")
@@ -172,7 +169,6 @@ public class IntegrationTestForUserController {
         assertAll(
                 () -> assertEquals(OK,statusCode),
                 () -> {
-                    assert result != null;
                     assertEquals(-1, result.getCode());
                     // 具体报错信息暂不展示
                     assertNull(result.getData());
@@ -197,7 +193,6 @@ public class IntegrationTestForUserController {
         assertAll(
                 () -> assertEquals(OK, statusCode),
                 () -> {
-                    assert result != null;
                     assertEquals(-1, result.getCode());
                     // 具体报错信息暂不展示
                     assertNull(result.getData());
@@ -221,7 +216,6 @@ public class IntegrationTestForUserController {
         assertAll(
                 () -> assertEquals(OK,statusCode),
                 () -> {
-                    assert result != null;
                     assertEquals(0, result.getCode());
                     assertEquals(SUCCESS_MSG, result.getMessage());
                     assertNull(result.getData());
@@ -240,7 +234,6 @@ public class IntegrationTestForUserController {
         assertAll(
                 () -> assertEquals(OK,statusCode),
                 () -> {
-                    assert result != null;
                     assertEquals(-1, result.getCode());
                     assertNull(result.getData());
                 }
@@ -259,7 +252,6 @@ public class IntegrationTestForUserController {
         assertAll(
                 () -> assertEquals(OK,statusCode),
                 () -> {
-                    assert result != null;
                     assertEquals(0, result.getCode());
                     assertEquals(request.getEmail(),map.get("email"));
                     assertTrue(map.containsKey("token"));
@@ -282,7 +274,6 @@ public class IntegrationTestForUserController {
         assertAll(
                 () -> assertEquals(OK,statusCode),
                 () -> {
-                    assert result != null;
                     assertEquals(0, result.getCode());
                     assertEquals(request.getEmail(),map.get("email"));
                     assertTrue(map.containsKey("token"));
@@ -304,7 +295,6 @@ public class IntegrationTestForUserController {
         assertAll(
                 () -> assertEquals(OK, statusCode),
                 () -> {
-                    assert result != null;
                     assertEquals(-1, result.getCode());
                 }
         );
@@ -331,7 +321,6 @@ public class IntegrationTestForUserController {
         assertAll(
                 () -> assertEquals(OK, statusCode),
                 () -> {
-                    assert result != null;
                     assertEquals(0, result.getCode());
                     assertEquals(SUCCESS_MSG, result.getMessage());
                 }
@@ -362,7 +351,6 @@ public class IntegrationTestForUserController {
         assertAll(
                 () -> assertEquals(OK, statusCode),
                 () -> {
-                    assert result != null;
                     assertEquals(0, result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
                 }
@@ -399,7 +387,6 @@ public class IntegrationTestForUserController {
         assertAll(
                 () -> assertEquals(OK, statusCode),
                 () -> {
-                    assert result != null;
                     assertEquals(0, result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
                 }
@@ -409,7 +396,7 @@ public class IntegrationTestForUserController {
     @Test
     @DisplayName("修改个人密码")
     @Transactional
-    public void testModifyPassword(){
+    public void testModifyPassword() {
         HttpHeaders httpHeaders = new HttpHeaders();
         // 放到最后
         httpHeaders.add("user_token",tokenForUser);
@@ -427,7 +414,6 @@ public class IntegrationTestForUserController {
         assertAll(
                 () -> assertEquals(OK, statusCode),
                 () -> {
-                    assert result != null;
                     assertEquals(0, result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
                 }
@@ -438,7 +424,7 @@ public class IntegrationTestForUserController {
     @Test
     @DisplayName("测试发送验证码")
     @Transactional
-    public void testSendEmailForCode(){
+    public void testSendEmailForCode() {
 
         Map<String,String> map = new HashMap<>();
         map.put("email",used_email);
@@ -448,7 +434,6 @@ public class IntegrationTestForUserController {
         assertAll(
                 () -> assertEquals(OK, statusCode),
                 () ->{
-                    assert result != null;
                     assertEquals(0, result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
                 }
@@ -457,7 +442,7 @@ public class IntegrationTestForUserController {
 
     @Test
     @DisplayName("测试管理员查看所有用户")
-    public void testFindAllUsersByAdmin(){
+    public void testFindAllUsersByAdmin() {
         HttpHeaders httpHeaders = new HttpHeaders();
         // 放到最后
         httpHeaders.add("user_token",tokenForAdmin);
@@ -476,7 +461,6 @@ public class IntegrationTestForUserController {
         assertAll(
                 () -> assertEquals(OK, statusCode),
                 () ->{
-                    assert result != null;
                     assertEquals(0, result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
                     assertEquals(1,((LinkedHashMap)result.getData()).get("pageNum"));
@@ -487,7 +471,7 @@ public class IntegrationTestForUserController {
 
     @Test
     @DisplayName("测试管理员查看所有禁用的用户")
-    public void testFindAllDisabledUsersByAdmin(){
+    public void testFindAllDisabledUsersByAdmin() {
         HttpHeaders httpHeaders = new HttpHeaders();
         // 放到最后
         httpHeaders.add("user_token",tokenForAdmin);
@@ -506,7 +490,6 @@ public class IntegrationTestForUserController {
         assertAll(
                 () -> assertEquals(OK, statusCode),
                 () ->{
-                    assert result != null;
                     assertEquals(0, result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
                     assertEquals(1,((LinkedHashMap) result.getData()).get("pageNum"));
@@ -518,7 +501,7 @@ public class IntegrationTestForUserController {
     @Test
     @DisplayName("测试管理员禁用用户")
     @Transactional
-    public void testDisableAccountByAdmin(){
+    public void testDisableAccountByAdmin() {
         HttpHeaders httpHeaders = new HttpHeaders();
         // 放到最后
         httpHeaders.add("user_token",tokenForAdmin);
@@ -538,7 +521,6 @@ public class IntegrationTestForUserController {
         assertAll(
                 () -> assertEquals(OK, statusCode),
                 () ->{
-                    assert result != null;
                     assertEquals(0, result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
                 }
@@ -548,7 +530,7 @@ public class IntegrationTestForUserController {
     @Test
     @DisplayName("测试管理员取消用户禁用")
     @Transactional
-    public void testEnableAccountByAdmin(){
+    public void testEnableAccountByAdmin() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("user_token",tokenForAdmin);
         Map<String,String> map = new HashMap<>();
@@ -567,18 +549,16 @@ public class IntegrationTestForUserController {
         assertAll(
                 () -> assertEquals(OK, statusCode),
                 () ->{
-                    assert result != null;
                     assertEquals(0, result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
                 }
         );
     }
 
-    // todo have some bugs which I haven't found yet here??
     @Test
     @DisplayName("更新信誉值")
     @Transactional
-    public void testUpdateCredit(){
+    public void testUpdateCredit() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("user_token",tokenForAdmin);
         Map<String,Object> map = new HashMap<>();
@@ -598,7 +578,6 @@ public class IntegrationTestForUserController {
         assertAll(
                 () -> assertEquals(OK, statusCode),
                 () ->{
-                    assert result != null;
                     assertEquals(0, result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
                 }

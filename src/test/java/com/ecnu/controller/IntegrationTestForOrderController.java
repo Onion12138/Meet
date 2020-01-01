@@ -3,6 +3,9 @@ package com.ecnu.controller;
 import com.ecnu.dao.UserDao;
 import com.ecnu.domain.User;
 import com.ecnu.request.AvailableTimeRequest;
+import com.ecnu.request.CommentRequest;
+import com.ecnu.request.OrderCommentRequest;
+import com.ecnu.request.OrderRequest;
 import com.ecnu.utils.JwtUtil;
 import com.ecnu.vo.ResultVO;
 import lombok.extern.slf4j.Slf4j;
@@ -20,11 +23,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
 import javax.transaction.Transactional;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -75,7 +79,7 @@ public class IntegrationTestForOrderController {
     @Test
     @DisplayName("测试查看所有可用的时间，需要登陆")
     @Transactional
-    public void testFindAvailableTime(){
+    public void testFindAvailableTime() {
         AvailableTimeRequest request = AvailableTimeRequest.builder()
                 .date(testDate)
                 .gymId(testGymId)
@@ -92,12 +96,448 @@ public class IntegrationTestForOrderController {
         assertAll(
                 () -> assertEquals(OK,response.getStatusCodeValue()),
                 () -> {
-                    assert result != null;
                     assertEquals(0,result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
                 }
         );
-
     }
+
+    // todo bugs here to fix.
+    @Test
+    @DisplayName("测试查看我的取消订单,需要登陆")
+    @Transactional
+    public void testMyCanceledOrder() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForAdmin);
+        Map<String,Integer> map = new HashMap<>();
+        map.put("page",1);
+        map.put("size",5);
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.exchange(
+                REQUEST_MAPPING + "/myCanceledOrder?page={page}&size={size}",
+                HttpMethod.GET,
+                entity,
+                ResultVO.class,
+                map
+        );
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> {
+                    assertEquals(0,result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("测试查看我的所有订单,需要登陆")
+    @Transactional
+    public void testMyOrder() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForAdmin);
+        Map<String,Integer> map = new HashMap<>();
+        map.put("page",1);
+        map.put("size",5);
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.exchange(
+                REQUEST_MAPPING + "/myOrder?page={page}&size={size}",
+                HttpMethod.GET,
+                entity,
+                ResultVO.class,
+                map
+        );
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> {
+                    assertEquals(0,result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("测试查看我的当前进行中订单,需要登陆")
+    @Transactional
+    public void testMyCurrentOrder() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForAdmin);
+        Map<String,Integer> map = new HashMap<>();
+        map.put("page",1);
+        map.put("size",5);
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.exchange(
+                REQUEST_MAPPING + "/myCurrentOrder?page={page}&size={size}",
+                HttpMethod.GET,
+                entity,
+                ResultVO.class,
+                map
+        );
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> {
+                    assertEquals(0,result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("测试查看我的未来订单,需要登陆")
+    @Transactional
+    public void testMyFutureOrder() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForAdmin);
+        Map<String,Integer> map = new HashMap<>();
+        map.put("page",1);
+        map.put("size",5);
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.exchange(
+                REQUEST_MAPPING + "/myFutureOrder?page={page}&size={size}",
+                HttpMethod.GET,
+                entity,
+                ResultVO.class,
+                map
+        );
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> {
+                    assertEquals(0,result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("测试查看我的过去的订单,需要登陆")
+    @Transactional
+    public void testMyPastOrder() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForAdmin);
+        Map<String,Integer> map = new HashMap<>();
+        map.put("page",1);
+        map.put("size",5);
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.exchange(
+                REQUEST_MAPPING + "/myPastOrder?page={page}&size={size}",
+                HttpMethod.GET,
+                entity,
+                ResultVO.class,
+                map
+        );
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> {
+                    assertEquals(0,result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("测试查看gym的type来查我的订单,需要登陆")
+    @Transactional
+    public void testFindMyOrdersByGymType() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForAdmin);
+        Map<String,Object> map = new HashMap<>();
+        map.put("type","篮球");
+        map.put("page",1);
+        map.put("size",5);
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.exchange(
+                REQUEST_MAPPING + "/myOrderByGym?type={type}&page={page}&size={size}",
+                HttpMethod.GET,
+                entity,
+                ResultVO.class,
+                map
+        );
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> {
+                    assertEquals(0,result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("测试添加订单,需要登陆")
+    @Transactional
+    public void testAddOrder() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForAdmin);
+        OrderRequest request = OrderRequest.builder()
+                .date("2020/01/01")
+                .startTime(20)
+                .endTime(25)
+                .gymId(testGymId)
+                .build();
+        HttpEntity<OrderRequest> entity = new HttpEntity<>(request,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.postForEntity(
+                REQUEST_MAPPING + "/addOrder",
+                entity,
+                ResultVO.class
+        );
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> {
+                    assertEquals(0,result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("测试添加评论,需要登陆(默认好评)")
+    @Transactional
+    public void testComment() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForAdmin);
+        OrderCommentRequest request = OrderCommentRequest.builder()
+                .comment("德玛西亚用不为奴")
+                .orderId("1577863710286417087")
+                .score(5)
+                .build();
+
+        HttpEntity<OrderCommentRequest> entity = new HttpEntity<>(request,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.postForEntity(
+                REQUEST_MAPPING + "/comment",
+                entity,
+                ResultVO.class
+        );
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> {
+                    assertEquals(0,result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("测试取消订单,需要登陆")
+    @Transactional
+    public void testCancelOrder() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForAdmin);
+        Map<String,String> map = new HashMap<>();
+        map.put("orderId","1577863710286417087");
+
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.postForEntity(
+                REQUEST_MAPPING + "/cancelMyOrder?orderId={orderId}",
+                entity,
+                ResultVO.class,
+                map
+        );
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> {
+                    assertEquals(0,result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("测试查看所有订单,需要管理员登陆")
+    @Transactional
+    public void testSeeAllOrderByAdmin() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForAdmin);
+        Map<String,Integer> map = new HashMap<>();
+        map.put("page",1);
+        map.put("size",5);
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.exchange(
+                REQUEST_MAPPING + "/allOrder?page={page}&size={size}",
+                HttpMethod.GET,
+                entity,
+                ResultVO.class,
+                map
+        );
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> {
+                    assertEquals(0,result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("测试查看当前进行中所有订单,需要管理员登陆")
+    @Transactional
+    public void testAllCurrentOrder() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForAdmin);
+        Map<String,Integer> map = new HashMap<>();
+        map.put("page",1);
+        map.put("size",5);
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.exchange(
+                REQUEST_MAPPING + "/currentOrder?page={page}&size={size}",
+                HttpMethod.GET,
+                entity,
+                ResultVO.class,
+                map
+        );
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> {
+                    assertEquals(0,result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("测试查看未来所有订单,需要管理员登陆")
+    @Transactional
+    public void testAllFutureOrder() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForAdmin);
+        Map<String,Integer> map = new HashMap<>();
+        map.put("page",1);
+        map.put("size",5);
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.exchange(
+                REQUEST_MAPPING + "/futureOrder?page={page}&size={size}",
+                HttpMethod.GET,
+                entity,
+                ResultVO.class,
+                map
+        );
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> {
+                    assertEquals(0,result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("测试查看过去所有订单,需要管理员登陆")
+    @Transactional
+    public void testAllPastOrder() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForAdmin);
+        Map<String,Integer> map = new HashMap<>();
+        map.put("page",1);
+        map.put("size",5);
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.exchange(
+                REQUEST_MAPPING + "/pastOrder?page={page}&size={size}",
+                HttpMethod.GET,
+                entity,
+                ResultVO.class,
+                map
+        );
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> {
+                    assertEquals(0,result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("测试查看通过gym的type查找订单,需要管理员登陆")
+    @Transactional
+    public void testFindAllOrdersByGymByAdmin() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForAdmin);
+        Map<String,Object> map = new HashMap<>();
+        map.put("type","篮球");
+        map.put("page",1);
+        map.put("size",5);
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.exchange(
+                REQUEST_MAPPING + "/gymOrder?type={type}&page={page}&size={size}",
+                HttpMethod.GET,
+                entity,
+                ResultVO.class,
+                map
+        );
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> {
+                    assertEquals(0,result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("测试查看某个特定用户的订单,需要管理员登陆")
+    @Transactional
+    public void testFindAllOrdersByEmailByAdmin() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForAdmin);
+        Map<String,Object> map = new HashMap<>();
+        map.put("email",admin.getEmail());
+        map.put("page",1);
+        map.put("size",5);
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.exchange(
+                REQUEST_MAPPING + "/userOrder?email={email}&page={page}&size={size}",
+                HttpMethod.GET,
+                entity,
+                ResultVO.class,
+                map
+        );
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> {
+                    assertEquals(0,result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                }
+        );
+    }
+
+    // todo still 只要有cancel便有bug
+    @Test
+    @DisplayName("测试查看所有被取消的订单,需要管理员登陆")
+    @Transactional
+    public void testFindAllCanceledOrdersByAdmin() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForAdmin);
+        Map<String,Integer> map = new HashMap<>();
+        map.put("page",1);
+        map.put("size",5);
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.exchange(
+                REQUEST_MAPPING + "/allCanceledOrder?page={page}&size={size}",
+                HttpMethod.GET,
+                entity,
+                ResultVO.class,
+                map
+        );
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> assertEquals(0,result.getCode()),
+                () -> assertEquals(SUCCESS_MSG,result.getMessage())
+        );
+    }
+
+
 
 }

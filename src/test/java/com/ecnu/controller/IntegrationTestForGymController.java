@@ -97,7 +97,6 @@ public class IntegrationTestForGymController {
         assertAll(
                 () -> assertEquals(OK,response.getStatusCodeValue()),
                 () -> {
-                    assert result != null;
                     assertEquals(0,result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
 //                    assertEquals(1,((PageInfo) result.getData()).getPageNum());
@@ -131,7 +130,6 @@ public class IntegrationTestForGymController {
         assertAll(
                 () -> assertEquals(OK,response.getStatusCodeValue()),
                 () -> {
-                    assert result != null;
                     assertEquals(0,result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
                     assertEquals(1,((LinkedHashMap) result.getData()).get("pageNum"));
@@ -168,7 +166,6 @@ public class IntegrationTestForGymController {
         assertAll(
                 () -> assertEquals(OK,response.getStatusCodeValue()),
                 () -> {
-                    assert result != null;
                     assertEquals(0,result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
                     assertEquals(1,((LinkedHashMap) result.getData()).get("pageNum"));
@@ -197,7 +194,6 @@ public class IntegrationTestForGymController {
         assertAll(
                 () -> assertEquals(OK,response.getStatusCodeValue()),
                 () -> {
-                    assert result != null;
                     assertEquals(0,result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
                     assertTrue(((HashMap<String,Object>)result.getData()).containsKey("score"));
@@ -228,7 +224,6 @@ public class IntegrationTestForGymController {
         assertAll(
                 () -> assertEquals(OK,response.getStatusCodeValue()),
                 () -> {
-                    assert result != null;
                     assertEquals(0,result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
                     assertEquals( gym.getOpen(),((LinkedHashMap)result.getData()).get("open"));
@@ -264,7 +259,6 @@ public class IntegrationTestForGymController {
         assertAll(
                 () -> assertEquals(OK,response.getStatusCodeValue()),
                 () -> {
-                    assert result != null;
                     assertEquals(0,result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
                     assertEquals( gym.getGymId(),((LinkedHashMap)result.getData()).get("gymId"));
@@ -295,7 +289,6 @@ public class IntegrationTestForGymController {
         assertAll(
                 () -> assertEquals(OK,response.getStatusCodeValue()),
                 () -> {
-                    assert result != null;
                     assertEquals(0,result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
                 }

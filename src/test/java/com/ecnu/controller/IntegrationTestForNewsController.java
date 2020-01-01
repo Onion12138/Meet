@@ -93,7 +93,6 @@ public class IntegrationTestForNewsController {
         assertAll(
                 () -> assertEquals(OK,response.getStatusCodeValue()),
                 () -> {
-                    assert result != null;
                     assertEquals(0,result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
                     assertEquals(1,((LinkedHashMap) result.getData()).get("pageNum"));
@@ -121,7 +120,6 @@ public class IntegrationTestForNewsController {
         assertAll(
                 () -> assertEquals(OK,response.getStatusCodeValue()),
                 () -> {
-                    assert result != null;
                     assertEquals(-1,result.getCode());
                     assertEquals("当前新闻不存在",result.getMessage());
                 }
@@ -148,7 +146,6 @@ public class IntegrationTestForNewsController {
         assertAll(
                 () -> assertEquals(OK,response.getStatusCodeValue()),
                 () -> {
-                    assert result != null;
                     assertEquals(0,result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
                     assertTrue(((LinkedHashMap)result.getData()).containsKey("news"));
@@ -180,7 +177,6 @@ public class IntegrationTestForNewsController {
         assertAll(
                 () -> assertEquals(OK,response.getStatusCodeValue()),
                 () -> {
-                    assert result != null;
                     assertEquals(0,result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
                     assertEquals(testUser.getEmail(),((LinkedHashMap)result.getData()).get("email"));
@@ -208,7 +204,6 @@ public class IntegrationTestForNewsController {
         assertAll(
                 () -> assertEquals(OK,response.getStatusCodeValue()),
                 () -> {
-                    assert result != null;
                     assertEquals(0,result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
                 }
@@ -233,7 +228,6 @@ public class IntegrationTestForNewsController {
         assertAll(
                 () -> assertEquals(OK,response.getStatusCodeValue()),
                 () -> {
-                    assert result != null;
                     assertEquals(0,result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
                     assertEquals( request.getTitle(),((LinkedHashMap)result.getData()).get("title"));
@@ -262,7 +256,6 @@ public class IntegrationTestForNewsController {
         assertAll(
                 () -> assertEquals(OK,response.getStatusCodeValue()),
                 () -> {
-                    assert result != null;
                     assertEquals(0,result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
                     assertEquals( request.getNewsId(),((LinkedHashMap)result.getData()).get("newsId"));
@@ -291,7 +284,6 @@ public class IntegrationTestForNewsController {
         assertAll(
                 () -> assertEquals(OK,response.getStatusCodeValue()),
                 () -> {
-                    assert result != null;
                     assertEquals(0,result.getCode());
                     assertEquals(SUCCESS_MSG,result.getMessage());
                 }
