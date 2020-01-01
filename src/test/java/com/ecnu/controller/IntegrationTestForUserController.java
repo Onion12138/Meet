@@ -266,7 +266,7 @@ public class IntegrationTestForUserController {
     @DisplayName("普通用户登陆成功")
     @Transactional
     public void testUserSuccessLogin(){
-        UserLoginRequest request = new UserLoginRequest(used_email,"123456");
+        UserLoginRequest request = new UserLoginRequest(testUser.getEmail(),"123456");
         ResponseEntity<ResultVO> response = restTemplate.postForEntity(REQUEST_MAPPING + "/login",request, ResultVO.class);
         ResultVO result = response.getBody();
         Map<String, Object> map = (Map<String, Object>) response.getBody().getData();

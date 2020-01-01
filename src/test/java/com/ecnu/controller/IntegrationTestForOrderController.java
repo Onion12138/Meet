@@ -3,7 +3,6 @@ package com.ecnu.controller;
 import com.ecnu.dao.UserDao;
 import com.ecnu.domain.User;
 import com.ecnu.request.AvailableTimeRequest;
-import com.ecnu.request.CommentRequest;
 import com.ecnu.request.OrderCommentRequest;
 import com.ecnu.request.OrderRequest;
 import com.ecnu.utils.JwtUtil;
@@ -274,8 +273,8 @@ public class IntegrationTestForOrderController {
         httpHeaders.add("user_token",tokenForAdmin);
         OrderRequest request = OrderRequest.builder()
                 .date("2020/01/01")
-                .startTime(20)
-                .endTime(25)
+                .startTime(26)
+                .endTime(40)
                 .gymId(testGymId)
                 .build();
         HttpEntity<OrderRequest> entity = new HttpEntity<>(request,httpHeaders);

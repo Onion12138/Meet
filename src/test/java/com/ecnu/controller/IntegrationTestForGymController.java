@@ -6,7 +6,6 @@ import com.ecnu.domain.User;
 import com.ecnu.request.GymFilterRequest;
 import com.ecnu.utils.JwtUtil;
 import com.ecnu.vo.ResultVO;
-import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
