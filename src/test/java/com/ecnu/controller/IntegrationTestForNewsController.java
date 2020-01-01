@@ -1,14 +1,16 @@
 package com.ecnu.controller;
 
 import com.ecnu.dao.UserDao;
-import com.ecnu.domain.Gym;
 import com.ecnu.domain.User;
-import com.ecnu.request.GymFilterRequest;
+import com.ecnu.request.CommentRequest;
+import com.ecnu.request.NewsRequest;
 import com.ecnu.utils.JwtUtil;
 import com.ecnu.vo.ResultVO;
-import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -29,8 +31,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Slf4j
-public class IntegrationTestForGymController {
-
+public class IntegrationTestForNewsController {
     @Autowired
     private StringRedisTemplate redisTemplate;
 
@@ -40,13 +41,13 @@ public class IntegrationTestForGymController {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    private final static String REQUEST_MAPPING = "/gym";
+    private final static String REQUEST_MAPPING = "/news";
 
     private final static String SUCCESS_MSG = "成功";
 
-    private final static String toTestGymId = "1576735101615918632";
-
     private final static int OK = 200;
+
+    private final static String toTestNewsId = "1577683872559839329";
 
     private String tokenForUser;
 
@@ -55,16 +56,12 @@ public class IntegrationTestForGymController {
     private User testUser;
 
     private User admin;
-
     @BeforeEach
     public void choseTestUserAndAdmin() {
         testUser = userDao.findById("leodpen@gmail.com").get();
-        log.info(testUser.getAdmin().toString());
         admin = userDao.findById("969023014@qq.com").get();
         tokenForUser = JwtUtil.createJwt(testUser);
-        log.info(tokenForUser);
         tokenForAdmin = JwtUtil.createJwt(admin);
-
         redisTemplate.opsForValue().set(tokenForAdmin,admin.getEmail(),144, TimeUnit.SECONDS);
         redisTemplate.opsForValue().set(tokenForUser,testUser.getEmail(),144, TimeUnit.SECONDS);
     }
@@ -76,52 +73,17 @@ public class IntegrationTestForGymController {
     }
 
     @Test
-    @DisplayName("测试查看所有的场馆，需要登陆")
+    @DisplayName("测试查看所有的新闻，需要登陆")
     @Transactional
-    public void testFindAllGyms() {
+    public void testFindAllNews() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("user_token",tokenForUser);
-
         Map<String,Integer> map = new HashMap<>();
         map.put("page",1);
         map.put("size",5);
         HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
         ResponseEntity<ResultVO> response = restTemplate.exchange(
-                REQUEST_MAPPING + "/allGyms?page={page}&size={size}",
-                HttpMethod.GET,
-                entity,
-                ResultVO.class,
-                map
-        );
-        ResultVO result = response.getBody();
-        assertAll(
-                () -> assertEquals(OK,response.getStatusCodeValue()),
-                () -> {
-                    assert result != null;
-                    assertEquals(0,result.getCode());
-                    assertEquals(SUCCESS_MSG,result.getMessage());
-//                    assertEquals(1,((PageInfo) result.getData()).getPageNum());
-//                    assertEquals(5,((PageInfo) result.getData()).getPageSize());
-                    assertEquals(1,((LinkedHashMap) result.getData()).get("pageNum"));
-                    assertEquals(5,((LinkedHashMap) result.getData()).get("pageSize"));
-                }
-        );
-    }
-
-    @Test
-    @DisplayName("测试通过模糊查找查看所有的场馆，需要登陆")
-    @Transactional
-    public void testKeywords() {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("user_token",tokenForUser);
-
-        Map<String,Object> map = new HashMap<>();
-        map.put("page",1);
-        map.put("size",5);
-        map.put("keyword","乒乓球");
-        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
-        ResponseEntity<ResultVO> response = restTemplate.exchange(
-                REQUEST_MAPPING + "/keyword?page={page}&size={size}&keyword={keyword}",
+                REQUEST_MAPPING + "/all?page={page}&size={size}",
                 HttpMethod.GET,
                 entity,
                 ResultVO.class,
@@ -139,155 +101,189 @@ public class IntegrationTestForGymController {
                 }
         );
     }
-
     @Test
-    @DisplayName("测试通过过滤器高级查找来查看所有的场馆，需要登陆")
+    @DisplayName("测试查看某一个新闻，但不存在相关新闻，需要登陆")
     @Transactional
-    public void testFilter() {
+    public void testBadFindCertainNewsWithComments() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("user_token",tokenForUser);
-
-        Map<String,Integer> map = new HashMap<>();
-        map.put("page",1);
-        map.put("size",5);
-        GymFilterRequest request = GymFilterRequest.builder()
-                .address("大学生活动中心一楼")
-                .highToLow(true)
-                .openOnly(true)
-                .type("乒乓球")
-                .build();
-        HttpEntity<GymFilterRequest> entity = new HttpEntity<>(request,httpHeaders);
-        ResponseEntity<ResultVO> response = restTemplate.exchange(
-                REQUEST_MAPPING + "/filter?page={page}&size={size}",
-                HttpMethod.POST,
-                entity,
-                ResultVO.class,
-                map
-        );
-        ResultVO result = response.getBody();
-        assertAll(
-                () -> assertEquals(OK,response.getStatusCodeValue()),
-                () -> {
-                    assert result != null;
-                    assertEquals(0,result.getCode());
-                    assertEquals(SUCCESS_MSG,result.getMessage());
-                    assertEquals(1,((LinkedHashMap) result.getData()).get("pageNum"));
-                    assertEquals(5,((LinkedHashMap) result.getData()).get("pageSize"));
-                }
-        );
-    }
-    @Test
-    @DisplayName("测试gymId查找其评分，需要登陆")
-    @Transactional
-    public void testScore() {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("user_token",tokenForUser);
-
-        Map<String,Object> map = new HashMap<>();
-        map.put("gymId",toTestGymId);
-        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
-        ResponseEntity<ResultVO> response = restTemplate.exchange(
-                REQUEST_MAPPING + "/score?gymId={gymId}",
-                HttpMethod.GET,
-                entity,
-                ResultVO.class,
-                map
-        );
-        ResultVO result = response.getBody();
-        assertAll(
-                () -> assertEquals(OK,response.getStatusCodeValue()),
-                () -> {
-                    assert result != null;
-                    assertEquals(0,result.getCode());
-                    assertEquals(SUCCESS_MSG,result.getMessage());
-                    assertTrue(((HashMap<String,Object>)result.getData()).containsKey("score"));
-                }
-        );
-    }
-
-    @Test
-    @DisplayName("测试添加gym，需要管理员的登陆")
-    @Transactional
-    public void testAddGym() {
-        Gym gym = new Gym();
-//        gym.setGymId("1576735101615988888");
-        gym.setAddress("共青场");
-        gym.setDescription("最烂的篮球场");
-        gym.setName("改造场地test篮球场");
-        gym.setOpen(true);
-        gym.setRent(20.0);
-        gym.setType("篮球场");
-        gym.setPhoto("yyy");
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("user_token",tokenForAdmin);
-        HttpEntity<Gym> entity = new HttpEntity<>(gym,httpHeaders);
-        ResponseEntity<ResultVO> response = restTemplate.postForEntity(REQUEST_MAPPING + "/addGym",
-                entity,
-                ResultVO.class);
-        ResultVO result = response.getBody();
-        assertAll(
-                () -> assertEquals(OK,response.getStatusCodeValue()),
-                () -> {
-                    assert result != null;
-                    assertEquals(0,result.getCode());
-                    assertEquals(SUCCESS_MSG,result.getMessage());
-                    assertEquals( gym.getOpen(),((LinkedHashMap)result.getData()).get("open"));
-                    assertEquals( gym.getAddress(),((LinkedHashMap)result.getData()).get("address"));
-                    assertEquals( gym.getRent(),((LinkedHashMap)result.getData()).get("rent"));
-                    assertEquals( gym.getDescription(),((LinkedHashMap)result.getData()).get("description"));
-                    assertEquals( gym.getName(),((LinkedHashMap)result.getData()).get("name"));
-                    assertEquals( gym.getType(),((LinkedHashMap)result.getData()).get("type"));
-                }
-        );
-    }
-
-    @Test
-    @DisplayName("测试更新gym，需要管理员的登陆")
-    @Transactional
-    public void testUpdateGym() {
-        Gym gym = new Gym();
-        gym.setGymId("1577853447914481036");
-        gym.setAddress("共青场");
-        gym.setDescription("最烂的篮球场的更改");
-        gym.setName("改造场地test篮球场的更改");
-        gym.setOpen(true);
-        gym.setRent(20.0);
-        gym.setType("篮球场");
-        gym.setPhoto("yyy");
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("user_token",tokenForAdmin);
-        HttpEntity<Gym> entity = new HttpEntity<>(gym,httpHeaders);
-        ResponseEntity<ResultVO> response = restTemplate.postForEntity(REQUEST_MAPPING + "/updateGym",
-                entity,
-                ResultVO.class);
-        ResultVO result = response.getBody();
-        assertAll(
-                () -> assertEquals(OK,response.getStatusCodeValue()),
-                () -> {
-                    assert result != null;
-                    assertEquals(0,result.getCode());
-                    assertEquals(SUCCESS_MSG,result.getMessage());
-                    assertEquals( gym.getGymId(),((LinkedHashMap)result.getData()).get("gymId"));
-                    assertEquals( gym.getOpen(),((LinkedHashMap)result.getData()).get("open"));
-                    assertEquals( gym.getAddress(),((LinkedHashMap)result.getData()).get("address"));
-                    assertEquals( gym.getRent(),((LinkedHashMap)result.getData()).get("rent"));
-                    assertEquals( gym.getDescription(),((LinkedHashMap)result.getData()).get("description"));
-                    assertEquals( gym.getName(),((LinkedHashMap)result.getData()).get("name"));
-                    assertEquals( gym.getType(),((LinkedHashMap)result.getData()).get("type"));
-                }
-        );
-    }
-
-    @Test
-    @DisplayName("测试删除gym，需要管理员的登陆")
-    @Transactional
-    public void testDeleteGym() {
         Map<String,String> map = new HashMap<>();
-        map.put("gymId","1577853224913165215");
+        map.put("newsId","bad_news_id");
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.exchange(
+                REQUEST_MAPPING + "/one?newsId={newsId}",
+                HttpMethod.GET,
+                entity,
+                ResultVO.class,
+                map
+        );
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> {
+                    assert result != null;
+                    assertEquals(-1,result.getCode());
+                    assertEquals("当前新闻不存在",result.getMessage());
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("测试成功查看某一个新闻，返回新闻与相关评论，需要登陆")
+    @Transactional
+    public void testFindCertainNewsWithComments() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForUser);
+        Map<String,String> map = new HashMap<>();
+        map.put("newsId",toTestNewsId);
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.exchange(
+                REQUEST_MAPPING + "/one?newsId={newsId}",
+                HttpMethod.GET,
+                entity,
+                ResultVO.class,
+                map
+        );
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> {
+                    assert result != null;
+                    assertEquals(0,result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                    assertTrue(((LinkedHashMap)result.getData()).containsKey("news"));
+                    assertTrue(((LinkedHashMap)result.getData()).containsKey("comment"));
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("测试成功添加评论")
+    @Transactional
+    public void testAddComment(){
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForUser);
+        CommentRequest request = CommentRequest.builder()
+                .newsId(toTestNewsId)
+                .parentId("")
+                .profile(testUser.getProfile())
+                .content("那是真的牛皮")
+                .parentName("")
+                .build();
+        HttpEntity<CommentRequest> entity = new HttpEntity<>(request,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.postForEntity(
+                REQUEST_MAPPING + "/addComment",
+                entity,
+                ResultVO.class
+        );
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> {
+                    assert result != null;
+                    assertEquals(0,result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                    assertEquals(testUser.getEmail(),((LinkedHashMap)result.getData()).get("email"));
+                    assertEquals(request.getContent(),((LinkedHashMap)result.getData()).get("content"));
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("测试成功删除评论，类似微信，只能删除和添加")
+    @Transactional
+    public void testDeleteComment(){
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForUser);
+        Map<String,String> map = new HashMap<>();
+        map.put("commentId","1577859419371241813");
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.postForEntity(
+                REQUEST_MAPPING + "/deleteComment?commentId={commentId}",
+                entity,
+                ResultVO.class,
+                map
+        );
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> {
+                    assert result != null;
+                    assertEquals(0,result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("测试添加news，需要管理员的登陆")
+    @Transactional
+    public void testAddNews() {
+        NewsRequest request = NewsRequest.builder()
+                .content("是的这只是一个test")
+                .title("震惊，德玛西亚重出江湖？")
+                .build();
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForAdmin);
+        HttpEntity<NewsRequest> entity = new HttpEntity<>(request,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.postForEntity(REQUEST_MAPPING + "/addNews",
+                entity,
+                ResultVO.class);
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> {
+                    assert result != null;
+                    assertEquals(0,result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                    assertEquals( request.getTitle(),((LinkedHashMap)result.getData()).get("title"));
+                    assertEquals( admin.getEmail(),((LinkedHashMap)result.getData()).get("email"));
+                    assertEquals( request.getContent(),((LinkedHashMap)result.getData()).get("content"));
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("测试更新News，需要管理员的登陆")
+    @Transactional
+    public void testUpdateNews() {
+        NewsRequest request = NewsRequest.builder()
+                .newsId("1577860458170502678")
+                .content("是的这只是一个test的update")
+                .title("震惊，德玛西亚重出江湖？")
+                .build();
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForAdmin);
+        HttpEntity<NewsRequest> entity = new HttpEntity<>(request,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.postForEntity(REQUEST_MAPPING + "/updateNews",
+                entity,
+                ResultVO.class);
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> {
+                    assert result != null;
+                    assertEquals(0,result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                    assertEquals( request.getNewsId(),((LinkedHashMap)result.getData()).get("newsId"));
+                    assertEquals( request.getContent(),((LinkedHashMap)result.getData()).get("content"));
+                    assertEquals( request.getTitle(),((LinkedHashMap)result.getData()).get("title"));
+                    assertEquals( admin.getEmail(),((LinkedHashMap)result.getData()).get("email"));
+                }
+        );
+    }
+
+
+    @Test
+    @DisplayName("测试删除news，需要管理员的登陆")
+    @Transactional
+    public void testDeleteNews() {
+        Map<String,String> map = new HashMap<>();
+        map.put("newsId","1577860750751112024");
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("user_token",tokenForAdmin);
         HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
-        ResponseEntity<ResultVO> response = restTemplate.postForEntity(REQUEST_MAPPING + "/deleteGym?gymId={gymId}",
+        ResponseEntity<ResultVO> response = restTemplate.postForEntity(REQUEST_MAPPING + "/deleteNews?newsId={newsId}",
                 entity,
                 ResultVO.class,
                 map);
@@ -301,4 +297,8 @@ public class IntegrationTestForGymController {
                 }
         );
     }
+
+
+
+
 }
