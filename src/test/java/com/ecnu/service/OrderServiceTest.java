@@ -194,13 +194,13 @@ public class OrderServiceTest {
     @DisplayName("测试查找取消的订单")
     public void testFindMyCanceledOrder() {
         orderService.findMyCanceledOrder(email,1, 5);
-        verify(orderDao).findByUserEmailAndCancel(anyString(), anyBoolean(),any(Pageable.class));
+        verify(orderDao).findByUserEmailAndCancelTrue(anyString(), any(Pageable.class));
     }
     @Test
     @DisplayName("测试查找全部取消的订单")
     public void testFindAllCanceledOrders() {
         orderService.findAllCanceledOrders(1, 5);
-        verify(orderDao).findByCancel(anyBoolean(), any(Pageable.class));
+        verify(orderDao).findAllByCancelTrue(any(Pageable.class));
     }
 
 }

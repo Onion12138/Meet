@@ -179,14 +179,14 @@ public class OrderDaoTest {
     @DisplayName("测试查询用户取消的订单")
     public void testFindUserCanceledOrder() {
         pageable = PageRequest.of(0, 2);
-        Page<Order> page = orderDao.findByUserEmailAndCancel(email, true, pageable);
+        Page<Order> page = orderDao.findByUserEmailAndCancelTrue(email, pageable);
         assertEquals(0, page.getTotalElements());
     }
     @Test
     @DisplayName("测试查询用户取消的订单")
     public void testFindAllCanceledOrders() {
         pageable = PageRequest.of(0, 2);
-        Page<Order> page = orderDao.findByCancel(true, pageable);
+        Page<Order> page = orderDao.findAllByCancelTrue( pageable);
         assertEquals(1, page.getTotalElements());
     }
 }

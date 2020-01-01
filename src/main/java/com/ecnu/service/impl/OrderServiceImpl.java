@@ -209,16 +209,16 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Page<Order> findMyCanceledOrder(String email, Integer page, Integer size) {
-        Sort sort = Sort.by("order_date").descending();
+        Sort sort = Sort.by("orderDate").descending();
         Pageable pageable = PageRequest.of(page - 1, size, sort);
-        return orderDao.findByUserEmailAndCancel(email, true, pageable);
+        return orderDao.findByUserEmailAndCancelTrue(email, pageable);
     }
 
     @Override
     public Page<Order> findAllCanceledOrders(Integer page, Integer size) {
-        Sort sort = Sort.by("order_date").descending();
+        Sort sort = Sort.by("orderDate").descending();
         Pageable pageable = PageRequest.of(page - 1, size, sort);
-        return orderDao.findByCancel(true, pageable);
+        return orderDao.findAllByCancelTrue(pageable);
     }
 
     //    @Override

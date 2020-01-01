@@ -105,9 +105,7 @@ public class UserServiceImpl implements UserService {
     public Map<String, String> login(UserLoginRequest request) {
         String email = request.getEmail();
         String password = request.getPassword();
-        User u = new User();
-        u.setEmail(email);
-        User user = userMapper.selectOne(u);
+        User user = userMapper.selectByPrimaryKey(email);
         if (user == null){
             throw new MyException(ResultEnum.USER_NOT_EXIST);
         }
