@@ -44,6 +44,8 @@ public class IntegrationTestForGymController {
 
     private final static String SUCCESS_MSG = "成功";
 
+    private final static String toTestGymId = "1576735101615918632";
+
     private final static int OK = 200;
 
     private String tokenForUser;
@@ -175,6 +177,72 @@ public class IntegrationTestForGymController {
                 }
         );
     }
+    @Test
+    @DisplayName("测试gymId查找其评分，需要登陆")
+    @Transactional
+    public void testScore() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForUser);
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("gymId",toTestGymId);
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.exchange(
+                REQUEST_MAPPING + "/score?gymId={gymId}",
+                HttpMethod.GET,
+                entity,
+                ResultVO.class,
+                map
+        );
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> {
+                    assert result != null;
+                    assertEquals(0,result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                    assertTrue(((HashMap<String,Object>)result.getData()).containsKey("score"));
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("测试添加gym，需要管理员的登陆")
+    @Transactional
+    public void testAddGym() {
+        Gym gym = new Gym();
+//        gym.setGymId("1576735101615988888");
+        gym.setAddress("共青场");
+        gym.setDescription("最烂的篮球场");
+        gym.setName("改造场地test篮球场");
+        gym.setOpen(true);
+        gym.setRent(20.0);
+        gym.setType("篮球场");
+        gym.setPhoto("yyy");
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user_token",tokenForAdmin);
+        HttpEntity<Gym> entity = new HttpEntity<>(gym,httpHeaders);
+        ResponseEntity<ResultVO> response = restTemplate.postForEntity(REQUEST_MAPPING + "/addGym",
+                entity,
+                ResultVO.class);
+        ResultVO result = response.getBody();
+        assertAll(
+                () -> assertEquals(OK,response.getStatusCodeValue()),
+                () -> {
+                    assert result != null;
+                    assertEquals(0,result.getCode());
+                    assertEquals(SUCCESS_MSG,result.getMessage());
+                    assertEquals( gym.getOpen(),((LinkedHashMap)result.getData()).get("open"));
+                    assertEquals( gym.getAddress(),((LinkedHashMap)result.getData()).get("address"));
+                    assertEquals( gym.getRent(),((LinkedHashMap)result.getData()).get("rent"));
+                    assertEquals( gym.getDescription(),((LinkedHashMap)result.getData()).get("description"));
+                    assertEquals( gym.getName(),((LinkedHashMap)result.getData()).get("name"));
+                    assertEquals( gym.getType(),((LinkedHashMap)result.getData()).get("type"));
+                }
+        );
+    }
+
+
 
 
 

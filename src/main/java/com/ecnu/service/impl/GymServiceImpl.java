@@ -14,10 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -84,9 +81,12 @@ public class GymServiceImpl implements GymService {
             map.put("comment", "暂无订单和评论");
             return map;
         }
-        int sum = orderSet.stream().map(Order::getScore).reduce(Integer::sum).get();
+
+        Optional<Integer> sum = orderSet.stream().map(Order::getScore).reduce(Integer::sum);
+        int sumValue = sum.orElse(1);
+
         List<String> comments = orderSet.stream().map(Order::getComment).collect(Collectors.toList());
-        map.put("score", sum / (double) orderSet.size());
+        map.put("score", sumValue / (double) orderSet.size());
         map.put("comment", comments);
         return map;
     }
