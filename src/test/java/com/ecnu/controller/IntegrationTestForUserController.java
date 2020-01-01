@@ -357,7 +357,7 @@ public class IntegrationTestForUserController {
         );
     }
 
-    // todo 此处待真实使用下看看
+    // fail 使用postman结合测试后通过
     @Test
     @DisplayName("修改个人头像")
     @Transactional
