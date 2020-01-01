@@ -102,7 +102,7 @@ public class IntegrationTestForOrderController {
         );
     }
 
-    // todo bugs here to fix.
+    // 使用驼峰法即过
     @Test
     @DisplayName("测试查看我的取消订单,需要登陆")
     @Transactional
@@ -512,7 +512,6 @@ public class IntegrationTestForOrderController {
         );
     }
 
-    // todo still 只要有cancel便有bug
     @Test
     @DisplayName("测试查看所有被取消的订单,需要管理员登陆")
     @Transactional
