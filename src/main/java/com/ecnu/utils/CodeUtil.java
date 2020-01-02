@@ -3,7 +3,6 @@ package com.ecnu.utils;
 import java.util.Random;
 
 /**
- * @author onion
  * @date 2019/12/11 -6:38 下午
  */
 public class CodeUtil {

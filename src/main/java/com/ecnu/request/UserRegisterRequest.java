@@ -10,7 +10,6 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 /**
- * @author onion
  * @date 2019/12/10 -11:03 下午
  */
 @Data

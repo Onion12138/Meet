@@ -28,10 +28,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-/**
- * @author onion
- * @date 2019/12/31 -10:27 上午
- */
+
 @SpringBootTest
 public class OrderServiceTest {
     @InjectMocks

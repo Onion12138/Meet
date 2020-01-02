@@ -8,10 +8,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Properties;
 
-/**
- * @author onion
- * @date 2019/12/10 -10:47 下午
- */
 @SpringBootApplication
 public class MeetHereApplication {
     public static void main(String[] args) {

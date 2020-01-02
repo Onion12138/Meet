@@ -11,10 +11,7 @@ import org.springframework.util.StringUtils;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-/**
- * @author onion
- * @date 2019/12/31 -5:58 下午
- */
+
 @SpringBootTest
 public class JwtUtilTest {
     private User user;

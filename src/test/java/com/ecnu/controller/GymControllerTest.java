@@ -27,10 +27,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/**
- * @author onion
- * @date 2019/12/25 -9:55 下午
- */
+
 @SpringBootTest
 @AutoConfigureMockMvc
 public class GymControllerTest {

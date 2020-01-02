@@ -19,7 +19,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * @author onion
  * @date 2019/12/15 -9:50 下午
  */
 @Aspect

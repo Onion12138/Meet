@@ -13,7 +13,6 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 /**
- * @author onion
  * @date 2019/12/11 -9:05 下午
  */
 @Service

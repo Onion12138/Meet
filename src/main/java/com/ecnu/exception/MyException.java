@@ -4,7 +4,6 @@ import com.ecnu.enums.ResultEnum;
 import lombok.Getter;
 
 /**
- * @author onion
  * @date 2019/12/10 -11:09 下午
  */
 @Getter

@@ -7,7 +7,6 @@ import com.github.pagehelper.PageInfo;
 import java.util.Map;
 
 /**
- * @author onion
  * @date 2019/12/11 -6:24 下午
  */
 public interface GymService {

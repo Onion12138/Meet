@@ -28,7 +28,6 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * @author onion
  * @date 2019/12/10 -11:02 下午
  * function:
  * 1. Get：邮箱是否被注册/发送验证码

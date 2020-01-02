@@ -11,7 +11,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import java.util.Date;
 
 /**
- * @author onion
  * @date 2019/12/11 -9:09 上午
  */
 public class JwtUtil {

@@ -1,4 +1,4 @@
-package com.ecnu.controller;
+package com.ecnu.IntegrationTests;
 
 import com.ecnu.dao.UserDao;
 import com.ecnu.domain.User;

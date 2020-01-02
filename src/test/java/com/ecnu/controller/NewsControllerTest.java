@@ -25,11 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/**
- * @author onion
- * @date 2019/12/26 -12:59 下午
- * 删除接口、异常情况暂未测试
- */
+
 @SpringBootTest
 @AutoConfigureMockMvc
 public class NewsControllerTest {

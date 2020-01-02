@@ -9,7 +9,6 @@ import org.hibernate.validator.constraints.Range;
 import javax.validation.constraints.NotEmpty;
 
 /**
- * @author onion
  * @date 2019/12/11 -11:18 下午
  */
 @Data

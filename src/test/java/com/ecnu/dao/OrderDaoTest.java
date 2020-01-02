@@ -24,10 +24,7 @@ import java.time.LocalTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * @author onion
- * @date 2019/12/31 -11:32 上午
- */
+
 @DataJpaTest
 @DirtiesContext
 @Transactional

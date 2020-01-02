@@ -20,10 +20,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-/**
- * @author onion
- * @date 2019/12/30 -10:27 下午
- */
+
+
 @SpringBootTest
 public class GymServiceTest {
     @Mock

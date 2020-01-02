@@ -3,7 +3,6 @@ package com.ecnu.enums;
 import lombok.Getter;
 
 /**
- * @author onion
  * @date 2019/12/10 -11:08 下午
  */
 @Getter

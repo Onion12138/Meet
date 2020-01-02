@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotEmpty;
 
 /**
- * @author onion
  * @date 2019/12/21 -9:37 上午
  */
 @Data
