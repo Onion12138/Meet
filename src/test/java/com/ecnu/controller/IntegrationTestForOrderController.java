@@ -23,11 +23,11 @@ import org.springframework.http.ResponseEntity;
 
 import javax.transaction.Transactional;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -272,7 +272,7 @@ public class IntegrationTestForOrderController {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("user_token",tokenForAdmin);
         OrderRequest request = OrderRequest.builder()
-                .date("2020/01/05")
+                .date("2020/01/04")
                 .startTime(26)
                 .endTime(40)
                 .gymId(testGymId)

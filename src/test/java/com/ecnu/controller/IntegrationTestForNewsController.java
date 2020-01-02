@@ -19,6 +19,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.Rollback;
 
 import javax.transaction.Transactional;
 import java.util.HashMap;
@@ -30,6 +31,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@org.springframework.transaction.annotation.Transactional
+@Rollback(value = true)
 @Slf4j
 public class IntegrationTestForNewsController {
     @Autowired
@@ -272,7 +275,7 @@ public class IntegrationTestForNewsController {
     @Transactional
     public void testDeleteNews() {
         Map<String,String> map = new HashMap<>();
-        map.put("newsId","1577891814936236465");
+        map.put("newsId","1577892899786252492");
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("user_token",tokenForAdmin);
         HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
