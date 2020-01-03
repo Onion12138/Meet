@@ -12,25 +12,26 @@
 
 ## 后端工具与技术选用
 
-+ IDE: `IDEA` 2019.3  `Visual Studio Code` 1.41.1
++ IDE: `IDEA` 2019.3 、 `Visual Studio Code` 1.41.1
 
-+ 数据库: `Mysql 8.0`  `Redis`
++ 数据库: `Mysql 8.0` 、 `Redis`
 
 + 数据校验: `JSR303` `Validation`
 
-+ 持久层框架: `通用Mapper` `SpringDataJPA`
++ 持久层框架: `通用Mapper`、 `SpringDataJPA`
 
-+ 安全: `SpringSecurity` `Jwt`
++ 安全: `SpringSecurity` 、`Jwt`
 
 + 对象存储: `七牛云`
 
 ## 测试工具与技术选用
 
-+ 单元测试: `Junit 5` `Mockito`
++ 单元测试: `Junit 5`、 `Mockito`
 
-+ 工具: `Postman` `JMeter 5.2.1`
++ 工具: `Postman`、 `JMeter 5.2.1`
 
-+ 静态代码分析: `FindBugs`  `Alibaba编程规约P3C`
++ 静态代码分析: `FindBugs` 、 `Alibaba编程规约P3C` ( 自动生成的`html`格式报告见Doc仓库 )
+
 ## 后端开发代码结构
 ```
 .
