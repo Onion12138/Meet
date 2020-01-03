@@ -12,15 +12,15 @@
 
 ## 后端工具与技术选用
 
-+ IDE: `IDEA` 2019.3, `Visual Studio Code` 1.41.1
++ IDE: `IDEA` 2019.3  `Visual Studio Code` 1.41.1
 
-+ 数据库: `Mysql 8.0`, `Redis`
++ 数据库: `Mysql 8.0`  `Redis`
 
-+ 数据校验: `JSR303`
++ 数据校验: `JSR303` `Validation`
 
-+ 持久层框架: `通用Mapper`,`SpringDataJPA`
++ 持久层框架: `通用Mapper` `SpringDataJPA`
 
-+ 安全: `SpringSecurity`,`Jwt`
++ 安全: `SpringSecurity` `Jwt`
 
 + 对象存储: `七牛云`
 
