@@ -201,7 +201,10 @@ public class OrderServiceImpl implements OrderService {
         timeRequest.setGymId(orderRequest.getGymId());
         List<Integer[]> timeInterval = findAvailableTime(timeRequest);
         for (Integer[] integers : timeInterval)
-            if (integers[1] > orderRequest.getStartTime() || integers[0] < orderRequest.getEndTime())
+            if ((integers[0] >= orderRequest.getStartTime() && orderRequest.getEndTime() >= integers[1] )||
+                    (integers[0] <= orderRequest.getStartTime() && integers[1] >= orderRequest.getEndTime() )||
+                    (integers[0]>=orderRequest.getStartTime() && integers[0]<orderRequest.getEndTime() && integers[1]>=orderRequest.getEndTime()) ||
+                    (integers[0]<orderRequest.getStartTime() && integers[1]>orderRequest.getStartTime() && integers[1]<=orderRequest.getEndTime()))
                 return true;
         return false;
     }
