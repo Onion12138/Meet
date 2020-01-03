@@ -26,11 +26,11 @@
 
 ## 测试工具与技术选用
 
-+ 单元测试: `Junit 5`, `Mockito`
++ 单元测试: `Junit 5` `Mockito`
 
-+ 工具: `Postman`, `JMeter 5.2.1`
++ 工具: `Postman` `JMeter 5.2.1`
 
-+ 静态代码分析: `FindBugs`, `Alibaba编程规约P3C`, 
++ 静态代码分析: `FindBugs`  `Alibaba编程规约P3C`
 ## 后端开发代码结构
 ```
 .
