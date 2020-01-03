@@ -14,6 +14,8 @@
 
 + IDE: `IDEA` 2019.3 、 `Visual Studio Code` 1.41.1
 
++ Web框架: `SpringBoot2.2.0`
+
 + 数据库: `Mysql 8.0` 、 `Redis`
 
 + 数据校验: `JSR303` `Validation`
@@ -21,6 +23,8 @@
 + 持久层框架: `通用Mapper`、 `SpringDataJPA`
 
 + 安全: `SpringSecurity` 、`Jwt`
+
++ 权限控制: `AOP`
 
 + 对象存储: `七牛云`
 
